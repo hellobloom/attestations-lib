@@ -21,6 +21,7 @@
     "typescript": "^2.9.2"
   },
   "scripts": {
-    "build": "./bin/build"
+    "build": "./bin/build",
+    "prepare": "./bin/build"
   }
 }
