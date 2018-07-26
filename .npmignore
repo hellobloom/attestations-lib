@@ -77,3 +77,8 @@ tests/cases/user/*/**/*.d.ts
 !tests/cases/user/discord.js/
 tests/baselines/reference/dt
 .failed-tests
+
+# bloom additions
+.prettierignore
+.prettierrc
+tslint.json
