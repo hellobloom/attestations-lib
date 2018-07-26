@@ -3,9 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "description": "Shared types and logic between blooms dapp and whisper docker.",
-  "main": "index.ts",
   "repository": "https://github.com/hellobloom/attestations-lib",
-  "author": "Eddie Hedges <eddiehedges@gmail.com>",
+  "author": "Eddie Hedges <eddie@bloom.co>",
   "license": "UNLICENSED",
   "devDependencies": {
     "typescript": "^2.9.2"
