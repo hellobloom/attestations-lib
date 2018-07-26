@@ -22,5 +22,8 @@
   },
   "scripts": {
     "build": "./bin/build"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
