@@ -19,9 +19,5 @@
     "prettier": "^1.13.7",
     "tslint": "^5.11.0",
     "typescript": "^2.9.2"
-  },
-  "scripts": {
-    "build": "./bin/build",
-    "prepare": "yarn"
   }
 }
