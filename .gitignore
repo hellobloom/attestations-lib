@@ -81,3 +81,4 @@ tests/baselines/reference/dt
 # bloom additions
 dist/
 *.tgz
+package/
