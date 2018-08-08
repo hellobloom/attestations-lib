@@ -1,16 +1,21 @@
 import {AttestationTypeID} from './AttestationTypeID'
 
 export function getAttestationTypeStr(typeId: AttestationTypeID): string {
-  if (typeId === AttestationTypeID.email) {
-    return 'email'
-  } else if (typeId === AttestationTypeID.phone) {
-    return 'phone'
-  } else if (typeId === AttestationTypeID.facebook) {
-    return 'facebook'
-  } else if (typeId === AttestationTypeID.sanctionScreen) {
-    return 'sanction-screen'
-  } else {
-    throw Error(`AttestationTypeID '${typeId}' not supported`)
+  switch (typeId) {
+    case AttestationTypeID.email:
+      return 'email'
+    case AttestationTypeID.phone:
+      return 'phone'
+    case AttestationTypeID.facebook:
+      return 'facebook'
+    case AttestationTypeID.sanctionScreen:
+      return 'sanction-screen'
+    case AttestationTypeID.pepScreen:
+        return 'pep-screen'
+    case AttestationTypeID.idDocument:
+        return 'id-document'
+    default:
+      throw Error(`AttestationTypeID ${typeId} not supported`)
   }
 }
 
@@ -21,7 +26,10 @@ export function getBloomIDStrength(typeId: AttestationTypeID) {
     case AttestationTypeID.facebook:
       return 5
     case AttestationTypeID.sanctionScreen:
+    case AttestationTypeID.pepScreen:
       return 10
+    case AttestationTypeID.idDocument:
+      return 20
     default:
       throw Error(`AttestationTypeID ${typeId} not supported`)
   }
@@ -37,6 +45,10 @@ export function getFormattedName(typeId: AttestationTypeID) {
       return 'Facebook'
     case AttestationTypeID.sanctionScreen:
       return 'Sanction Screen'
+      case AttestationTypeID.pepScreen:
+      return 'PEP Screen'
+      case AttestationTypeID.idDocument:
+      return 'ID Document'
     default:
       throw Error(`AttestationTypeID ${typeId} not supported`)
   }
