@@ -14,6 +14,12 @@ export function getAttestationTypeStr(typeId: AttestationTypeID): string {
         return 'pep-screen'
     case AttestationTypeID.idDocument:
         return 'id-document'
+    case AttestationTypeID.google:
+      return 'google'
+    case AttestationTypeID.linkedin:
+      return 'linkedin'
+    case AttestationTypeID.twitter:
+      return 'twitter'
     default:
       throw Error(`AttestationTypeID ${typeId} not supported`)
   }
@@ -30,6 +36,12 @@ export function getBloomIDStrength(typeId: AttestationTypeID) {
       return 10
     case AttestationTypeID.idDocument:
       return 20
+    case AttestationTypeID.google:
+      return 5
+    case AttestationTypeID.linkedin:
+      return 5
+    case AttestationTypeID.twitter:
+      return 5
     default:
       throw Error(`AttestationTypeID ${typeId} not supported`)
   }
@@ -49,6 +61,12 @@ export function getFormattedName(typeId: AttestationTypeID) {
       return 'PEP Screen'
       case AttestationTypeID.idDocument:
       return 'ID Document'
+      case AttestationTypeID.google:
+      return 'Google'
+      case AttestationTypeID.linkedin:
+      return 'LinkedIn'
+      case AttestationTypeID.twitter:
+      return 'Twitter'
     default:
       throw Error(`AttestationTypeID ${typeId} not supported`)
   }
