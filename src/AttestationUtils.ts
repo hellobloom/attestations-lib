@@ -64,7 +64,7 @@ export function getFormattedName(typeId: AttestationTypeID) {
       case AttestationTypeID.google:
       return 'Google'
       case AttestationTypeID.linkedin:
-      return 'Linkedin'
+      return 'LinkedIn'
       case AttestationTypeID.twitter:
       return 'Twitter'
     default:
