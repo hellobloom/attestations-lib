@@ -1,6 +1,6 @@
 /**
  * Should correlate to AttestationLogic permittedTypesList ordering.
- * 
+ *
  * Example call to verify would look like:
  * var attestationLogic = new AttestationLogic(CONTRACT_ADDRESS);
  * attesationLogic.permittedTypesList.call(0) // should print out 'phone'
@@ -17,3 +17,7 @@ export enum AttestationTypeID {
   linkedin = 7,
   twitter = 8,
 }
+
+export const AttestationTypeNames: string[] = Object.keys(AttestationTypeID).filter(
+  k => typeof AttestationTypeID[k] === 'number'
+)
