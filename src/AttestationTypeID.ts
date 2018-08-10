@@ -21,3 +21,11 @@ export enum AttestationTypeID {
 export const AttestationTypeNames: string[] = Object.keys(AttestationTypeID).filter(
   k => typeof AttestationTypeID[k] === 'number'
 )
+
+let toDashedCase = function(str: string) {
+  return str.replace(/([A-Z])/g, function($1) {
+    return '-' + $1.toLowerCase()
+  })
+}
+
+export const AttestationTypeDashedNames = AttestationTypeNames.map(toDashedCase)
