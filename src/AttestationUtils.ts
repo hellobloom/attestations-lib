@@ -14,6 +14,12 @@ export function getAttestationTypeStr(typeId: AttestationTypeID): string {
         return 'pep-screen'
     case AttestationTypeID.idDocument:
         return 'id-document'
+    case AttestationTypeID.google:
+      return 'google'
+    case AttestationTypeID.linkedin:
+      return 'linkedin'
+    case AttestationTypeID.twitter:
+      return 'twitter'
     default:
       throw Error(`AttestationTypeID ${typeId} not supported`)
   }
