@@ -13,7 +13,7 @@ export enum AttestationTypeID {
   sanctionScreen = 3,
   pepScreen = 4,
   idDocument = 5,
-  google= 6,
-  linkedin= 7,
-  twitter= 8,
+  google = 6,
+  linkedin = 7,
+  twitter = 8,
 }
