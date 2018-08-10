@@ -11,8 +11,9 @@ Pretty: Run `bin/prettier`
 
 #### Packaging
 1. Bump version in `package.json` and commit / push
-2. Run `yarn pack` to create the .tgz that will be uploaded in the following step.
-2. Create a release on GitHub, tag it with version number, associate it with the commit from step 1, and upload the aforementioned .tgz file. 
+2. Remove any previous package files from the repo directory (the next step would create the package with these unecessary files/folders)
+3. Run `yarn pack` to create the .tgz that will be uploaded in the following step.
+4. Create a release on GitHub, tag it with version number, associate it with the commit from step 1, and upload the aforementioned .tgz file. 
 
 #### Consuming
 
