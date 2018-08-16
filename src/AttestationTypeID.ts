@@ -29,3 +29,7 @@ let toDashedCase = function(str: string) {
 }
 
 export const AttestationTypeDashedNames = AttestationTypeNames.map(toDashedCase)
+
+export const AttestationTypeIDs = Object.keys(AttestationTypeID)
+  .map(key => AttestationTypeID[key])
+  .filter(x => typeof x == 'number')
