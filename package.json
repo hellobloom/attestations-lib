@@ -2,7 +2,7 @@
   "name": "attestations-lib",
   "version": "0.1.4",
   "main": "dist/index.js",
-  "types" : "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "private": true,
   "description": "Shared types and logic between blooms dapp and whisper docker.",
   "repository": "https://github.com/hellobloom/attestations-lib",
@@ -24,5 +24,8 @@
     "build": "./bin/build",
     "prepack": "yarn build",
     "prepare": "yarn build"
+  },
+  "dependencies": {
+    "lodash": "^4.17.10"
   }
 }
