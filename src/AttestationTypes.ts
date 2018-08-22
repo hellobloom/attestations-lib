@@ -7,10 +7,6 @@ export type AttestationType = {
   nameFriendly: string
 }
 
-export type AttestationTypeManifest = {
-  [AttestationTypeID]: AttestationType
-}
-
 export enum AttestationTypeID {
   phone = 0,
   email = 1,
@@ -31,6 +27,10 @@ export enum AttestationTypeID {
   drug = 16,
   bank = 17,
   utility = 18,
+}
+
+export type AttestationTypeManifest = {
+  [P in keyof typeof AttestationTypeID]: AttestationType
 }
 
 export const AttestationTypes: AttestationTypeManifest = {
@@ -153,7 +153,7 @@ export const AttestationTypes: AttestationTypeManifest = {
 export const AttestationTypesByID = reduce(
   AttestationTypes,
   (obj, val, key) => {
-    obj[val.id.toString()] = Object.assign({}, val, {name: key})
+    obj[val.id.toString()] = (Object as any).assign({}, val, {name: key})
     return obj
   },
   {}
@@ -179,7 +179,7 @@ export const getAttestationTypeAttrib = (
 }
 
 const attestationTypeAccessor = (attrib: keyof AttestationType) => (
-  typeId: attestationTypeId
+  typeId: AttestationTypeID
 ) => getAttestationTypeAttrib(typeId, attrib)
 
 export const getAttestationTypeStr = attestationTypeAccessor('nameContract')
