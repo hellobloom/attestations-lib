@@ -1,0 +1,52 @@
+#!/usr/bin/env node
+
+const repl = require('repl')
+const path = require('path')
+
+require('ts-node').register({project: 'tsconfig.server.json'})
+require('tsconfig-paths/register')
+
+const projectRequire = relativeRequire =>
+  require(path.join(path.resolve(__dirname, '..'), relativeRequire))
+
+// Add values to this object if you want them to be available in the console
+const customReplContext = {}
+
+// List of injected variables for the welcome message
+const injectedValuesList = Object.keys(customReplContext)
+  .map(key => `   - ${key}`)
+  .join('\n')
+
+console.log(`Welcome to the attestations-lib REPL!`)
+console.log(`The following values are already available in the REPL for you:\n`)
+console.log(injectedValuesList)
+console.log()
+
+/**
+ * Inject helpers into REPL context
+ */
+
+const helpers = {
+}
+
+Object.assign(customReplContext, helpers)
+
+
+/**
+ * Initialize REPLs
+ */
+
+const replSession = repl.start({prompt: `attestations-lib $ `})
+
+// Inject our customReplContext into the env so they are avaialable top level
+for (key in customReplContext) {
+  // replSession.context already has things in it like `console` so you can do `console.log`
+  // As a precaution, we should throw an error if we accidentally clobber
+  if (key in replSession.context) {
+    throw new Error(
+      `${key} is already set in replSession.context! You'll need to give it another name`
+    )
+  }
+
+  replSession.context[key] = customReplContext[key]
+}

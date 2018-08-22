@@ -1,17 +1,31 @@
 import {
+  AttestationType,
+  AttestationTypeManifest,
   AttestationTypeID,
-  AttestationTypeIDs,
+  AttestationTypes,
+  AttestationTypesByID,
   AttestationTypeNames,
-  AttestationTypeDashedNames,
-} from './src/AttestationTypeID'
-import {AttestationStatus} from './src/AttestationStatus'
-import * as AttestationUtils from './src/AttestationUtils'
+  AttestationTypeContractNames,
+  AttestationTypeIDs,
+  getAttestationTypeAttrib,
+  getAttestationTypeStr,
+  getBloomIDStrength,
+  getFormattedName,
+  AttestationStatus,
+} from './src/AttestationTypes'
 
 export {
+  AttestationType,
+  AttestationTypeManifest,
   AttestationTypeID,
-  AttestationTypeIDs,
-  AttestationStatus,
-  AttestationUtils,
+  AttestationTypes,
+  AttestationTypesByID,
   AttestationTypeNames,
-  AttestationTypeDashedNames,
+  AttestationTypeContractNames,
+  AttestationTypeIDs,
+  getAttestationTypeAttrib,
+  getAttestationTypeStr,
+  getBloomIDStrength,
+  getFormattedName,
+  AttestationStatus,
 }
