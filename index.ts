@@ -15,7 +15,6 @@ import {
 } from './src/AttestationTypes'
 
 export {
-  AttestationStatus,
   AttestationType,
   AttestationTypeManifest,
   AttestationTypeID,
@@ -28,4 +27,5 @@ export {
   getAttestationTypeStr,
   getBloomIDStrength,
   getFormattedName,
+  AttestationStatus,
 }
