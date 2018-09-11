@@ -27,6 +27,8 @@ export enum AttestationTypeID {
   drug = 16,
   bank = 17,
   utility = 18,
+  income = 19,
+  assets = 20,
 }
 
 export type AttestationTypeManifest = {
@@ -147,6 +149,18 @@ export const AttestationTypes: AttestationTypeManifest = {
     nameContract: 'utility',
     scoreWeight: 10,
     nameFriendly: 'Utility Statements',
+  },
+  income: {
+    id: AttestationTypeID.income,
+    nameContract: 'income',
+    scoreWeight: 15,
+    nameFriendly: 'Income Verification',
+  },
+  assets: {
+    id: AttestationTypeID.assets,
+    nameContract: 'assets',
+    scoreWeight: 15,
+    nameFriendly: 'Assets Verification',
   },
 }
 
