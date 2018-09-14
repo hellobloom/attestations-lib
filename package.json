@@ -36,6 +36,7 @@
     "lodash": "^4.17.10",
     "ts-node": "^7.0.1",
     "tsconfig-paths": "^3.5.0",
+    "uuidv4": "^1.0.1",
     "web3-utils": "^1.0.0-beta.36"
   }
 }

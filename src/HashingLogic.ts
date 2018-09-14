@@ -1,6 +1,10 @@
 import {AttestationTypeID} from './AttestationTypes'
 
 const {soliditySha3} = require('web3-utils')
+const uuid = require('uuidv4')
+
+export const generateAttestationRequestNonceHash = () =>
+  soliditySha3({type: 'string', value: uuid()})
 
 export interface IAttestationData {
   /**
@@ -11,13 +15,18 @@ export interface IAttestationData {
    * Optionally identifies service used to perform attestation
    */
   provider?: string
+  // tslint:disable:max-line-length
   /**
    * String representation of the attestations data.
    *
-   * Email: test@bloom.co
+   * ### Examples ###
+   * email: "test@bloom.co"
+   * sanction-screen: {\"firstName\":\"FIRSTNAME\",\"middleName\":\"MIDDLENAME\",\"lastName\":\"LASTNAME\",\"birthMonth\":1,\"birthDay\":1,\"birthYear\":1900,\"id\":\"a1a1a1a...\"}
+   *
    * Any attestation that isn't a single string value will be
    * a JSON string representing the attestation data.
    */
+  // tslint:enable:max-line-length
   data: string
   /**
    * Attestation type nonce
@@ -68,7 +77,7 @@ export interface IAgreementParameters {
    */
   typeHash: string
   /**
-   * Attestation request nonce
+   * Meant to contain the value from generateAttestationRequestNonceHash
    */
   nonce: string
 }
