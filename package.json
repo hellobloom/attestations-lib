@@ -29,6 +29,7 @@
     "prepack": "yarn build",
     "prepare": "yarn build",
     "test": "node_modules/.bin/jest --watch",
+    "test:ci": "node_modules/.bin/jest",
     "watch": "./node_modules/.bin/tsc --watch"
   },
   "dependencies": {
