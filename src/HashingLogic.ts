@@ -143,7 +143,7 @@ export enum ChainId {
 }
 
 export const getAttestationAgreementEIP712 = (
-  params: IAgreementParameters,
+  message: IAgreementParameters,
   chainId: ChainId,
   verifyingContract: string
 ) => ({
@@ -156,8 +156,8 @@ export const getAttestationAgreementEIP712 = (
     ],
     AttestationRequest: [
       {name: 'subject', type: 'address'},
-      {name: 'attester', type: 'address'},
       {name: 'requester', type: 'address'},
+      {name: 'attester', type: 'address'},
       {name: 'dataHash', type: 'bytes32'},
       {name: 'typeHash', type: 'bytes32'},
       {name: 'nonce', type: 'bytes32'},
@@ -170,5 +170,5 @@ export const getAttestationAgreementEIP712 = (
     chainId,
     verifyingContract,
   },
-  message: params,
+  message,
 })
