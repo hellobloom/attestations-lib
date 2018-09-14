@@ -1,4 +1,5 @@
 import {AttestationTypeID} from './AttestationTypes'
+import {sortBy} from 'lodash'
 
 const {soliditySha3} = require('web3-utils')
 const uuid = require('uuidv4')
@@ -38,11 +39,24 @@ export interface IAttestationData {
   version: string
 }
 
+/**
+ * Returns the value of `JSON.stringify` of a new object argument `obj`,
+ * which is a copy of `obj`, but its properties are sorted using
+ * `Array<string>.sort`.
+ */
+export const orderedStringify = (obj: {}) => {
+  let orderedObj = {}
+  Object.keys(obj)
+    .sort()
+    .map(o => (orderedObj[o] = obj[o]))
+  return JSON.stringify(orderedObj)
+}
+
 export const hashAttestations = (attestations: IAttestationData[]) => {
-  const individualAttestationHashes = attestations.map(a =>
+  const individualAttestationHashes = sortBy(attestations, ['type']).map(a =>
     soliditySha3({
       type: 'string',
-      value: JSON.stringify(a),
+      value: orderedStringify(a),
     })
   )
   const combinedAttestationHash = soliditySha3({
@@ -53,7 +67,7 @@ export const hashAttestations = (attestations: IAttestationData[]) => {
 }
 
 export const hashAttestationTypes = (types: AttestationTypeID[]) =>
-  soliditySha3({type: 'uint256[]', value: types})
+  soliditySha3({type: 'uint256[]', value: sortBy(types)})
 
 export interface IAgreementParameters {
   /**
