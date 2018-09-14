@@ -136,3 +136,39 @@ export const getAttestationAgreement = (
     value: params.nonce,
   },
 ]
+
+export enum ChainId {
+  Main = 1,
+  Rinkeby = 4,
+}
+
+export const getAttestationAgreementEIP712 = (
+  params: IAgreementParameters,
+  chainId: ChainId,
+  verifyingContract: string
+) => ({
+  types: {
+    EIP712Domain: [
+      {name: 'name', type: 'string'},
+      {name: 'version', type: 'string'},
+      {name: 'chainId', type: 'uint256'},
+      {name: 'verifyingContract', type: 'address'},
+    ],
+    AttestationRequest: [
+      {name: 'subject', type: 'address'},
+      {name: 'attester', type: 'address'},
+      {name: 'requester', type: 'address'},
+      {name: 'dataHash', type: 'bytes32'},
+      {name: 'typeHash', type: 'bytes32'},
+      {name: 'nonce', type: 'bytes32'},
+    ],
+  },
+  primaryType: 'AttestationRequest',
+  domain: {
+    name: 'Bloom',
+    version: '1',
+    chainId,
+    verifyingContract,
+  },
+  message: params,
+})
