@@ -2,11 +2,30 @@ import {AttestationTypeID} from './AttestationTypes'
 
 const {soliditySha3} = require('web3-utils')
 
-interface IAttestationData {
+export interface IAttestationData {
+  /**
+   * The type of attestation (phone, email, etc.)
+   */
   type: keyof typeof AttestationTypeID
+  /**
+   * Optionally identifies service used to perform attestation
+   */
   provider?: string
+  /**
+   * String representation of the attestations data.
+   *
+   * Email: test@bloom.co
+   * Any attestation that isn't a single string value will be
+   * a JSON string representing the attestation data.
+   */
   data: string
+  /**
+   * Attestation type nonce
+   */
   nonce: string
+  /**
+   * Semantic version used to keep track of attestation versions
+   */
   version: string
 }
 
@@ -27,7 +46,7 @@ export const hashAttestations = (attestations: IAttestationData[]) => {
 export const hashAttestationTypes = (types: AttestationTypeID[]) =>
   soliditySha3({type: 'uint256[]', value: types})
 
-interface IAgreementParameters {
+export interface IAgreementParameters {
   /**
    * ETH address of the subject
    */
@@ -54,7 +73,7 @@ interface IAgreementParameters {
   nonce: string
 }
 
-interface IAgreementEntry {
+export interface IAgreementEntry {
   type: string
   name: keyof IAgreementParameters
   value: string
