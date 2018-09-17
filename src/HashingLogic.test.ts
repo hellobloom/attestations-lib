@@ -1,9 +1,5 @@
 import * as HashingLogic from './HashingLogic'
 import {AttestationTypeID} from './AttestationTypes'
-import MerkleTree from 'merkletreejs'
-
-// import MerkleTree from 'merkletreejs'
-// const MerkleTree = require('merkletreejs')
 
 const preComputedHashes = {
   emailAttestationType:
@@ -62,17 +58,17 @@ test('HashingLogic hashAttestations matches', () => {
   expect(emailAttestationHash).toBe(preComputedHashes.emailAttestation)
   expect(phoneAttestationHash).toBe(preComputedHashes.phoneAttestation)
 
-  // const emailFirstCombinedAttestationHash = HashingLogic.hashAttestations([
-  //   emailAttesation,
-  //   phoneAttestation,
-  // ])
-  // const phoneFirstCombinedAttestationHash = HashingLogic.hashAttestations([
-  //   phoneAttestation,
-  //   emailAttesation,
-  // ])
-  // expect(emailFirstCombinedAttestationHash).toBe(
-  //   phoneFirstCombinedAttestationHash
-  // )
+  const emailFirstMerkleTree = HashingLogic.getMerkleTree([
+    emailAttestation,
+    phoneAttestation,
+  ])
+  const phoneFirstMerkleTree = HashingLogic.getMerkleTree([
+    phoneAttestation,
+    emailAttestation,
+  ])
+  expect(emailFirstMerkleTree.getRoot().toString('hex')).toBe(
+    phoneFirstMerkleTree.getRoot().toString('hex')
+  )
 })
 
 test('HashingLogic hashAttestations mismatches', () => {
@@ -84,14 +80,14 @@ test('HashingLogic hashAttestations mismatches', () => {
     preComputedHashes.emailAttestationType
   )
 
-  const emailAttesation: HashingLogic.IAttestationData = {
+  const emailAttestation: HashingLogic.IAttestationData = {
     type: 'email',
     data: 'not-test@bloom.co', // Not test@bloom.co
     nonce: 'a3877038-79a9-477d-8037-9826032e6af0',
     version: '1.0.0',
   }
-  // const emailAttestationHash = HashingLogic.hashAttestations([emailAttesation])
-  // expect(emailAttestationHash).not.toBe(preComputedHashes.emailAttestation)
+  const emailAttestationHash = HashingLogic.hashAttestation(emailAttestation)
+  expect(emailAttestationHash).not.toBe(preComputedHashes.emailAttestation)
 })
 
 test('HashingLogic orderedStringify', () => {
