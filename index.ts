@@ -13,6 +13,7 @@ import {
   getFormattedName,
   AttestationStatus,
 } from './src/AttestationTypes'
+import * as HashingLogic from './src/HashingLogic'
 
 export {
   AttestationType,
@@ -28,4 +29,5 @@ export {
   getBloomIDStrength,
   getFormattedName,
   AttestationStatus,
+  HashingLogic,
 }

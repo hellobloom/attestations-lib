@@ -29,6 +29,9 @@ export enum AttestationTypeID {
   'utility' = 18,
   'income' = 19,
   'assets' = 20,
+  'full-name' = 21,
+  'birth-date' = 22,
+  'gender' = 23,
 }
 
 export type AttestationTypeManifest = {
@@ -140,6 +143,21 @@ export const AttestationTypes: AttestationTypeManifest = {
     id: AttestationTypeID.assets,
     scoreWeight: 15,
     nameFriendly: 'Assets Verification',
+  },
+  'full-name': {
+    id: AttestationTypeID['full-name'],
+    scoreWeight: 5,
+    nameFriendly: 'Full Name',
+  },
+  'birth-date': {
+    id: AttestationTypeID['birth-date'],
+    scoreWeight: 5,
+    nameFriendly: 'Date of Birth',
+  },
+  gender: {
+    id: AttestationTypeID['gender'],
+    scoreWeight: 5,
+    nameFriendly: 'Gender',
   },
 }
 

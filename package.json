@@ -1,6 +1,6 @@
 {
   "name": "attestations-lib",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "private": true,
@@ -15,20 +15,31 @@
     ]
   },
   "devDependencies": {
+    "@types/jest": "^23.3.2",
+    "@types/node": "^10.9.4",
+    "jest": "^23.6.0",
     "lint-staged": "^7.2.0",
     "prettier": "^1.13.7",
+    "ts-jest": "^23.1.4",
     "tslint": "^5.11.0",
     "typescript": "^2.9.2"
   },
   "scripts": {
     "build": "./bin/build",
     "prepack": "yarn build",
-    "prepare": "yarn build"
+    "prepare": "yarn build",
+    "test": "node_modules/.bin/jest --watch",
+    "test:ci": "node_modules/.bin/jest",
+    "watch": "./node_modules/.bin/tsc --watch"
   },
   "dependencies": {
     "@types/lodash": "^4.14.116",
+    "js-sha3": "^0.8.0",
     "lodash": "^4.17.10",
+    "merkletreejs": "^0.0.10",
     "ts-node": "^7.0.1",
-    "tsconfig-paths": "^3.5.0"
+    "tsconfig-paths": "^3.5.0",
+    "uuidv4": "^1.0.1",
+    "web3-utils": "^1.0.0-beta.36"
   }
 }
