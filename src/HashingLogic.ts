@@ -1,7 +1,8 @@
 import {AttestationTypeID} from './AttestationTypes'
 import {sortBy} from 'lodash'
 import {keccak256} from 'js-sha3'
-
+import MerkleTree from 'merkletreejs'
+// import MerkleTree from 'merkletreejs'
 const uuid = require('uuidv4')
 
 export const generateAttestationRequestNonceHash = () => keccak256(uuid())
@@ -51,19 +52,24 @@ export const orderedStringify = (obj: {}) => {
   return JSON.stringify(orderedObj)
 }
 
+/**
+ * Given an IAttestationData, sorts the property names, serializes the object to JSON,
+ * and uses keccak256 to hash to a hex string with NO 0x prefix.
+ */
 export const hashAttestation = (attestation: IAttestationData) => {
   const attestationHash = keccak256(orderedStringify(attestation))
   return attestationHash
 }
 
-export const hashAttestations = (attestations: IAttestationData[]) => {
-  const individualAttestationHashes = sortBy(attestations, ['type']).map(
-    hashAttestation
-  )
-  const combinedAttestationHash = keccak256(
-    JSON.stringify(individualAttestationHashes)
-  )
-  return combinedAttestationHash
+/**
+ * Given an array of IAttestationData, creates a new MerkleTree with the attestations
+ * as the leaves being sorted by type and mapped into hash Buffers.
+ */
+export const getMerkleTree = (attestations: IAttestationData[]) => {
+  const leaves = sortBy(attestations, ['type'])
+    .map(hashAttestation)
+    .map(hexStr => Buffer.from(hexStr, 'hex'))
+  return new MerkleTree(leaves, x => Buffer.from(hashAttestation(x), 'hex'))
 }
 
 export const hashAttestationTypes = (types: AttestationTypeID[]) =>
@@ -83,7 +89,7 @@ export interface IAgreementParameters {
    */
   attester: string
   /**
-   * Meant to contain the value from hashAttestations
+   * Meant to contain the value from a MerkleTree's `getRoot()` func
    */
   dataHash: string
   /**
