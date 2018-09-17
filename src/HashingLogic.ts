@@ -1,11 +1,10 @@
 import {AttestationTypeID} from './AttestationTypes'
 import {sortBy} from 'lodash'
+import {keccak256} from 'js-sha3'
 
-const {soliditySha3} = require('web3-utils')
 const uuid = require('uuidv4')
 
-export const generateAttestationRequestNonceHash = () =>
-  soliditySha3({type: 'string', value: uuid()})
+export const generateAttestationRequestNonceHash = () => keccak256(uuid())
 
 export interface IAttestationData {
   /**
@@ -52,22 +51,23 @@ export const orderedStringify = (obj: {}) => {
   return JSON.stringify(orderedObj)
 }
 
+export const hashAttestation = (attestation: IAttestationData) => {
+  const attestationHash = keccak256(orderedStringify(attestation))
+  return attestationHash
+}
+
 export const hashAttestations = (attestations: IAttestationData[]) => {
-  const individualAttestationHashes = sortBy(attestations, ['type']).map(a =>
-    soliditySha3({
-      type: 'string',
-      value: orderedStringify(a),
-    })
+  const individualAttestationHashes = sortBy(attestations, ['type']).map(
+    hashAttestation
   )
-  const combinedAttestationHash = soliditySha3({
-    type: 'string',
-    value: JSON.stringify(individualAttestationHashes),
-  })
+  const combinedAttestationHash = keccak256(
+    JSON.stringify(individualAttestationHashes)
+  )
   return combinedAttestationHash
 }
 
 export const hashAttestationTypes = (types: AttestationTypeID[]) =>
-  soliditySha3({type: 'uint256[]', value: sortBy(types)})
+  keccak256(sortBy(types))
 
 export interface IAgreementParameters {
   /**

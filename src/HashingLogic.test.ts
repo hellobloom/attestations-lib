@@ -1,15 +1,17 @@
 import * as HashingLogic from './HashingLogic'
 import {AttestationTypeID} from './AttestationTypes'
 
+const MerkleTree = require('merkletreejs')
+
 const preComputedHashes = {
   emailAttestationType:
-    '0xb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf6',
+    '5fe7f977e71dba2ea1a68e21057beebb9be2ac30c6410aa38d4f3fbe41dcffd2',
   emailAttestation:
-    '0x81b6819c368a22ea3b4b1b3ea939a6e8e264acaff4c314b8d2ed834536dcdfff',
+    '916384b118d284ce03f78e126c658c0a0be150e40590b81abc2626e48a68b341',
   phoneAttestationType:
-    '0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563',
+    'bc36789e7a1e281436464229828f817d6612f7b477d66591ff96a9e064bcc98a',
   phoneAttestation:
-    '0xa9f1b74f342ac217e990c3690728339f12af70ad93ad38b9d3284ad406ad24ad',
+    '13b32cc88a37dfadbf17263189c226841deac32fcd576c3b4ce383f225df6459',
 }
 
 test('HashingLogic.hashAttestationTypes', () => {
@@ -127,4 +129,49 @@ test('HashingLogic orderedStringify', () => {
   expect(HashingLogic.orderedStringify(objectA)).not.toBe(
     HashingLogic.orderedStringify(objectD)
   )
+})
+
+test('HashingLogic merkle trees / proofs', () => {
+  const fullNameAttestation: HashingLogic.IAttestationData = {
+    type: 'full-name',
+    data: 'Ludwig Heinrich Edler von Mises',
+    nonce: 'a3877038-79a9-477d-8037-9826032e6af0',
+    version: '1.0.0',
+  }
+  const emailAttesation: HashingLogic.IAttestationData = {
+    type: 'email',
+    data: 'test@bloom.co',
+    nonce: 'a3877038-79a9-477d-8037-9826032e6af1',
+    version: '1.0.0',
+  }
+  const phoneAttestation: HashingLogic.IAttestationData = {
+    type: 'phone',
+    data: '+17203600587',
+    nonce: 'a3877038-79a9-477d-8037-9826032e6af2',
+    version: '1.0.0',
+  }
+
+  const leaves = [
+    Buffer.from(HashingLogic.hashAttestation(fullNameAttestation), 'hex'),
+    Buffer.from(HashingLogic.hashAttestation(emailAttesation), 'hex'),
+    Buffer.from(HashingLogic.hashAttestation(phoneAttestation), 'hex'),
+  ]
+  const tree = new MerkleTree(leaves, (x: any) =>
+    Buffer.from(HashingLogic.hashAttestation(x), 'hex')
+  )
+  const root = tree.getRoot()
+  const fullNameProof = tree.getProof(leaves[0])
+  expect(tree.verify(fullNameProof, leaves[0], root)).toBeTruthy()
+  expect(tree.verify(fullNameProof, leaves[1], root)).toBeFalsy()
+  expect(tree.verify(fullNameProof, leaves[2], root)).toBeFalsy()
+
+  const emailProof = tree.getProof(leaves[1])
+  expect(tree.verify(emailProof, leaves[0], root)).toBeFalsy()
+  expect(tree.verify(emailProof, leaves[1], root)).toBeTruthy()
+  expect(tree.verify(emailProof, leaves[2], root)).toBeFalsy()
+
+  const phoneProof = tree.getProof(leaves[2])
+  expect(tree.verify(phoneProof, leaves[0], root)).toBeFalsy()
+  expect(tree.verify(phoneProof, leaves[1], root)).toBeFalsy()
+  expect(tree.verify(phoneProof, leaves[2], root)).toBeTruthy()
 })
