@@ -73,6 +73,10 @@ export const getMerkleTree = (attestations: IAttestationData[]) => {
   return new MerkleTree(leaves, x => Buffer.from(hashAttestation(x), 'hex'))
 }
 
+/**
+ * Given an array of type `AttestationTypeID`, sorts the array, and
+ * uses `soliditySha3` to hash the array.
+ */
 export const hashAttestationTypes = (types: AttestationTypeID[]) =>
   soliditySha3({type: 'uint256[]', value: sortBy(types)})
 
