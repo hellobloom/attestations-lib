@@ -3,11 +3,11 @@ import {AttestationTypeID} from './AttestationTypes'
 
 const preComputedHashes = {
   emailAttestationType:
-    '5fe7f977e71dba2ea1a68e21057beebb9be2ac30c6410aa38d4f3fbe41dcffd2',
+    '0xb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf6',
   emailAttestation:
     '4f40b2af901ae168de7c8514a932e71e91347cd0ba821162462d421f07e3cc42',
   phoneAttestationType:
-    'bc36789e7a1e281436464229828f817d6612f7b477d66591ff96a9e064bcc98a',
+    '0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563',
   phoneAttestation:
     '8495a0af5e35ade5b867bc6937f7d43d073b4ef25ffcc21c38d81d8ea529cfb8',
 }

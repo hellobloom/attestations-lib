@@ -2,7 +2,8 @@ import {AttestationTypeID} from './AttestationTypes'
 import {sortBy} from 'lodash'
 import {keccak256} from 'js-sha3'
 import MerkleTree from 'merkletreejs'
-// import MerkleTree from 'merkletreejs'
+
+const {soliditySha3} = require('web3-utils')
 const uuid = require('uuidv4')
 
 export const generateAttestationRequestNonceHash = () => keccak256(uuid())
@@ -73,7 +74,7 @@ export const getMerkleTree = (attestations: IAttestationData[]) => {
 }
 
 export const hashAttestationTypes = (types: AttestationTypeID[]) =>
-  keccak256(sortBy(types))
+  soliditySha3({type: 'uint256[]', value: sortBy(types)})
 
 export interface IAgreementParameters {
   /**
