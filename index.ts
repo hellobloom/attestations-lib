@@ -1,4 +1,3 @@
-/// <reference path="./typings/merkletreejs.d.ts" />
 import {
   AttestationType,
   AttestationTypeManifest,
