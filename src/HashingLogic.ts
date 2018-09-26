@@ -71,7 +71,7 @@ export const getMerkleTree = (attestations: IAttestationData[]) => {
   .map(hashAttestation)
   .sort()
   .map(hexStr => Buffer.from(hexStr, 'hex'))
-  return new MerkleTree(leaves, (x: string) => Buffer.from(keccak256(x), 'hex'))
+  return new MerkleTree(leaves, (x: Buffer) => Buffer.from(keccak256(x), 'hex'))
 }
 /**
  * verify
