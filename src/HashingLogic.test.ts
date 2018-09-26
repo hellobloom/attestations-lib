@@ -165,15 +165,21 @@ test('HashingLogic merkle trees / proofs', () => {
     Buffer.from(HashingLogic.hashAttestation(phoneAttestation), 'hex')
   )
 
-  expect(tree.verify(emailProof, tree.getLeaves()[0], root)).toBeTruthy()
-  expect(tree.verify(emailProof, tree.getLeaves()[1], root)).toBeFalsy()
-  expect(tree.verify(emailProof, tree.getLeaves()[2], root)).toBeFalsy()
+  const stringLeaves = leaves.map(x => x.toString('hex'))
+  
+  const emailPosition = stringLeaves.indexOf(HashingLogic.hashAttestation(emailAttestation))
+  const fullNamePosition = stringLeaves.indexOf(HashingLogic.hashAttestation(fullNameAttestation))
+  const phonePosition = stringLeaves.indexOf(HashingLogic.hashAttestation(phoneAttestation))
 
-  expect(tree.verify(fullNameProof, leaves[0], root)).toBeFalsy()
-  expect(tree.verify(fullNameProof, leaves[1], root)).toBeTruthy()
-  expect(tree.verify(fullNameProof, leaves[2], root)).toBeFalsy()
+  expect(HashingLogic.verify(emailProof, tree.getLeaves()[emailPosition], root)).toBeTruthy()
+  expect(HashingLogic.verify(emailProof, tree.getLeaves()[phonePosition], root)).toBeFalsy()
+  expect(HashingLogic.verify(emailProof, tree.getLeaves()[fullNamePosition], root)).toBeFalsy()
 
-  expect(tree.verify(phoneProof, leaves[0], root)).toBeFalsy()
-  expect(tree.verify(phoneProof, leaves[1], root)).toBeFalsy()
-  expect(tree.verify(phoneProof, leaves[2], root)).toBeTruthy()
+  expect(HashingLogic.verify(fullNameProof, leaves[emailPosition], root)).toBeFalsy()
+  expect(HashingLogic.verify(fullNameProof, leaves[fullNamePosition], root)).toBeTruthy()
+  expect(HashingLogic.verify(fullNameProof, leaves[phonePosition], root)).toBeFalsy()
+
+  expect(HashingLogic.verify(phoneProof, leaves[fullNamePosition], root)).toBeFalsy()
+  expect(HashingLogic.verify(phoneProof, leaves[emailPosition], root)).toBeFalsy()
+  expect(HashingLogic.verify(phoneProof, leaves[phonePosition], root)).toBeTruthy()
 })

@@ -1,7 +1,7 @@
 import {AttestationTypeID} from './AttestationTypes'
 import {sortBy} from 'lodash'
 import {keccak256} from 'js-sha3'
-import MerkleTree from 'merkletreejs'
+import MerkleTree, { IProof } from 'merkletreejs'
 
 const {soliditySha3} = require('web3-utils')
 const uuid = require('uuidv4')
@@ -67,11 +67,59 @@ export const hashAttestation = (attestation: IAttestationData) => {
  * as the leaves being sorted by type and mapped into hash Buffers.
  */
 export const getMerkleTree = (attestations: IAttestationData[]) => {
-  const leaves = sortBy(attestations, ['type'])
-    .map(hashAttestation)
-    .map(hexStr => Buffer.from(hexStr, 'hex'))
-  return new MerkleTree(leaves, x => Buffer.from(hashAttestation(x), 'hex'))
+  const leaves = attestations
+  .map(hashAttestation)
+  .sort()
+  .map(hexStr => Buffer.from(hexStr, 'hex'))
+  // const leaves = sortBy(attestations, ['type'])
+  //   .map(hashAttestation)
+  //   .map(hexStr => Buffer.from(hexStr, 'hex'))
+  return new MerkleTree(leaves, x => Buffer.from(keccak256(x), 'hex'))
 }
+/**
+ * verify
+ * @desc Returns true if the proof path (array of hashes) can connect the target node
+ * to the Merkle root.
+ * @param {Object[]} proof - Array of proof objects that should connect
+ * target node to Merkle root.
+ * @param {Buffer} targetNode - Target node Buffer
+ * @param {Buffer} root - Merkle root Buffer
+ * @return {Boolean}
+ * @example
+ * const root = tree.getRoot()
+ * const proof = tree.getProof(leaves[2])
+ * const verified = tree.verify(proof, leaves[2], root)
+ * 
+ * standalone verify function taken from https://github.com/miguelmota/merkletreejs
+ */
+export const verify = (
+  proof: IProof[],
+  targetNode: Buffer,
+  root: Buffer,
+): boolean => {
+    let hash = targetNode
+
+    if (!Array.isArray(proof) ||
+        !proof.length ||
+        !targetNode ||
+        !root) {
+      return false
+    }
+
+    for (let i = 0; i < proof.length; i++) {
+      const node = proof[i]
+      const isLeftNode = (node.position === 'left')
+      const buffers = []
+
+        buffers.push(hash)
+
+        buffers[isLeftNode ? 'unshift' : 'push'](node.data)
+
+        hash = Buffer.from(keccak256(Buffer.concat(buffers)), 'hex')
+    }
+
+    return Buffer.compare(hash, root) === 0
+  }
 
 /**
  * Given an array of type `AttestationTypeID`, sorts the array, and
