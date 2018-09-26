@@ -92,31 +92,29 @@ export const getMerkleTree = (attestations: IAttestationData[]) => {
  * 
  * standalone verify function taken from https://github.com/miguelmota/merkletreejs
  */
-export const verify = (
+export const verifyMerkleProof = (
   proof: IProof[],
   targetNode: Buffer,
   root: Buffer,
 ): boolean => {
-    let hash = targetNode
 
-    if (!Array.isArray(proof) ||
-        !proof.length ||
+    // Should not succeed with all empty arguments
+    if (!proof.length ||
         !targetNode ||
         !root) {
       return false
     }
 
-    for (let i = 0; i < proof.length; i++) {
-      const node = proof[i]
+    // Initialize hash with only targetNode data
+    let hash = targetNode
+
+    // Build hash using each component of proof until the root node
+    proof.forEach(node => {
       const isLeftNode = (node.position === 'left')
-      const buffers = []
-
-        buffers.push(hash)
-
-        buffers[isLeftNode ? 'unshift' : 'push'](node.data)
-
-        hash = Buffer.from(keccak256(Buffer.concat(buffers)), 'hex')
-    }
+      const buffers = [hash]
+      buffers[isLeftNode ? 'unshift' : 'push'](node.data)
+      hash = Buffer.from(keccak256(Buffer.concat(buffers)), 'hex')
+    })
 
     return Buffer.compare(hash, root) === 0
   }

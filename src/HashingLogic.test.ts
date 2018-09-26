@@ -171,15 +171,17 @@ test('HashingLogic merkle trees / proofs', () => {
   const fullNamePosition = stringLeaves.indexOf(HashingLogic.hashAttestation(fullNameAttestation))
   const phonePosition = stringLeaves.indexOf(HashingLogic.hashAttestation(phoneAttestation))
 
-  expect(HashingLogic.verify(emailProof, tree.getLeaves()[emailPosition], root)).toBeTruthy()
-  expect(HashingLogic.verify(emailProof, tree.getLeaves()[phonePosition], root)).toBeFalsy()
-  expect(HashingLogic.verify(emailProof, tree.getLeaves()[fullNamePosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(emailProof, tree.getLeaves()[emailPosition], root)).toBeTruthy()
+  expect(HashingLogic.verifyMerkleProof(emailProof, tree.getLeaves()[phonePosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(emailProof, tree.getLeaves()[fullNamePosition], root)).toBeFalsy()
 
-  expect(HashingLogic.verify(fullNameProof, leaves[emailPosition], root)).toBeFalsy()
-  expect(HashingLogic.verify(fullNameProof, leaves[fullNamePosition], root)).toBeTruthy()
-  expect(HashingLogic.verify(fullNameProof, leaves[phonePosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(fullNameProof, leaves[emailPosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(fullNameProof, leaves[fullNamePosition], root)).toBeTruthy()
+  expect(HashingLogic.verifyMerkleProof(fullNameProof, leaves[phonePosition], root)).toBeFalsy()
 
-  expect(HashingLogic.verify(phoneProof, leaves[fullNamePosition], root)).toBeFalsy()
-  expect(HashingLogic.verify(phoneProof, leaves[emailPosition], root)).toBeFalsy()
-  expect(HashingLogic.verify(phoneProof, leaves[phonePosition], root)).toBeTruthy()
+  expect(HashingLogic.verifyMerkleProof(phoneProof, leaves[fullNamePosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(phoneProof, leaves[emailPosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(phoneProof, leaves[phonePosition], root)).toBeTruthy()
+
+  expect(HashingLogic.verifyMerkleProof([], Buffer.from(''), Buffer.from(''))).toBeFalsy()
 })
