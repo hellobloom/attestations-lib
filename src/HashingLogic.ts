@@ -64,15 +64,22 @@ export const hashAttestation = (attestation: IAttestationData) => {
 
 /**
  * Given an array of IAttestationData, creates a new MerkleTree with the attestations
- * as the leaves being sorted by type and mapped into hash Buffers.
+ * after the leaves are sorted by hash and mapped into hash Buffers.
  */
 export const getMerkleTree = (attestations: IAttestationData[]) => {
-  const leaves = attestations
-  .map(hashAttestation)
-  .sort()
-  .map(hexStr => Buffer.from(hexStr, 'hex'))
-  return new MerkleTree(leaves, (x: Buffer) => Buffer.from(keccak256(x), 'hex'))
+  const leaves = attestations.map(hashAttestation)
+  return getMerkleTreeFromLeaves(leaves)
 }
+
+/**
+ * Given an array of hashed attestations, creates a new MerkleTree with the leaves
+ * after the leaves are sorted by hash and mapped into hash Buffers.
+ */
+export const getMerkleTreeFromLeaves = (leaves: string[]) => {
+  const leavesSorted = leaves.sort().map(hexStr => Buffer.from(hexStr, 'hex'))
+  return new MerkleTree(leavesSorted, (x: Buffer) => Buffer.from(keccak256(x), 'hex'))
+}
+
 /**
  * verify
  * @desc Returns true if the proof path (array of hashes) can connect the target node

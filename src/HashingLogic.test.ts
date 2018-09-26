@@ -148,6 +148,11 @@ test('HashingLogic merkle trees / proofs', () => {
     nonce: 'a3877038-79a9-477d-8037-9826032e6af2',
     version: '1.0.0',
   }
+
+  const hashedEmailAttestation = HashingLogic.hashAttestation(emailAttestation)
+  const hashedPhoneAttestation = HashingLogic.hashAttestation(phoneAttestation)
+  const hashedFullNameAttestation = HashingLogic.hashAttestation(fullNameAttestation)
+
   const tree = HashingLogic.getMerkleTree([
     fullNameAttestation,
     emailAttestation,
@@ -156,20 +161,26 @@ test('HashingLogic merkle trees / proofs', () => {
   const root = tree.getRoot()
   const leaves = tree.getLeaves()
   const emailProof = tree.getProof(
-    Buffer.from(HashingLogic.hashAttestation(emailAttestation), 'hex')
+    Buffer.from(hashedEmailAttestation, 'hex')
   )
   const fullNameProof = tree.getProof(
-    Buffer.from(HashingLogic.hashAttestation(fullNameAttestation), 'hex')
+    Buffer.from(hashedFullNameAttestation, 'hex')
   )
   const phoneProof = tree.getProof(
-    Buffer.from(HashingLogic.hashAttestation(phoneAttestation), 'hex')
+    Buffer.from(hashedPhoneAttestation, 'hex')
   )
+
+  const treeDifferentOrder = HashingLogic.getMerkleTreeFromLeaves([
+    hashedEmailAttestation,
+    hashedFullNameAttestation,
+    hashedPhoneAttestation
+  ])
 
   const stringLeaves = leaves.map(x => x.toString('hex'))
   
-  const emailPosition = stringLeaves.indexOf(HashingLogic.hashAttestation(emailAttestation))
-  const fullNamePosition = stringLeaves.indexOf(HashingLogic.hashAttestation(fullNameAttestation))
-  const phonePosition = stringLeaves.indexOf(HashingLogic.hashAttestation(phoneAttestation))
+  const emailPosition = stringLeaves.indexOf(hashedEmailAttestation)
+  const fullNamePosition = stringLeaves.indexOf(hashedFullNameAttestation)
+  const phonePosition = stringLeaves.indexOf(hashedPhoneAttestation)
 
   expect(HashingLogic.verifyMerkleProof(emailProof, tree.getLeaves()[emailPosition], root)).toBeTruthy()
   expect(HashingLogic.verifyMerkleProof(emailProof, tree.getLeaves()[phonePosition], root)).toBeFalsy()
@@ -184,4 +195,6 @@ test('HashingLogic merkle trees / proofs', () => {
   expect(HashingLogic.verifyMerkleProof(phoneProof, leaves[phonePosition], root)).toBeTruthy()
 
   expect(HashingLogic.verifyMerkleProof([], Buffer.from(''), Buffer.from(''))).toBeFalsy()
+
+  expect (Buffer.compare(tree.getRoot(), treeDifferentOrder.getRoot()) === 0).toBeTruthy()
 })
