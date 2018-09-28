@@ -172,13 +172,13 @@ export const getAttestationAgreement = (
   },
   {
     type: 'address',
-    name: 'requester',
-    value: params.requester,
+    name: 'attester',
+    value: params.attester,
   },
   {
     type: 'address',
-    name: 'attester',
-    value: params.attester,
+    name: 'requester',
+    value: params.requester,
   },
   {
     type: 'bytes32',
@@ -216,8 +216,8 @@ export const getAttestationAgreementEIP712 = (
     ],
     AttestationRequest: [
       {name: 'subject', type: 'address'},
-      {name: 'requester', type: 'address'},
       {name: 'attester', type: 'address'},
+      {name: 'requester', type: 'address'},
       {name: 'dataHash', type: 'bytes32'},
       {name: 'typeHash', type: 'bytes32'},
       {name: 'nonce', type: 'bytes32'},
