@@ -174,6 +174,11 @@ test('HashingLogic merkle trees / proofs', () => {
     hashedPhoneAttestation,
   ])
 
+  const singleLeafTree = HashingLogic.getMerkleTree([emailAttestation])
+  const singleLeafTreeProof = singleLeafTree.getProof(
+    Buffer.from(hashedEmailAttestation, 'hex')
+  )
+
   const stringLeaves = leaves.map(x => x.toString('hex'))
 
   const emailPosition = stringLeaves.indexOf(hashedEmailAttestation)
@@ -232,5 +237,13 @@ test('HashingLogic merkle trees / proofs', () => {
 
   expect(
     Buffer.compare(tree.getRoot(), treeDifferentOrder.getRoot()) === 0
+  ).toBeTruthy()
+
+  expect(
+    HashingLogic.verifyMerkleProof(
+      singleLeafTreeProof,
+      Buffer.from(hashedEmailAttestation, 'hex'),
+      singleLeafTree.getRoot()
+    )
   ).toBeTruthy()
 })

@@ -104,7 +104,8 @@ export const verifyMerkleProof = (
   root: Buffer
 ): boolean => {
   // Should not succeed with all empty arguments
-  if (!proof.length || !targetNode || !root) {
+  // Proof can be empty if single leaf tree
+  if (targetNode.toString() === '' || root.toString() === '') {
     return false
   }
 
