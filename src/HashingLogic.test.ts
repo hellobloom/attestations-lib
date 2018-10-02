@@ -247,3 +247,61 @@ test('HashingLogic merkle trees / proofs', () => {
     )
   ).toBeTruthy()
 })
+
+test(
+  'HashingLogic getAttestationAgreement' +
+    ' - format matches for same data independent of order of the objects properties',
+  () => {
+    const subject = '0x7ce40ed34b4170d4f2d027906552aa18f2137330'
+    const attester = '0x5bd995a55218baa26a6f25904bcc77805e11a337'
+    const requester = '0x156ba3f2af07d24cfd5dd8ec0fe2b17c6131d7fb'
+    const dataHash = preComputedHashes.emailAttestation
+    const typeHash = preComputedHashes.emailAttestationType
+    const nonce = HashingLogic.generateAttestationRequestNonceHash()
+
+    const agreementParamsA = JSON.stringify(
+      HashingLogic.getAttestationAgreement({
+        subject,
+        attester,
+        requester,
+        dataHash,
+        typeHash,
+        nonce,
+      })
+    )
+    const agreementParamsB = JSON.stringify(
+      HashingLogic.getAttestationAgreement({
+        nonce,
+        typeHash,
+        dataHash,
+        requester,
+        attester,
+        subject,
+      })
+    )
+    const agreementParamsC = JSON.stringify(
+      HashingLogic.getAttestationAgreement({
+        attester,
+        dataHash,
+        nonce,
+        requester,
+        subject,
+        typeHash,
+      })
+    )
+    const agreementParamsD = JSON.stringify(
+      HashingLogic.getAttestationAgreement({
+        attester,
+        dataHash,
+        nonce: HashingLogic.generateAttestationRequestNonceHash(),
+        requester,
+        subject,
+        typeHash,
+      })
+    )
+
+    expect(agreementParamsA).toBe(agreementParamsB)
+    expect(agreementParamsB).toBe(agreementParamsC)
+    expect(agreementParamsC).not.toBe(agreementParamsD)
+  }
+)
