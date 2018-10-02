@@ -302,6 +302,6 @@ test(
 
     expect(agreementParamsA).toBe(agreementParamsB)
     expect(agreementParamsB).toBe(agreementParamsC)
-    expect(agreementParamsC).toBe(agreementParamsD)
+    expect(agreementParamsC).not.toBe(agreementParamsD)
   }
 )
