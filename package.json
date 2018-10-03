@@ -1,9 +1,9 @@
 {
-  "name": "attestations-lib",
-  "version": "0.4.2",
+  "name": "@bloomprotocol/attestations-lib",
+  "version": "0.4.3",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "private": true,
+  "private": false,
   "description": "Shared types and logic between blooms dApp and implementation of attestation-kit.",
   "repository": "https://github.com/hellobloom/attestations-lib",
   "author": "Eddie Hedges <eddie@bloom.co>",
