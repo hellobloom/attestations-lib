@@ -1,13 +1,12 @@
 {
   "name": "@bloomprotocol/attestations-lib",
-  "version": "0.4.3",
+  "version": "1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "private": false,
   "description": "Shared types and logic between blooms dApp and implementation of attestation-kit.",
   "repository": "https://github.com/hellobloom/attestations-lib",
   "author": "Eddie Hedges <eddie@bloom.co>",
-  "license": "UNLICENSED",
+  "license": "GPL-3.0-only",
   "lint-staged": {
     "src/**/*.{ts,tsx,json,css}": [
       "prettier --write",
