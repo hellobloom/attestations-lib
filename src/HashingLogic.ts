@@ -1,6 +1,7 @@
 import {AttestationTypeID} from './AttestationTypes'
 import {sortBy} from 'lodash'
 import {keccak256} from 'js-sha3'
+var crypto = require('crypto')
 import MerkleTree, {IProof} from 'merkletreejs'
 
 const {soliditySha3} = require('web3-utils')
@@ -9,14 +10,6 @@ const uuid = require('uuidv4')
 export const generateAttestationRequestNonceHash = () => keccak256(uuid())
 
 export interface IAttestationData {
-  /**
-   * The type of attestation (phone, email, etc.)
-   */
-  type: keyof typeof AttestationTypeID
-  /**
-   * Optionally identifies service used to perform attestation
-   */
-  provider?: string
   // tslint:disable:max-line-length
   /**
    * String representation of the attestations data.
@@ -31,13 +24,28 @@ export interface IAttestationData {
   // tslint:enable:max-line-length
   data: string
   /**
-   * Attestation type nonce
+   * Attestation data nonce
    */
   nonce: string
   /**
    * Semantic version used to keep track of attestation versions
    */
   version: string
+}
+
+export interface IAttestationType {
+  /**
+   * The type of attestation (phone, email, etc.)
+   */
+  type: keyof typeof AttestationTypeID
+  /**
+   * Optionally identifies service used to perform attestation
+   */
+  provider?: string
+  /**
+   * Attestation type nonce
+   */
+  nonce: string
 }
 
 /**
@@ -54,10 +62,10 @@ export const orderedStringify = (obj: {}) => {
 }
 
 /**
- * Given an IAttestationData, sorts the property names, serializes the object to JSON,
+ * Given an IAttestationData or IAttestationType, sorts the property names, serializes the object to JSON,
  * and uses keccak256 to hash to a hex string with NO 0x prefix.
  */
-export const hashAttestation = (attestation: IAttestationData) => {
+export const hashAttestation = (attestation: IAttestationData | IAttestationType) => {
   const attestationHash = keccak256(orderedStringify(attestation))
   return attestationHash
 }
@@ -74,12 +82,34 @@ export const getMerkleTreeFromLeaves = (leaves: string[]) => {
 }
 
 /**
+ * Given an array of hashed dataNode signatures and a hashed checksum signature, creates a new MerkleTree
+ * after padding, and sorting.
+ */
+export const getMerkleTree = (dataHashes: string[], checksumHash: string) => {
+  let leaves = dataHashes
+  leaves.push(checksumHash)
+  leaves = leaves.concat(getPadding(dataHashes.length))
+  return getMerkleTreeFromLeaves(leaves)
+}
+
+export const getPadding = (dataCount: number): string[] => {
+  if (dataCount < 1) return []
+  let i = 5
+  while((dataCount + 1) > (2 ** (i - 1))) { i += 5 }
+  const paddingCount = (2 ** (i -1) - (dataCount + 1))
+  return Array.apply(null, Array(paddingCount)).map(((item: number, index: number) => {
+    return keccak256(crypto.randomBytes(20))
+  }))
+}
+
+/**
  * Given an array of IAttestationData, creates a new MerkleTree with the attestations
  * after the leaves are sorted by hash and mapped into hash Buffers.
  */
-export const getMerkleTree = (attestations: IAttestationData[]) => {
-  const leaves = attestations.map(hashAttestation)
-  return getMerkleTreeFromLeaves(leaves)
+export const getDataTree = (data: IAttestationData, type: IAttestationType) => {
+  const dataLeaf = hashAttestation(data)
+  const typeLeaf = hashAttestation(type)
+  return getMerkleTreeFromLeaves([dataLeaf, typeLeaf])
 }
 
 /**
@@ -126,6 +156,8 @@ export const verifyMerkleProof = (
 /**
  * Given an array of type `AttestationTypeID`, sorts the array, and
  * uses `soliditySha3` to hash the array.
+ * 
+ * Deprecated due to types being removed from Attestation Logic contract
  */
 export const hashAttestationTypes = (types: AttestationTypeID[]) =>
   soliditySha3({type: 'uint256[]', value: sortBy(types)})
