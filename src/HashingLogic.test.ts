@@ -414,7 +414,7 @@ test('HashingLogic.getPadding', () => {
   padding = HashingLogic.getPadding(511)
   expect(padding.length).toBe(0)
 
-  // If 512 data node padding should be 16383
+  // If 512 data node padding should be 15871
   padding = HashingLogic.getPadding(512)
   expect(padding.length).toBe(15871)
 })

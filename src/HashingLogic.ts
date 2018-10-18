@@ -1,7 +1,7 @@
 import {AttestationTypeID} from './AttestationTypes'
 import {sortBy} from 'lodash'
 import {keccak256} from 'js-sha3'
-var crypto = require('crypto')
+const crypto = require('crypto')
 import MerkleTree, {IProof} from 'merkletreejs'
 const ethUtil = require('ethereumjs-util')
 const ethSigUtil = require('eth-sig-util')
@@ -239,6 +239,18 @@ export const getSignedDataNode = (
 /**
  * Given the number of data nodes return an array of padding nodes
  * @param {number} dataCount - number of data nodes in tree
+ *
+ * A Bloom Merkle tree will contain at minimum one data node and one checksum node
+ * In order to obscure the amount of data in the tree, the number of nodes are padded to
+ * a set threshold
+ *
+ * The Depth of the tree increments in steps of 5
+ * The number of terminal nodes in a filled binary tree is 2 ^ (n - 1) where n is the depth
+ *
+ * dataCount 1 -> 15: paddingCount: 14 -> 0 (remeber + 1 for checksum node)
+ * dataCount 16 -> 511: paddingCount 495 -> 0
+ * dataCount 512 -> ...: paddingCount 15871 -> ...
+ * ...
  */
 export const getPadding = (dataCount: number): string[] => {
   if (dataCount < 1) return []
