@@ -35,11 +35,11 @@ const preComputedHashes = {
   treeARootHash:
     '0xeff7cf589aa83bb524c9daeb776d171558b77a17ada025a94a67b0086dac5ede',
   emailDataTreeHash:
-    '0xd97eb3575a8f757ce6701b82bdbb6e471edabbab8daca30e0dacaee748a53357',
+    '0x0ef39bc9c680c01dbf61db1186ea4632bb195b85575eb205670cb146ee181275',
   emailDataTreeHashAliceSigned:
-    '0x657f5b7677b77c006c59345519a8e61a5b64cf63dc5b7cae6de6230f80ca22154879a60e9658a2e858b1644fa1a5444b96854911aaaedacce5442499329776881c',
+    '0x124af1877444cbfea5a31a323449e76ab341c4df4d9943588fbe289c5eaf1bd339216d2e34c73d8d4f8f9f7bc939b1f127591ef25c4f1ce57d2e0af1a4cd8b561b',
   rootHash:
-    '0x235df482fcd719300fd3618126bcb1ff450e6231631e8defd3938bf5439e2cbf',
+    '0xe72cf1f9a85fbc529cd17cded83d0021beb12359c7f238276d8e20aea603e928',
 }
 // tslint:enable:max-line-length
 
@@ -58,6 +58,10 @@ const emailAttestationType: HashingLogic.IAttestationType = {
 const emailRevocationLinks: HashingLogic.IRevocationLinks = {
   local: '0x5a35e46865c7a4e0a5443b03d17d60c528896881646e6d58d3c4ad90ef84448e',
   global: '0xe04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
+  dataHash:
+    '0xd1696aa0222c2ee299efa58d265eaecc4677d8c88cb3a5c7e60bc5957fff514a',
+  typeHash:
+    '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
 }
 
 const emailAuxHash =
@@ -90,6 +94,10 @@ const phoneAttestationType: HashingLogic.IAttestationType = {
 const phoneRevocationLinks: HashingLogic.IRevocationLinks = {
   local: '0xb85448fe09da4c3d85d6e646188698825c06d71d30b3445a0e4a7c56864e52a4',
   global: '0xe04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
+  dataHash:
+    '0x1d3ad3b73cddc7948cb0adfbbf6ce74dda20e42e864ecd67088985b339557461',
+  typeHash:
+    '0x90f61ca5746fc0223e9a7564fd75c2336f902a78c59dfeb04cf119b204f2a404',
 }
 
 const phoneAuxHash =
@@ -240,6 +248,10 @@ test('HashingLogic.getDataTree & hashAttestationNode', () => {
         '0x6a35e46865c7a4e0a5443b03d17d60c528896881646e6d58d3c4ad90ef84448e',
       global:
         '0xe04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
+      dataHash:
+        '0xd1696aa0222c2ee299efa58d265eaecc4677d8c88cb3a5c7e60bc5957fff514a',
+      typeHash:
+        '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
     },
     aux: emailAuxHash,
   })

@@ -64,6 +64,14 @@ export interface IRevocationLinks {
    * Hex string to identify this attestation in the event of revocation
    */
   global: string
+  /**
+   * hash of data node attester is verifying
+   */
+  dataHash: string
+  /**
+   * hash of type node attester is verifying
+   */
+  typeHash: string
 }
 
 export interface IAuxSig {
@@ -226,6 +234,8 @@ export const getSignedDataNode = (
     link: {
       local: generateNonce(),
       global: globalRevocationLink,
+      dataHash: hashMessage(orderedStringify(dataNode.data)),
+      typeHash: hashMessage(orderedStringify(dataNode.type)),
     },
   }
   const attestationHash = hashAttestationNode(attestationNode)
