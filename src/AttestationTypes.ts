@@ -1,5 +1,3 @@
-import {reduce} from 'lodash'
-
 export type AttestationType = {
   id: number
   scoreWeight: number
@@ -32,6 +30,8 @@ export enum AttestationTypeID {
   'full-name' = 21,
   'birth-date' = 22,
   'gender' = 23,
+  'corporate' = 24,
+  'meta' = 25,
 }
 
 export type AttestationTypeManifest = {
@@ -159,13 +159,29 @@ export const AttestationTypes: AttestationTypeManifest = {
     scoreWeight: 5,
     nameFriendly: 'Gender',
   },
+  corporate: {
+    id: AttestationTypeID['corporate'],
+    scoreWeight: 5,
+    nameFriendly: 'Gender',
+  },
+  meta: {
+    id: AttestationTypeID['meta'],
+    scoreWeight: 15,
+    nameFriendly: 'Gender',
+  },
 }
 
-export const AttestationTypesByID = reduce(
-  AttestationTypes,
-  (obj, val, key) => {
-    obj[val.id.toString()] = (Object as any).assign({}, val, {name: key})
-    return obj
+export const AttestationTypesByID = Object.keys(AttestationTypes).reduce(
+  (acc: any, key: string) => {
+    return (Object as any).assign(acc, {
+      [AttestationTypes[key].id.toString()]: (Object as any).assign(
+        {},
+        AttestationTypes[key],
+        {
+          name: key,
+        }
+      ),
+    })
   },
   {}
 )
