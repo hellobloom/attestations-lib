@@ -1,5 +1,3 @@
-import {reduce} from 'lodash'
-
 export type AttestationType = {
   id: number
   scoreWeight: number
@@ -32,6 +30,11 @@ export enum AttestationTypeID {
   'full-name' = 21,
   'birth-date' = 22,
   'gender' = 23,
+  'group' = 24,
+  'meta' = 25,
+  'office' = 26,
+  'credential' = 27,
+  'medical' = 28,
 }
 
 export type AttestationTypeManifest = {
@@ -159,13 +162,39 @@ export const AttestationTypes: AttestationTypeManifest = {
     scoreWeight: 5,
     nameFriendly: 'Gender',
   },
+  group: {
+    id: AttestationTypeID['group'],
+    scoreWeight: 5,
+    nameFriendly: 'Group',
+  },
+  meta: {
+    id: AttestationTypeID['meta'],
+    scoreWeight: 20,
+    nameFriendly: 'Meta-attestation',
+  },
+  office: {
+    id: AttestationTypeID['office'],
+    scoreWeight: 5,
+    nameFriendly: 'Office/Position',
+  },
+  credential: {
+    id: AttestationTypeID['credential'],
+    scoreWeight: 5,
+    nameFriendly: 'Credential',
+  },
+  medical: {
+    id: AttestationTypeID['medical'],
+    scoreWeight: 0,
+    nameFriendly: 'Medical Information',
+  },
 }
 
-export const AttestationTypesByID = reduce(
-  AttestationTypes,
-  (obj, val, key) => {
-    obj[val.id.toString()] = (Object as any).assign({}, val, {name: key})
-    return obj
+export const AttestationTypesByID = Object.keys(AttestationTypes).reduce(
+  (acc: any, key: string) => {
+    var def = (Object as any).assign({}, AttestationTypes[key], {
+      name: key,
+    })
+    return (Object as any).assign(acc, {[def.id.toString()]: def})
   },
   {}
 )

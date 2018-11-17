@@ -1,5 +1,4 @@
 import {AttestationTypeID} from './AttestationTypes'
-import {sortBy} from 'lodash'
 import {keccak256} from 'js-sha3'
 const crypto = require('crypto')
 import MerkleTree, {IProof} from 'merkletreejs'
@@ -382,7 +381,7 @@ export const verifyMerkleProof = (
  * Deprecated due to types being removed from Attestation Logic contract
  */
 export const hashAttestationTypes = (types: AttestationTypeID[]) =>
-  soliditySha3({type: 'uint256[]', value: sortBy(types)})
+  soliditySha3({type: 'uint256[]', value: types.sort()})
 
 export interface IAgreementParameters {
   /**
