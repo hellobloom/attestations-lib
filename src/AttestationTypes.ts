@@ -30,8 +30,11 @@ export enum AttestationTypeID {
   'full-name' = 21,
   'birth-date' = 22,
   'gender' = 23,
-  'corporate' = 24,
+  'group' = 24,
   'meta' = 25,
+  'office' = 26,
+  'credential' = 27,
+  'medical' = 28,
 }
 
 export type AttestationTypeManifest = {
@@ -159,15 +162,30 @@ export const AttestationTypes: AttestationTypeManifest = {
     scoreWeight: 5,
     nameFriendly: 'Gender',
   },
-  corporate: {
-    id: AttestationTypeID['corporate'],
+  group: {
+    id: AttestationTypeID['group'],
     scoreWeight: 5,
-    nameFriendly: 'Gender',
+    nameFriendly: 'Group',
   },
   meta: {
     id: AttestationTypeID['meta'],
-    scoreWeight: 15,
-    nameFriendly: 'Gender',
+    scoreWeight: 20,
+    nameFriendly: 'Meta-attestation',
+  },
+  office: {
+    id: AttestationTypeID['office'],
+    scoreWeight: 5,
+    nameFriendly: 'Office/Position',
+  },
+  credential: {
+    id: AttestationTypeID['credential'],
+    scoreWeight: 5,
+    nameFriendly: 'Credential',
+  },
+  medical: {
+    id: AttestationTypeID['medical'],
+    scoreWeight: 0,
+    nameFriendly: 'Medical Information',
   },
 }
 
