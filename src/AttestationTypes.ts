@@ -191,15 +191,10 @@ export const AttestationTypes: AttestationTypeManifest = {
 
 export const AttestationTypesByID = Object.keys(AttestationTypes).reduce(
   (acc: any, key: string) => {
-    return (Object as any).assign(acc, {
-      [AttestationTypes[key].id.toString()]: (Object as any).assign(
-        {},
-        AttestationTypes[key],
-        {
-          name: key,
-        }
-      ),
+    var def = (Object as any).assign({}, AttestationTypes[key], {
+      name: key,
     })
+    return (Object as any).assign(acc, {[def.id.toString()]: def})
   },
   {}
 )
