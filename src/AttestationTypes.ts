@@ -35,6 +35,7 @@ export enum AttestationTypeID {
   'office' = 26,
   'credential' = 27,
   'medical' = 28,
+  'biometric' = 29,
 }
 
 export type AttestationTypeManifest = {
@@ -186,6 +187,11 @@ export const AttestationTypes: AttestationTypeManifest = {
     id: AttestationTypeID['medical'],
     scoreWeight: 0,
     nameFriendly: 'Medical Information',
+  },
+  biometric: {
+    id: AttestationTypeID['biometric'],
+    scoreWeight: 20,
+    nameFriendly: 'Biometric Information',
   },
 }
 
