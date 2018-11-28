@@ -5,8 +5,6 @@ import MerkleTree, {IProof} from 'merkletreejs'
 const ethUtil = require('ethereumjs-util')
 const ethSigUtil = require('eth-sig-util')
 
-const {soliditySha3} = require('web3-utils')
-
 export const hashMessage = (message: string) =>
   ethUtil.addHexPrefix(keccak256(message))
 
@@ -374,101 +372,60 @@ export const verifyMerkleProof = (
   return Buffer.compare(hash, root) === 0
 }
 
-/**
- * Given an array of type `AttestationTypeID`, sorts the array, and
- * uses `soliditySha3` to hash the array.
- *
- * Deprecated due to types being removed from Attestation Logic contract
- */
-export const hashAttestationTypes = (types: AttestationTypeID[]) =>
-  soliditySha3({type: 'uint256[]', value: types.sort()})
-
-export interface IAgreementParameters {
-  /**
-   * ETH address of the subject
-   */
-  subject: string
-  /**
-   * ETH address of the requester
-   */
-  requester: string
-  /**
-   * ETH address of the attester
-   */
-  attester: string
-  /**
-   * Meant to contain the value from a MerkleTree's `getRoot()` func
-   */
-  dataHash: string
-  /**
-   * Meant to contain the value from hashAttestationTypes
-   */
-  nonce: string
-}
-
-export interface IAgreementEntry {
-  type: string
-  name: keyof IAgreementParameters
-  value: string
-}
-
-export const getAttestationAgreement = (
-  params: IAgreementParameters
-): IAgreementEntry[] => [
-  {
-    type: 'address',
-    name: 'subject',
-    value: params.subject,
-  },
-  {
-    type: 'address',
-    name: 'attester',
-    value: params.attester,
-  },
-  {
-    type: 'address',
-    name: 'requester',
-    value: params.requester,
-  },
-  {
-    type: 'bytes32',
-    name: 'dataHash',
-    value: params.dataHash,
-  },
-  {
-    type: 'bytes32',
-    name: 'nonce',
-    value: params.nonce,
-  },
-]
-
 export enum ChainId {
   Main = 1,
   Rinkeby = 4,
 }
 
-export const getAttestationAgreementEIP712 = (
-  message: IAgreementParameters
-) => ({
-  types: {
-    EIP712Domain: [
-      {name: 'name', type: 'string'},
-      {name: 'version', type: 'string'},
-      {name: 'chainId', type: 'uint256'},
-      {name: 'verifyingContract', type: 'address'},
-    ],
-    AttestationRequest: [
-      {name: 'subject', type: 'address'},
-      {name: 'attester', type: 'address'},
-      {name: 'requester', type: 'address'},
-      {name: 'dataHash', type: 'bytes32'},
-      {name: 'nonce', type: 'bytes32'},
-    ],
-  },
-  primaryType: 'AttestationRequest',
-  domain: {
-    name: 'Bloom',
-    version: '1',
-  },
-  message,
-})
+export interface ITypedDataParam {
+  name: string
+  type: string
+}
+
+export interface IFormattedTypedData {
+    types: {
+      EIP712Domain: ITypedDataParam[],
+      [key: string]: ITypedDataParam[]
+    }
+    primaryType: string
+    domain: {
+      name: string
+      version: string
+      chainId: number
+      verifyingContract: string
+    }
+    message: {[key: string]: string},
+}
+
+export const getAttestationAgreement = (
+  contractAddress: string,
+  chainId: number,
+  dataHash: string,
+  requestNonce: string,
+): IFormattedTypedData => {
+  return {
+    types: {
+      EIP712Domain: [
+          { name: 'name', type: 'string' },
+          { name: 'version', type: 'string' },
+          { name: 'chainId', type: 'uint256' },
+          { name: 'verifyingContract', type: 'address' },
+      ],
+      AttestationRequest: [
+        { name: 'dataHash', type: 'bytes32'},
+        { name: 'nonce', type: 'bytes32'}
+      ]
+    },
+    primaryType: 'AttestationRequest',
+    domain: {
+      name: 'Bloom Attestation Logic',
+      version: '2',
+      chainId: chainId,
+      verifyingContract: contractAddress,
+    },
+    message: {
+      dataHash: dataHash,
+      nonce: requestNonce
+    }
+  }
+}

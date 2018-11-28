@@ -1,5 +1,4 @@
 import * as HashingLogic from './HashingLogic'
-import {AttestationTypeID} from './AttestationTypes'
 import * as ethereumjsWallet from 'ethereumjs-wallet'
 const ethUtil = require('ethereumjs-util')
 
@@ -42,6 +41,33 @@ const preComputedHashes = {
     '0xe72cf1f9a85fbc529cd17cded83d0021beb12359c7f238276d8e20aea603e928',
 }
 // tslint:enable:max-line-length
+
+const preComputedAgreement = {
+  types: {
+    EIP712Domain: [
+      {name: 'name', type: 'string'},
+      {name: 'version', type: 'string'},
+      {name: 'chainId', type: 'uint256'},
+      {name: 'verifyingContract', type: 'address'},
+    ],
+    AttestationRequest: [
+      {name: 'dataHash', type: 'bytes32'},
+      {name: 'nonce', type: 'bytes32'},
+    ],
+  },
+  primaryType: 'AttestationRequest',
+  domain: {
+    name: 'Bloom Attestation Logic',
+    version: '2',
+    chainId: 1,
+    verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+  },
+  message: {
+    dataHash:
+      '0xe72cf1f9a85fbc529cd17cded83d0021beb12359c7f238276d8e20aea603e928',
+    nonce: '0xd5d7e6ae812a8ff7bd44f928b199806446c2170412df381efb41d8f47fcd044b',
+  },
+}
 
 const emailAttestationData: HashingLogic.IAttestationData = {
   data: 'test@bloom.co',
@@ -367,34 +393,6 @@ test('HashingLogic.getSignedChecksum', () => {
   )
   expect(sender.toLowerCase()).not.toBe(
     bobWallet.getAddressString().toLowerCase()
-  )
-})
-
-test('HashingLogic.hashAttestationTypes', () => {
-  // Deprecated
-
-  const emailAttestationTypeId = AttestationTypeID.email
-  const phoneAttestationTypeId = AttestationTypeID.phone
-  const emailAttestationTypeHash = HashingLogic.hashAttestationTypes([
-    emailAttestationTypeId,
-  ])
-  const phoneAttestationTypeHash = HashingLogic.hashAttestationTypes([
-    phoneAttestationTypeId,
-  ])
-  const emailFirstCombinedAttestationTypeHash = HashingLogic.hashAttestationTypes(
-    [emailAttestationTypeId, phoneAttestationTypeId]
-  )
-  const phoneFirstCombinedAttestationTypeHash = HashingLogic.hashAttestationTypes(
-    [phoneAttestationTypeId, emailAttestationTypeId]
-  )
-
-  // Precomputed hashes should match (if they don't a bug has potentially been introduced)
-  expect(emailAttestationTypeHash).toBe(preComputedHashes.emailAttestationType)
-  expect(phoneAttestationTypeHash).toBe(preComputedHashes.phoneAttestationType)
-
-  // Differently sorted input arrays should output the same hash due to sorting prior to serialization / hashing
-  expect(emailFirstCombinedAttestationTypeHash).toBe(
-    phoneFirstCombinedAttestationTypeHash
   )
 })
 
@@ -741,53 +739,16 @@ test('HashingLogic.getSignedMerkleTreeComponents', () => {
 
 test(
   'HashingLogic getAttestationAgreement' +
-    ' - format matches for same data independent of order of the objects properties',
+    ' - has not been modified',
   () => {
-    const subject = '0x7ce40ed34b4170d4f2d027906552aa18f2137330'
-    const attester = '0x5bd995a55218baa26a6f25904bcc77805e11a337'
-    const requester = '0x156ba3f2af07d24cfd5dd8ec0fe2b17c6131d7fb'
+    const contractAddress = '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC'
     const dataHash = preComputedHashes.rootHash
-    const nonce = HashingLogic.generateNonce()
+    const nonce = '0xd5d7e6ae812a8ff7bd44f928b199806446c2170412df381efb41d8f47fcd044b'
 
-    const agreementParamsA = JSON.stringify(
-      HashingLogic.getAttestationAgreement({
-        subject,
-        attester,
-        requester,
-        dataHash,
-        nonce,
-      })
+    const agreementParams = JSON.stringify(
+      HashingLogic.getAttestationAgreement(contractAddress, 1, dataHash, nonce)
     )
-    const agreementParamsB = JSON.stringify(
-      HashingLogic.getAttestationAgreement({
-        nonce,
-        dataHash,
-        requester,
-        attester,
-        subject,
-      })
-    )
-    const agreementParamsC = JSON.stringify(
-      HashingLogic.getAttestationAgreement({
-        attester,
-        dataHash,
-        nonce,
-        requester,
-        subject,
-      })
-    )
-    const agreementParamsD = JSON.stringify(
-      HashingLogic.getAttestationAgreement({
-        attester,
-        dataHash,
-        nonce: HashingLogic.generateNonce(),
-        requester,
-        subject,
-      })
-    )
-
-    expect(agreementParamsA).toBe(agreementParamsB)
-    expect(agreementParamsB).toBe(agreementParamsC)
-    expect(agreementParamsC).not.toBe(agreementParamsD)
+    // If this fails something changed
+    expect(agreementParams).toBe(JSON.stringify(preComputedAgreement))
   }
 )
