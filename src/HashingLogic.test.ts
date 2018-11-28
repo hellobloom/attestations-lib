@@ -1,5 +1,4 @@
 import * as HashingLogic from './HashingLogic'
-import {AttestationTypeID} from './AttestationTypes'
 import * as ethereumjsWallet from 'ethereumjs-wallet'
 const ethUtil = require('ethereumjs-util')
 
