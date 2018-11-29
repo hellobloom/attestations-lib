@@ -1,6 +1,6 @@
 {
   "name": "@bloomprotocol/attestations-lib",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Shared types and logic between blooms dApp and implementation of attestation-kit.",
