@@ -185,7 +185,7 @@ export const AttestationTypes: AttestationTypeManifest = {
   },
   medical: {
     id: AttestationTypeID['medical'],
-    scoreWeight: 5,
+    scoreWeight: 0,
     nameFriendly: 'Medical Information',
   },
   biometric: {
@@ -218,8 +218,10 @@ export const getAttestationTypeAttrib = (
   typeId: AttestationTypeID,
   attrib: keyof AttestationType
 ) => {
-  let val = AttestationTypesByID[typeId.toString()][attrib]
-  if (!val) throw new Error(`AttestationTypeID ${typeId} not supported`)
+  const val = AttestationTypesByID[typeId.toString()][attrib]
+  if (val === undefined || val === null) {
+    throw new Error(`AttestationTypeID ${typeId} not supported`)
+  }
   return val
 }
 
