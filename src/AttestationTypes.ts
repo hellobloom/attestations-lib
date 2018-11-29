@@ -185,7 +185,7 @@ export const AttestationTypes: AttestationTypeManifest = {
   },
   medical: {
     id: AttestationTypeID['medical'],
-    scoreWeight: 0,
+    scoreWeight: 5,
     nameFriendly: 'Medical Information',
   },
   biometric: {
