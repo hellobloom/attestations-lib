@@ -83,3 +83,5 @@ tests/baselines/reference/dt
 .prettierrc
 tslint.json
 .git
+*.swo
+*~
