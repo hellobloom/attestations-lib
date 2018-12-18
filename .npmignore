@@ -82,3 +82,4 @@ tests/baselines/reference/dt
 .prettierignore
 .prettierrc
 tslint.json
+.git
