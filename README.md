@@ -4,4 +4,4 @@ Shared types and logic between blooms [iOS](https://itunes.apple.com/us/app/bloo
 
 #### Installation
 
-`yarn add @bloomprotocol/attestations-lib`
+`npm install --save @bloomprotocol/attestations-lib`
