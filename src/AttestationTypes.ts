@@ -41,6 +41,7 @@ export enum AttestationTypeID {
   'audit' = 32,
   'address' = 33,
   'correction' = 34,
+  'account' = 35,
 }
 
 export type AttestationTypeManifest = {
@@ -222,6 +223,11 @@ export const AttestationTypes: AttestationTypeManifest = {
     id: AttestationTypeID['correction'],
     scoreWeight: 0,
     nameFriendly: 'Correction',
+  },
+  account: {
+    id: AttestationTypeID['account'],
+    scoreWeight: 5,
+    nameFriendly: 'Account',
   },
 }
 
