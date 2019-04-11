@@ -93,7 +93,7 @@ const emailRevocationLinks: HashingLogic.IRevocationLinks = {
 const emailAuxHash =
   '0x3a25e46865c7a4e0a5445b03b17d68c529826881647e6d58d3c4ad91ef83440f'
 
-const emailAttestation: HashingLogic.IAttestation = {
+const emailAttestation: HashingLogic.IAttestationLegacy = {
   data: emailAttestationData,
   type: emailAttestationType,
   aux: emailAuxHash,
@@ -129,7 +129,7 @@ const phoneRevocationLinks: HashingLogic.IRevocationLinks = {
 const phoneAuxHash =
   '0x303438fe19da4c3d85d6e746188618925c86d71b30b5443a0e4a7c56864e52b5'
 
-const phoneAttestation: HashingLogic.IAttestation = {
+const phoneAttestation: HashingLogic.IAttestationLegacy = {
   data: phoneAttestationData,
   type: phoneAttestationType,
   aux: phoneAuxHash,
