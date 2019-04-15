@@ -90,6 +90,19 @@ const emailRevocationLinks: HashingLogic.IRevocationLinks = {
     '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
 }
 
+const emailIssuanceNode: HashingLogic.IIssuanceNode = {
+  localRevocationToken:
+    '0x5a35e46865c7a4e0a5443b03d17d60c528896881646e6d58d3c4ad90ef84448e',
+  globalRevocationToken:
+    '0xe04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
+  dataHash:
+    '0xd1696aa0222c2ee299efa58d265eaecc4677d8c88cb3a5c7e60bc5957fff514a',
+  typeHash:
+    '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
+  issuanceDate: '2016-02-01T00:00:00.000Z',
+  expirationDate: '2018-02-01T00:00:00.000Z',
+}
+
 const emailAuxHash =
   '0x3a25e46865c7a4e0a5445b03b17d68c529826881647e6d58d3c4ad91ef83440f'
 
@@ -104,6 +117,13 @@ const emailAttestationNode: HashingLogic.IAttestationNode = {
   type: emailAttestationType,
   aux: emailAuxHash,
   link: emailRevocationLinks,
+}
+
+const emailClaimNode: HashingLogic.IIssuedClaimNode = {
+  data: emailAttestationData,
+  type: emailAttestationType,
+  aux: emailAuxHash,
+  issuance: emailIssuanceNode,
 }
 
 const phoneAttestationData: HashingLogic.IAttestationData = {
@@ -238,6 +258,72 @@ test('HashingLogic.getMerkleTreeFromLeaves', () => {
   expect(ethUtil.bufferToHex(treeA.getRoot())).toBe(
     preComputedHashes.treeARootHash
   )
+})
+
+test('HashingLogic.getClaimTree & hashClaimTree', () => {
+  const dataTreeA = HashingLogic.getClaimTree(emailAttestationNode)
+  const dataTreeHash = HashingLogic.hashAttestationNode(emailAttestationNode)
+
+  const dataTreeWrongDataNonce = HashingLogic.getDataTree({
+    data: {
+      data: 'test@bloom.co',
+      nonce: 'b3877038-79a9-477d-8037-9826032e6af0',
+      version: '1.0.0',
+    },
+    type: emailAttestationType,
+    link: emailRevocationLinks,
+    aux: emailAuxHash,
+  })
+
+  const dataTreeWrongTypeNonce = HashingLogic.getDataTree({
+    data: emailAttestationData,
+    type: {
+      type: 'email',
+      nonce: 'b3877038-79a9-477d-8037-9826032e6af1',
+      provider: 'Bloom',
+    },
+    link: emailRevocationLinks,
+    aux: emailAuxHash,
+  })
+
+  const dataTreeWrongLink = HashingLogic.getDataTree({
+    data: emailAttestationData,
+    type: emailAttestationType,
+    link: {
+      local:
+        '0x6a35e46865c7a4e0a5443b03d17d60c528896881646e6d58d3c4ad90ef84448e',
+      global:
+        '0xe04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
+      dataHash:
+        '0xd1696aa0222c2ee299efa58d265eaecc4677d8c88cb3a5c7e60bc5957fff514a',
+      typeHash:
+        '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
+    },
+    aux: emailAuxHash,
+  })
+
+  const dataTreeWrongAux = HashingLogic.getDataTree({
+    data: emailAttestationData,
+    type: emailAttestationType,
+    link: emailRevocationLinks,
+    aux: '0xf04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
+  })
+
+  expect(
+    dataTreeA.getRoot().equals(dataTreeWrongDataNonce.getRoot())
+  ).toBeFalsy()
+  expect(
+    dataTreeA.getRoot().equals(dataTreeWrongTypeNonce.getRoot())
+  ).toBeFalsy()
+  expect(dataTreeA.getRoot().equals(dataTreeWrongLink.getRoot())).toBeFalsy()
+  expect(dataTreeA.getRoot().equals(dataTreeWrongAux.getRoot())).toBeFalsy()
+
+  // If this doesn't match something changed
+  expect(ethUtil.bufferToHex(dataTreeA.getRoot())).toBe(
+    preComputedHashes.emailDataTreeHash
+  )
+
+  expect(dataTreeA.getRoot().equals(dataTreeHash)).toBeTruthy()
 })
 
 test('HashingLogic.getDataTree & hashAttestationNode', () => {
@@ -684,7 +770,7 @@ test('HashingLogic.getSignedDataNodes', () => {
 })
 
 test('HashingLogic.getSignedMerkleTreeComponents', () => {
-  const components = HashingLogic.getSignedMerkleTreeComponents(
+  const components = HashingLogic.getSignedMerkleTreeComponentsLegacy(
     [emailAttestation, phoneAttestation],
     alicePrivkey
   )
@@ -731,19 +817,19 @@ test('HashingLogic.getSignedMerkleTreeComponents', () => {
   )
   expect(layer2Hash).toBe(components.layer2Hash)
 
-  const rootHashFromComponents = HashingLogic.getMerkleTreeFromComponents(
+  const rootHashFromComponents = HashingLogic.getMerkleTreeFromComponentsLegacy(
     components
   ).getRoot()
   expect(rootHashFromComponents.equals(rootHash)).toBeTruthy()
 })
 
 test(
-  'HashingLogic getAttestationAgreement' +
-    ' - has not been modified',
+  'HashingLogic getAttestationAgreement' + ' - has not been modified',
   () => {
     const contractAddress = '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC'
     const dataHash = preComputedHashes.rootHash
-    const nonce = '0xd5d7e6ae812a8ff7bd44f928b199806446c2170412df381efb41d8f47fcd044b'
+    const nonce =
+      '0xd5d7e6ae812a8ff7bd44f928b199806446c2170412df381efb41d8f47fcd044b'
 
     const agreementParams = JSON.stringify(
       HashingLogic.getAttestationAgreement(contractAddress, 1, dataHash, nonce)
