@@ -34,14 +34,15 @@ export interface IBaseAtt {
     // ...extensible with other fields that summarize the content of the attestation - e.g., a list of addresses, accounts, totals of statistics, etc.
   }
 
-  data?: any
+  // Core attestation data, dependent on attestation type
+  data?: Array<Object | string | number> | Object | string | number
   // ...extensible with other fields.  Other fields explicating general data about the attestation, such as location, shelf life, common units, etc., should be placed here.
 }
 
 ///////////////////////////////////////////////////
 // Helper types
 ///////////////////////////////////////////////////
-export type TPersonalName =  // Designed to be flexible - as a rule, a basic {given: 'x', middle: 'x', family: 'x'} is probably the easiest for most Western use cases
+export type TPersonalName =  // Designed to be flexible - as a rule, a basic {given: "x", middle: "x", family: "x"} is probably the easiest for most Western use cases
   | string
   | {
       full?: string
@@ -52,6 +53,11 @@ export type TPersonalName =  // Designed to be flexible - as a rule, a basic {gi
       prefix?: string | Array<string>
       suffix?: string | Array<string>
       nickname?: string | Array<string>
+      generational?: string | Array<string>
+
+      // For name changes
+      start_date?: TDate
+      end_date?: TDate
     }
 
 export type TDate =
@@ -90,33 +96,40 @@ export type TGender = string // 'male', 'female', ...
 ///////////////////////////////////////////////////
 // Phone attestation dataStr type
 ///////////////////////////////////////////////////
+export type TBaseAttPhoneData = string | TPhoneNumber
 export interface IBaseAttPhone extends IBaseAtt {
-  data: string | TPhoneNumber
+  data: TBaseAttPhoneData | Array<TBaseAttPhoneData>
 }
 
 ///////////////////////////////////////////////////
 // Email attestation dataStr type
 ///////////////////////////////////////////////////
+export interface IBaseAttEmailData {
+  email?: string
+  start_date?: string
+  end_date?: string
+}
 export interface IBaseAttEmail extends IBaseAtt {
-  data: {
-    email?: string
-    start_date?: string
-    end_date?: string
-  }
+  data: IBaseAttEmailData | Array<IBaseAttEmailData>
 }
 
 ///////////////////////////////////////////////////
 // Name attestation dataStr type
 ///////////////////////////////////////////////////
 export interface IBaseAttName extends IBaseAtt {
-  data: TPersonalName
+  data: TPersonalName | Array<TPersonalName>
 }
 
 ///////////////////////////////////////////////////
 // SSN/government ID # attestation dataStr type
 ///////////////////////////////////////////////////
+export interface IBaseAttSSNData {
+  country_code: string
+  id_type: string
+  id: string | number
+}
 export interface IBaseAttSSN extends IBaseAtt {
-  data: string
+  data: IBaseAttSSNData | Array<IBaseAttSSNData>
 }
 
 ///////////////////////////////////////////////////
@@ -129,85 +142,96 @@ export interface IBaseAttDOB extends IBaseAtt {
 ///////////////////////////////////////////////////
 // Account attestation dataStr type
 ///////////////////////////////////////////////////
-export interface IBaseAttAccount extends IBaseAtt {
-  data: {
-    email?: string
+export interface IBaseAttAccountData {
+  email?: string
 
-    name?: TPersonalName
-    start_date?: string
-    end_date?: string
-  }
+  name?: TPersonalName
+  start_date?: string
+  end_date?: string
+}
+export interface IBaseAttAccount extends IBaseAtt {
+  data: IBaseAttAccountData | Array<IBaseAttAccountData>
 }
 
 ///////////////////////////////////////////////////
 // Sanction screen attestation dataStr type
 ///////////////////////////////////////////////////
+export interface IBaseAttSanctionScreenData {
+  name: TPersonalName
+  birthday: TDate
+}
 export interface IBaseAttSanctionScreen extends IBaseAtt {
-  data: {
-    name: TPersonalName
-    birthday: TDate
-  }
+  data: IBaseAttSanctionScreenData | Array<IBaseAttSanctionScreenData>
 }
 
 ///////////////////////////////////////////////////
 // PEP screen attestation dataStr type
 ///////////////////////////////////////////////////
-export interface IBaseAttPEP extends IBaseAtt {
-  data: {
-    date: TDate
-    name: TPersonalName
-    country: string
+export interface IBaseAttPEPData {
+  date: TDate
+  name: TPersonalName
+  country: string
 
-    // Primarily modelled after KYC2020 responses, most fields left optional for flexibility
-    search_summary: {
-      hit_location?: string
-      hit_number?: number
-      list_name?: string
-      list_url?: string
-      record_id?: string
-      search_reference_id?: string
-      score?: string
-      hits?: Array<{
-        id?: string
-        hit_name?: string
-      }>
-      flag_type?: string
-      comment?: string
-    }
+  // Primarily modelled after KYC2020 responses, most fields left optional for flexibility
+  search_summary: {
+    hit_location?: string
+    hit_number?: number
+    list_name?: string
+    list_url?: string
+    record_id?: string
+    search_reference_id?: string
+    score?: string
+    hits?: Array<{
+      id?: string
+      hit_name?: string
+    }>
+    flag_type?: string
+    comment?: string
   }
+}
+export interface IBaseAttPEP extends IBaseAtt {
+  data: IBaseAttPEPData | Array<IBaseAttPEPData>
 }
 
 ///////////////////////////////////////////////////
 // ID document attestation dataStr type
 ///////////////////////////////////////////////////
-export interface IBaseAttIDDocument extends IBaseAtt {
-  data: {
-    date: TDate
-    name: TPersonalName
-    country: string
+export interface IBaseAttIDDocumentData {
+  date: TDate
+  name: TPersonalName
+  country: string
 
-    // Primarily modelled after KYC2020 responses, most fields left optional for flexibility
-    authenticationResult:
-      | 'unknown'
-      | 'passed'
-      | 'failed'
-      | 'skipped'
-      | 'caution'
-      | 'attention' // IAssureIDResult.AuthenticationResult
-    biographic: {
-      age: number
-      dob: TDate
-      expiration_date: TDate
-      name: TPersonalName
-      gender: string
-      photo: string
-    } // IAssureIDResult.Biographic,
-    facematchResult: {
-      is_match: boolean
-      score: number
-      transaction_id: string
-    } // IFaceMatchResult
-  }
+  // Primarily modelled after KYC2020 responses, most fields left optional for flexibility
+  authenticationResult:
+    | 'unknown'
+    | 'passed'
+    | 'failed'
+    | 'skipped'
+    | 'caution'
+    | 'attention' // IAssureIDResult.AuthenticationResult
+  biographic: {
+    age: number
+    dob: TDate
+    expiration_date: TDate
+    name: TPersonalName
+    gender: string
+    photo: string
+  } // IAssureIDResult.Biographic,
+  facematchResult: {
+    is_match: boolean
+    score: number
+    transaction_id: string
+  } // IFaceMatchResult
+}
+export interface IBaseAttIDDocument extends IBaseAtt {
+  data: IBaseAttIDDocumentData | Array<IBaseAttIDDocumentData>
+}
+
+///////////////////////////////////////////////////
+// Utility bill attestation dataStr type
+///////////////////////////////////////////////////
+export interface IBaseAttUtility extends IBaseAtt {
+  data: Array<{}>
 }
 
 /*
