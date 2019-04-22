@@ -20,16 +20,16 @@ export interface IBaseAtt {
   // Optional summary object (often useful for multiple-account types - otherwise, the data field is preferable for most of these fields, for simplicity's sake
   summary?: {
     // Single date/time during which attestation was applicable
-    date?: string
+    date?: TDate
 
     // Start date/time of period during which attestation was applicable
-    start_date?: string
+    start_date?: TDate
 
     // End date/time of period during which attestation was applicable
-    end_date?: string
+    end_date?: TDate
 
-    // Different levels of specificity - zero-indexed, with increasing numbers indicating less specificity, to allow for unlimited levels of depth (in practice, 3-5 should be sufficient for most cases).  This allows for arbitrary levels or amounts of specificity within sub-attestations, to promote an attestation subject's ability to partially disclose the amount of data provided in an attestation.
-    specificity?: number
+    // Different levels of generality - zero-indexed, with increasing numbers indicating less generality, to allow for unlimited levels of depth (in practice, 3-5 should be sufficient for most cases).  This allows for arbitrary levels or amounts of generality within sub-attestations, to promote an attestation subject's ability to partially disclose the amount of data provided in an attestation.
+    generality?: number
 
     // ...extensible with other fields that summarize the content of the attestation - e.g., a list of addresses, accounts, totals of statistics, etc.
   }
@@ -92,6 +92,19 @@ export type TPhoneNumber =
     }
 
 export type TGender = string // 'male', 'female', ...
+
+export type TAddress = {
+  full: string
+  name: string
+  street_1: string
+  street_2?: string
+  street_3?: string
+  city: string
+  postal_code: string | number
+  region_1: string
+  region_2?: string
+  country?: string
+}
 
 ///////////////////////////////////////////////////
 // Phone attestation dataStr type
@@ -230,46 +243,166 @@ export interface IBaseAttIDDocument extends IBaseAtt {
 ///////////////////////////////////////////////////
 // Utility bill attestation dataStr type
 ///////////////////////////////////////////////////
+export type TBaseAttUtilitySummary = {
+  generality: number
+  currency?: string
+  total_paid?: number
+  account_numbers?: Array<string>
+  statement_dates: Array<string>
+  addresses?: Array<TAddress>
+}
+export type TBaseAttUtilityData = {
+  account_number?: string | number
+  currency?: string
+  billing_address: TAddress
+  service_address: TAddress
+  total_bill?: number
+  balance_adjustments?: number
+  due_date?: string
+  statement_date: TDate
+}
 export interface IBaseAttUtility extends IBaseAtt {
-  data: Array<{}>
+  summary?: TBaseAttUtilitySummary
+  data: TBaseAttUtilityData | Array<TBaseAttUtilityData>
 }
 
-/*
+///////////////////////////////////////////////////
+// Address attestation dataStr type
+///////////////////////////////////////////////////
+export interface IBaseAttAddressDataProviderAccount {}
+export interface IBaseAttAddressData {
+  provider?: {
+    name: string
+    id?: string
+    country?: string
+    service_types?: Array<string>
+    website?: string
+    accounts?: Array<IBaseAttAddressDataProviderAccount>
+  }
+  addresses?: Array<TAddress>
+}
+export interface IBaseAttAddress extends IBaseAtt {
+  data: IBaseAttAddressData | Array<IBaseAttAddressData>
+}
+
+///////////////////////////////////////////////////
+// Income attestation dataStr type (total, gross, or expenses)
+///////////////////////////////////////////////////
+export type TBaseAttIncomeSummary = {
+  generality: number
+  start_date: TDate
+  end_date: TDate
+  net?: TBaseAttIncomeIncome
+  gross?: TBaseAttIncomeIncome
+  expenses?: TBaseAttIncomeIncome
+}
+export type TBaseAttIncomeIncome = {
+  total: number
+  regular: number
+  irregular: number
+  num_transactions: number
+}
+export type TBaseAttIncomeStream = {
+  id?: number
+  start_date: string
+  end_date: string
+
+  cashflow_category?: string
+  cashflow_subcategory?: string
+  is_payroll_agency?: boolean
+  memo?: string
+  num_transactions?: number
+  length: number // length in days
+  payee?: string
+  payer?: string
+  rank?: string
+
+  frequency?: string // suggested: 'daily', 'weekly' 'biweekly', 'monthly', 'semi_monthly', 'multiple_months', 'irregular'
+  periodicity?: number // numerical alternative to above, in days
+
+  stdev_value?: number
+  total_value?: number
+  mean_value?: number
+  median_value?: number
+
+  transactions?: Array<{
+    currency?: string
+    date: TDate
+    value: number
+  }>
+}
+export interface IBaseAttIncome extends IBaseAtt {
+  summary?: TBaseAttIncomeSummary
+  data: TBaseAttIncomeStream | Array<TBaseAttIncomeStream>
+}
+
+///////////////////////////////////////////////////
+// Assets attestation dataStr type (total, gross, or expenses)
+///////////////////////////////////////////////////
+export interface IBaseAttAssetsSummary {
+  date?: TDate
+  value?: number
+  num_accounts?: number
+}
+export interface IBaseAttAssetsAccount {
+  category: string
+  institution_name: string
+  institution_id: number
+  owner_type: string
+  type: string
+  type_confidence: string
+  value: number
+}
+export interface IBaseAttAssets extends IBaseAtt {
+  generality: number
+  summary?: IBaseAttAssetsSummary
+  data: IBaseAttAssetsAccount | Array<IBaseAttAssetsAccount>
+}
+
+///////////////////////////////////////////////////
+// Gender attestation dataStr type
+///////////////////////////////////////////////////
+export interface IBaseAttGender extends IBaseAtt {
+  data: TGender
+}
+
+/**
  * X for completed, U for currently un-implemented elsewhere:
-  X 'phone' = 0,
-  X 'email' = 1,
-  X 'facebook' = 2,
-  X 'sanction-screen' = 3,
-  X 'pep-screen' = 4,
-  X 'id-document' = 5,
-  X 'google' = 6,
-  X 'linkedin' = 7,
-  X 'twitter' = 8,
-  U 'payroll' = 9,
-  U 'ssn' = 10,
-  U 'criminal' = 11,
-  U 'offense' = 12,
-  U 'driving' = 13,
-  U 'employment' = 14,
-  U 'education' = 15,
-  U 'drug' = 16,
-  U 'bank' = 17,
-  'utility' = 18,
-  'income' = 19,
-  'assets' = 20,
-  X 'full-name' = 21,
-  X 'birth-date' = 22,
-  'gender' = 23,
-  'group' = 24,
-  'meta' = 25,
-  'office' = 26,
-  'credential' = 27,
-  'medical' = 28,
-  'biometric' = 29,
-  'supplemental' = 30,
-  'vouch' = 31,
-  'audit' = 32,
-  'address' = 33,
-  'correction' = 34,
-  'account' = 35,
-*/
+ *
+ * X 'phone' = 0,
+ * X 'email' = 1,
+ * X 'facebook' = 2,
+ * X 'sanction-screen' = 3,
+ * X 'pep-screen' = 4,
+ * X 'id-document' = 5,
+ * X 'google' = 6,
+ * X 'linkedin' = 7,
+ * X 'twitter' = 8,
+ * U 'payroll' = 9,
+ * X 'ssn' = 10,
+ * U 'criminal' = 11,
+ * U 'offense' = 12,
+ * U 'driving' = 13,
+ * U 'employment' = 14,
+ * U 'education' = 15,
+ * U 'drug' = 16,
+ * U 'bank' = 17,
+ * X 'utility' = 18,
+ * X 'income' = 19,
+ * X 'assets' = 20,
+ * X 'full-name' = 21,
+ * X 'birth-date' = 22,
+ * X 'gender' = 23,
+ * 'group' = 24,
+ * 'meta' = 25,
+ * 'office' = 26,
+ * 'credential' = 27,
+ * 'medical' = 28,
+ * 'biometric' = 29,
+ * 'supplemental' = 30,
+ * 'vouch' = 31,
+ * 'audit' = 32,
+ * X 'address' = 33,
+ * 'correction' = 34,
+ * 'account' = 35,
+ **/
