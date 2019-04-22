@@ -41,16 +41,17 @@ export interface IBaseAtt {
 ///////////////////////////////////////////////////
 // Helper types
 ///////////////////////////////////////////////////
-export type TPersonalName =
+export type TPersonalName =  // Designed to be flexible - as a rule, a basic {given: 'x', middle: 'x', last: 'x'} is probably the easiest for most Western use cases
   | string
   | {
       full?: string
-      first?: string
-      middle?: string
-      last?: string
-      title?: string
-      prefix?: string
-      suffix?: string
+      given?: string | Array<string>
+      middle?: string | Array<string>
+      family?: string | Array<string>
+      title?: string | Array<string>
+      prefix?: string | Array<string>
+      suffix?: string | Array<string>
+      nickname?: string | Array<string>
     }
 
 export type TDate =
@@ -83,6 +84,8 @@ export type TPhoneNumber =
       line?: string
       ext?: string
     }
+
+export type TGender = string // 'male', 'female', ...
 
 ///////////////////////////////////////////////////
 // Phone attestation dataStr type
@@ -219,7 +222,7 @@ export interface IBaseAttIDDocument extends IBaseAtt {
   X 'linkedin' = 7,
   X 'twitter' = 8,
   U 'payroll' = 9,
-  'ssn' = 10,
+  U 'ssn' = 10,
   U 'criminal' = 11,
   U 'offense' = 12,
   U 'driving' = 13,
