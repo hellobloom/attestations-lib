@@ -8,6 +8,12 @@ export interface IBaseAtt {
   // Date/time attestation was performed
   date?: string
 
+  // Secondary provider
+  provider?: string
+
+  // Unique ID for attestation subject from provider
+  id?: number | string
+
   // Date/time when attestation should be considered void (e.g., for credential expiry)
   expiry_date?: string
 
@@ -90,8 +96,6 @@ export interface IBaseAttPhone extends IBaseAtt {
 ///////////////////////////////////////////////////
 export interface IBaseAttEmail extends IBaseAtt {
   data: {
-    provider?: string // Name of service used to verify email, e.g. "mailgun"
-    id?: number | string
     email?: string
     start_date?: string
     end_date?: string
@@ -106,14 +110,24 @@ export interface IBaseAttName extends IBaseAtt {
 }
 
 ///////////////////////////////////////////////////
+// SSN/government ID # attestation dataStr type
+///////////////////////////////////////////////////
+export interface IBaseAttSSN extends IBaseAtt {
+  data: string
+}
+
+///////////////////////////////////////////////////
+// Date of birth attestation dataStr type
+///////////////////////////////////////////////////
+export interface IBaseAttDOB extends IBaseAtt {
+  data: TDate
+}
+
+///////////////////////////////////////////////////
 // Account attestation dataStr type
 ///////////////////////////////////////////////////
 export interface IBaseAttAccount extends IBaseAtt {
   data: {
-    provider: string // "myspace", "friendster", etc..
-
-    // Either ID or email should be provided
-    id?: number | string
     email?: string
 
     name?: TPersonalName
@@ -127,9 +141,6 @@ export interface IBaseAttAccount extends IBaseAtt {
 ///////////////////////////////////////////////////
 export interface IBaseAttSanctionScreen extends IBaseAtt {
   data: {
-    provider: string // Provider used to verify sanction screen status
-    // Either ID or email should be provided
-    id?: number | string
     name: TPersonalName
     birthday: TDate
   }
@@ -140,7 +151,6 @@ export interface IBaseAttSanctionScreen extends IBaseAtt {
 ///////////////////////////////////////////////////
 export interface IBaseAttPEP extends IBaseAtt {
   data: {
-    provider: string // Provider used to verify sanction screen status
     date: TDate
     name: TPersonalName
     country: string
@@ -169,34 +179,31 @@ export interface IBaseAttPEP extends IBaseAtt {
 ///////////////////////////////////////////////////
 export interface IBaseAttIDDocument extends IBaseAtt {
   data: {
-    provider: string // Provider used to verify sanction screen status
     date: TDate
     name: TPersonalName
     country: string
 
     // Primarily modelled after KYC2020 responses, most fields left optional for flexibility
-    data: {
-      authenticationResult:
-        | 'unknown'
-        | 'passed'
-        | 'failed'
-        | 'skipped'
-        | 'caution'
-        | 'attention' // IAssureIDResult.AuthenticationResult
-      biographic: {
-        age: number
-        dob: TDate
-        expiration_date: TDate
-        name: TPersonalName
-        gender: string
-        photo: string
-      } // IAssureIDResult.Biographic,
-      facematchResult: {
-        is_match: boolean
-        score: number
-        transaction_id: string
-      } // IFaceMatchResult
-    }
+    authenticationResult:
+      | 'unknown'
+      | 'passed'
+      | 'failed'
+      | 'skipped'
+      | 'caution'
+      | 'attention' // IAssureIDResult.AuthenticationResult
+    biographic: {
+      age: number
+      dob: TDate
+      expiration_date: TDate
+      name: TPersonalName
+      gender: string
+      photo: string
+    } // IAssureIDResult.Biographic,
+    facematchResult: {
+      is_match: boolean
+      score: number
+      transaction_id: string
+    } // IFaceMatchResult
   }
 }
 
@@ -223,8 +230,8 @@ export interface IBaseAttIDDocument extends IBaseAtt {
   'utility' = 18,
   'income' = 19,
   'assets' = 20,
-  'full-name' = 21,
-  'birth-date' = 22,
+  X 'full-name' = 21,
+  X 'birth-date' = 22,
   'gender' = 23,
   'group' = 24,
   'meta' = 25,
