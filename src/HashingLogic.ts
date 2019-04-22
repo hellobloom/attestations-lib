@@ -2,11 +2,11 @@ import {AttestationTypeID} from './AttestationTypes'
 import {keccak256} from 'js-sha3'
 const crypto = require('crypto')
 import MerkleTree, {IProof} from 'merkletreejs'
-import { validateDateTime } from './RFC3339DateTime';
+import {validateDateTime} from './RFC3339DateTime'
 const ethUtil = require('ethereumjs-util')
 const ethSigUtil = require('eth-sig-util')
 
-export const hashMessage = (message: string) =>
+export const hashMessage = (message: string): string =>
   ethUtil.addHexPrefix(keccak256(message))
 
 /**
@@ -249,7 +249,9 @@ export const getSignedClaimNode = (
 ): ISignedClaimNode => {
   // validateDates
   if (!validateDateTime(issuanceDate)) throw new Error('Invalid issuance date')
-  if (!validateDateTime(expirationDate)) throw new Error('Invalid expiration date')
+  if (!validateDateTime(expirationDate)) {
+    throw new Error('Invalid expiration date')
+  }
   const issuedClaimNode: IIssuedClaimNode = {
     data: claimNode.data,
     type: claimNode.type,
@@ -516,11 +518,13 @@ export const getSignedBatchMerkleTreeComponents = (
     throw new Error('Invalid subject sig')
   }
   const attesterSig = signHash(
-    hashMessage(
-      orderedStringify({
-        subject: subject,
-        rootHash: components.rootHash,
-      })
+    ethUtil.toBuffer(
+      hashMessage(
+        orderedStringify({
+          subject: subject,
+          rootHash: components.rootHash,
+        })
+      )
     ),
     privKey
   )
@@ -604,7 +608,7 @@ export const getMerkleTreeFromComponentsLegacy = (
 }
 
 export const getMerkleTreeFromComponents = (
-  components: IBloomMerkleTreeComponents
+  components: IBloomMerkleTreeComponents | IBloomBatchMerkleTreeComponents
 ): MerkleTree => {
   const signedDataHashes = components.claimNodes.map(a =>
     hashMessage(a.attesterSig)
