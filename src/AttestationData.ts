@@ -6,7 +6,7 @@ type TContextField = string | {type: string; data: string}
 export interface IBaseAtt {
   '@context': TContextField | Array<TContextField>
   // Date/time attestation was performed
-  date?: string
+  date?: TDate
 
   // Secondary provider
   provider?: string
@@ -15,7 +15,7 @@ export interface IBaseAtt {
   id?: number | string
 
   // Date/time when attestation should be considered void (e.g., for credential expiry)
-  expiry_date?: string
+  expiry_date?: TDate
 
   // Optional summary object (often useful for multiple-account types - otherwise, the data field is preferable for most of these fields, for simplicity's sake
   summary?: {
@@ -35,9 +35,12 @@ export interface IBaseAtt {
   }
 
   // Core attestation data, dependent on attestation type
-  data?: Array<Object | string | number> | Object | string | number
+  data?: Array<TBaseAttData> | TBaseAttData
   // ...extensible with other fields.  Other fields explicating general data about the attestation, such as location, shelf life, common units, etc., should be placed here.
 }
+
+export interface IBaseAttDataObj {}
+export type TBaseAttData = IBaseAttDataObj | string | number
 
 ///////////////////////////////////////////////////
 // Helper types
@@ -109,18 +112,17 @@ export type TAddress = {
 ///////////////////////////////////////////////////
 // Phone attestation dataStr type
 ///////////////////////////////////////////////////
-export type TBaseAttPhoneData = string | TPhoneNumber
 export interface IBaseAttPhone extends IBaseAtt {
-  data: TBaseAttPhoneData | Array<TBaseAttPhoneData>
+  data: TPhoneNumber | Array<TPhoneNumber>
 }
 
 ///////////////////////////////////////////////////
 // Email attestation dataStr type
 ///////////////////////////////////////////////////
-export interface IBaseAttEmailData {
+export interface IBaseAttEmailData extends IBaseAttDataObj {
   email?: string
-  start_date?: string
-  end_date?: string
+  start_date?: TDate
+  end_date?: TDate
 }
 export interface IBaseAttEmail extends IBaseAtt {
   data: IBaseAttEmailData | Array<IBaseAttEmailData>
@@ -136,7 +138,7 @@ export interface IBaseAttName extends IBaseAtt {
 ///////////////////////////////////////////////////
 // SSN/government ID # attestation dataStr type
 ///////////////////////////////////////////////////
-export interface IBaseAttSSNData {
+export interface IBaseAttSSNData extends IBaseAttDataObj {
   country_code: string
   id_type: string
   id: string | number
@@ -155,12 +157,13 @@ export interface IBaseAttDOB extends IBaseAtt {
 ///////////////////////////////////////////////////
 // Account attestation dataStr type
 ///////////////////////////////////////////////////
-export interface IBaseAttAccountData {
+export interface IBaseAttAccountData extends IBaseAttDataObj {
+  id?: string | number
   email?: string
 
   name?: TPersonalName
-  start_date?: string
-  end_date?: string
+  start_date?: TDate
+  end_date?: TDate
 }
 export interface IBaseAttAccount extends IBaseAtt {
   data: IBaseAttAccountData | Array<IBaseAttAccountData>
@@ -169,7 +172,7 @@ export interface IBaseAttAccount extends IBaseAtt {
 ///////////////////////////////////////////////////
 // Sanction screen attestation dataStr type
 ///////////////////////////////////////////////////
-export interface IBaseAttSanctionScreenData {
+export interface IBaseAttSanctionScreenData extends IBaseAttDataObj {
   name: TPersonalName
   birthday: TDate
 }
@@ -180,7 +183,7 @@ export interface IBaseAttSanctionScreen extends IBaseAtt {
 ///////////////////////////////////////////////////
 // PEP screen attestation dataStr type
 ///////////////////////////////////////////////////
-export interface IBaseAttPEPData {
+export interface IBaseAttPEPData extends IBaseAttDataObj {
   date: TDate
   name: TPersonalName
   country: string
@@ -209,7 +212,7 @@ export interface IBaseAttPEP extends IBaseAtt {
 ///////////////////////////////////////////////////
 // ID document attestation dataStr type
 ///////////////////////////////////////////////////
-export interface IBaseAttIDDocumentData {
+export interface IBaseAttIDDocumentData extends IBaseAttDataObj {
   date: TDate
   name: TPersonalName
   country: string
@@ -248,17 +251,17 @@ export type TBaseAttUtilitySummary = {
   currency?: string
   total_paid?: number
   account_numbers?: Array<string>
-  statement_dates: Array<string>
+  statement_dates: Array<TDate>
   addresses?: Array<TAddress>
 }
-export type TBaseAttUtilityData = {
+export interface TBaseAttUtilityData extends IBaseAttDataObj {
   account_number?: string | number
   currency?: string
   billing_address: TAddress
   service_address: TAddress
   total_bill?: number
   balance_adjustments?: number
-  due_date?: string
+  due_date?: TDate
   statement_date: TDate
 }
 export interface IBaseAttUtility extends IBaseAtt {
@@ -304,8 +307,8 @@ export type TBaseAttIncomeIncome = {
 }
 export type TBaseAttIncomeStream = {
   id?: number
-  start_date: string
-  end_date: string
+  start_date: TDate
+  end_date: TDate
 
   cashflow_category?: string
   cashflow_subcategory?: string
@@ -404,5 +407,5 @@ export interface IBaseAttGender extends IBaseAtt {
  * 'audit' = 32,
  * X 'address' = 33,
  * 'correction' = 34,
- * 'account' = 35,
+ * X 'account' = 35,
  **/
