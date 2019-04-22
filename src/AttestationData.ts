@@ -212,35 +212,34 @@ export interface IBaseAttPEP extends IBaseAtt {
 ///////////////////////////////////////////////////
 // ID document attestation dataStr type
 ///////////////////////////////////////////////////
-export interface IBaseAttIDDocumentData extends IBaseAttDataObj {
+export interface IBaseAttIDDocData extends IBaseAttDataObj {
   date: TDate
   name: TPersonalName
   country: string
 
-  // Primarily modelled after KYC2020 responses, most fields left optional for flexibility
-  authenticationResult:
+  authenticationResult?:
     | 'unknown'
     | 'passed'
     | 'failed'
     | 'skipped'
     | 'caution'
     | 'attention' // IAssureIDResult.AuthenticationResult
-  biographic: {
-    age: number
-    dob: TDate
-    expiration_date: TDate
-    name: TPersonalName
-    gender: string
-    photo: string
+  biographic?: {
+    age?: number
+    dob?: TDate
+    expiration_date?: TDate
+    name?: TPersonalName
+    gender?: string
+    photo?: string
   } // IAssureIDResult.Biographic,
-  facematchResult: {
-    is_match: boolean
-    score: number
-    transaction_id: string
+  facematch_result?: {
+    is_match?: boolean
+    score?: number
+    transaction_id?: string
   } // IFaceMatchResult
 }
-export interface IBaseAttIDDocument extends IBaseAtt {
-  data: IBaseAttIDDocumentData | Array<IBaseAttIDDocumentData>
+export interface IBaseAttIDDoc extends IBaseAtt {
+  data: IBaseAttIDDocData | Array<IBaseAttIDDocData>
 }
 
 ///////////////////////////////////////////////////
