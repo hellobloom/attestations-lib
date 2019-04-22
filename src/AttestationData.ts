@@ -41,7 +41,7 @@ export interface IBaseAtt {
 ///////////////////////////////////////////////////
 // Helper types
 ///////////////////////////////////////////////////
-export type TPersonalName =  // Designed to be flexible - as a rule, a basic {given: 'x', middle: 'x', last: 'x'} is probably the easiest for most Western use cases
+export type TPersonalName =  // Designed to be flexible - as a rule, a basic {given: 'x', middle: 'x', family: 'x'} is probably the easiest for most Western use cases
   | string
   | {
       full?: string
