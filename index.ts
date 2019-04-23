@@ -13,9 +13,11 @@ import {
   getFormattedName,
   AttestationStatus,
 } from './src/AttestationTypes'
+import * as AttestationData from './src/AttestationData'
 import * as HashingLogic from './src/HashingLogic'
 
 export {
+  AttestationData,
   AttestationType,
   AttestationTypeManifest,
   AttestationTypeID,
