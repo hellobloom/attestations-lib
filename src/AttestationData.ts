@@ -1,4 +1,4 @@
-type TContextField = string | {type: string; data: string}
+export type TContextField = string | {type: string; data: string}
 
 ///////////////////////////////////////////////////
 // Base attestation dataStr type
