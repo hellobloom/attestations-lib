@@ -1,6 +1,7 @@
 import * as HashingLogic from './HashingLogic'
 import * as ethereumjsWallet from 'ethereumjs-wallet'
 const ethUtil = require('ethereumjs-util')
+const ethSigUtil = require('eth-sig-util')
 
 const aliceWallet = ethereumjsWallet.fromPrivateKey(
   new Buffer(
@@ -17,8 +18,13 @@ const bobWallet = ethereumjsWallet.fromPrivateKey(
   )
 )
 
+const bobPrivkey = bobWallet.getPrivateKey()
+const bobAddress = bobWallet.getAddressString()
+
 // tslint:disable:max-line-length
 const preComputedHashes = {
+  hashTest:
+    '0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658',
   emailAttestationType:
     '0xb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf6',
   emailAttestationDataHash:
@@ -35,12 +41,16 @@ const preComputedHashes = {
     '0xeff7cf589aa83bb524c9daeb776d171558b77a17ada025a94a67b0086dac5ede',
   emailDataTreeHash:
     '0x0ef39bc9c680c01dbf61db1186ea4632bb195b85575eb205670cb146ee181275',
+  emailClaimTreeHash:
+    '0xf7c60d8617a2221b96f566d9251a2146315fbae08c385737d3575914dccb3d08',
   emailDataTreeHashAliceSigned:
     '0x124af1877444cbfea5a31a323449e76ab341c4df4d9943588fbe289c5eaf1bd339216d2e34c73d8d4f8f9f7bc939b1f127591ef25c4f1ce57d2e0af1a4cd8b561b',
   rootHash:
     '0xe72cf1f9a85fbc529cd17cded83d0021beb12359c7f238276d8e20aea603e928',
 }
 // tslint:enable:max-line-length
+
+const contractAddress = '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC'
 
 const preComputedAgreement = {
   types: {
@@ -60,7 +70,7 @@ const preComputedAgreement = {
     name: 'Bloom Attestation Logic',
     version: '2',
     chainId: 1,
-    verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+    verifyingContract: contractAddress,
   },
   message: {
     dataHash:
@@ -68,6 +78,9 @@ const preComputedAgreement = {
     nonce: '0xd5d7e6ae812a8ff7bd44f928b199806446c2170412df381efb41d8f47fcd044b',
   },
 }
+
+const validComponentVersions = ['Attestation-Tree-2.0.0']
+const validBatchComponentVersions = ['Batch-Attestation-Tree-1.0.0']
 
 const emailAttestationData: HashingLogic.IAttestationData = {
   data: 'test@bloom.co',
@@ -90,10 +103,23 @@ const emailRevocationLinks: HashingLogic.IRevocationLinks = {
     '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
 }
 
+const emailIssuanceNode: HashingLogic.IIssuanceNode = {
+  localRevocationToken:
+    '0x5a35e46865c7a4e0a5443b03d17d60c528896881646e6d58d3c4ad90ef84448e',
+  globalRevocationToken:
+    '0xe04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
+  dataHash:
+    '0xd1696aa0222c2ee299efa58d265eaecc4677d8c88cb3a5c7e60bc5957fff514a',
+  typeHash:
+    '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
+  issuanceDate: '2016-02-01T00:00:00.000Z',
+  expirationDate: '2018-02-01T00:00:00.000Z',
+}
+
 const emailAuxHash =
   '0x3a25e46865c7a4e0a5445b03b17d68c529826881647e6d58d3c4ad91ef83440f'
 
-const emailAttestation: HashingLogic.IAttestation = {
+const emailAttestation: HashingLogic.IAttestationLegacy = {
   data: emailAttestationData,
   type: emailAttestationType,
   aux: emailAuxHash,
@@ -104,6 +130,13 @@ const emailAttestationNode: HashingLogic.IAttestationNode = {
   type: emailAttestationType,
   aux: emailAuxHash,
   link: emailRevocationLinks,
+}
+
+const emailIssuedClaimNode: HashingLogic.IIssuedClaimNode = {
+  data: emailAttestationData,
+  type: emailAttestationType,
+  aux: emailAuxHash,
+  issuance: emailIssuanceNode,
 }
 
 const phoneAttestationData: HashingLogic.IAttestationData = {
@@ -129,7 +162,7 @@ const phoneRevocationLinks: HashingLogic.IRevocationLinks = {
 const phoneAuxHash =
   '0x303438fe19da4c3d85d6e746188618925c86d71b30b5443a0e4a7c56864e52b5'
 
-const phoneAttestation: HashingLogic.IAttestation = {
+const phoneAttestation: HashingLogic.IAttestationLegacy = {
   data: phoneAttestationData,
   type: phoneAttestationType,
   aux: phoneAuxHash,
@@ -170,6 +203,10 @@ const fourRootHashesDifferentOrder = [
   '0x7a35e46865c7a4e0a5445b03d17d60c528896881646e6d58d3c4ad90ef84440e',
   '0xf1e980ada99fc38d5e99d95d1ba52578ebd03caca349cfa1f1d721c954882550',
 ]
+
+test('HashingLogic.hashMessage', () => {
+  expect(HashingLogic.hashMessage('test')).toBe(preComputedHashes.hashTest)
+})
 
 test('HashingLogic.generateNonce', () => {
   const nonce = HashingLogic.generateNonce()
@@ -238,6 +275,74 @@ test('HashingLogic.getMerkleTreeFromLeaves', () => {
   expect(ethUtil.bufferToHex(treeA.getRoot())).toBe(
     preComputedHashes.treeARootHash
   )
+})
+
+test('HashingLogic.getClaimTree & hashClaimTree', () => {
+  const claimTreeA = HashingLogic.getClaimTree(emailIssuedClaimNode)
+  const claimTreeHash = HashingLogic.hashClaimTree(emailIssuedClaimNode)
+
+  const claimTreeWrongNonce = HashingLogic.getClaimTree({
+    data: {
+      data: 'test@bloom.co',
+      nonce: 'f4877038-79a9-477d-8037-9826032e6ag1',
+      version: '1.0.0',
+    },
+    type: emailAttestationType,
+    aux: emailAuxHash,
+    issuance: emailIssuanceNode,
+  })
+
+  const claimTreeWrongTypeNonce = HashingLogic.getClaimTree({
+    data: emailAttestationData,
+    type: {
+      type: 'email',
+      nonce: 'b3877038-79a9-477d-8037-9826032e6af1',
+      provider: 'Bloom',
+    },
+    aux: emailAuxHash,
+    issuance: emailIssuanceNode,
+  })
+
+  const claimTreeWrongIssuance = HashingLogic.getClaimTree({
+    data: emailAttestationData,
+    type: emailAttestationType,
+    issuance: {
+      localRevocationToken:
+        '0x5a35e46865c7a4e0a5443b03d17d60c528896881646e6d58d3c4ad90ef84448e',
+      globalRevocationToken:
+        '0xe04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
+      dataHash:
+        '0xd1696aa0222c2ee299efa58d265eaecc4677d8c88cb3a5c7e60bc5957fff514a',
+      typeHash:
+        '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
+      issuanceDate: '2017-02-01T00:00:00.000Z',
+      expirationDate: '2018-02-01T00:00:00.000Z',
+    },
+    aux: emailAuxHash,
+  })
+
+  const claimTreeWrongAux = HashingLogic.getClaimTree({
+    data: emailAttestationData,
+    type: emailAttestationType,
+    issuance: emailIssuanceNode,
+    aux: '0xf04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
+  })
+
+  expect(claimTreeA.getRoot().equals(claimTreeWrongNonce.getRoot())).toBeFalsy()
+  expect(
+    claimTreeA.getRoot().equals(claimTreeWrongTypeNonce.getRoot())
+  ).toBeFalsy()
+  expect(
+    claimTreeA.getRoot().equals(claimTreeWrongIssuance.getRoot())
+  ).toBeFalsy()
+  expect(claimTreeA.getRoot().equals(claimTreeWrongAux.getRoot())).toBeFalsy()
+
+  // If this doesn't match something changed
+  expect(ethUtil.bufferToHex(claimTreeA.getRoot())).toBe(
+    preComputedHashes.emailClaimTreeHash
+  )
+
+  expect(claimTreeA.getRoot().equals(claimTreeHash)).toBeTruthy()
 })
 
 test('HashingLogic.getDataTree & hashAttestationNode', () => {
@@ -657,6 +762,58 @@ test('Attestation Data Tree Proofs', () => {
   ).toBeFalsy()
 })
 
+test('HashingLogic.getSignedClaimNode', () => {
+  const globalLink = HashingLogic.generateNonce()
+  const issuedClaimNode = HashingLogic.getSignedClaimNode(
+    emailAttestation,
+    globalLink,
+    alicePrivkey,
+    emailIssuedClaimNode.issuance.issuanceDate,
+    emailIssuedClaimNode.issuance.expirationDate
+  )
+
+  expect(issuedClaimNode.claimNode.issuance.globalRevocationToken).toBe(
+    globalLink
+  )
+  expect(issuedClaimNode.claimNode.issuance.localRevocationToken.length).toBe(
+    66
+  )
+  expect(issuedClaimNode.claimNode.data).toEqual(emailAttestation.data)
+  expect(issuedClaimNode.claimNode.type).toEqual(emailAttestation.type)
+  expect(issuedClaimNode.claimNode.aux).toEqual(emailAttestation.aux)
+
+  const claimHash = HashingLogic.hashClaimTree(issuedClaimNode.claimNode)
+  const sender = HashingLogic.recoverHashSigner(
+    claimHash,
+    issuedClaimNode.attesterSig
+  )
+  expect(sender.toLowerCase()).toBe(
+    aliceWallet.getAddressString().toLowerCase()
+  )
+})
+
+test('HashingLogic.getSignedClaimNode date validation', () => {
+  const globalLink = HashingLogic.generateNonce()
+  expect(() => {
+    HashingLogic.getSignedClaimNode(
+      emailAttestation,
+      globalLink,
+      alicePrivkey,
+      'March 2, 2016',
+      emailIssuedClaimNode.issuance.expirationDate
+    )
+  }).toThrowError('Invalid issuance date')
+  expect(() => {
+    HashingLogic.getSignedClaimNode(
+      emailAttestation,
+      globalLink,
+      alicePrivkey,
+      emailIssuedClaimNode.issuance.issuanceDate,
+      'March 2, 2018'
+    )
+  }).toThrowError('Invalid expiration date')
+})
+
 test('HashingLogic.getSignedDataNodes', () => {
   const globalLink = HashingLogic.generateNonce()
   const dataNode = HashingLogic.getSignedDataNode(
@@ -683,8 +840,8 @@ test('HashingLogic.getSignedDataNodes', () => {
   )
 })
 
-test('HashingLogic.getSignedMerkleTreeComponents', () => {
-  const components = HashingLogic.getSignedMerkleTreeComponents(
+test('HashingLogic.getSignedMerkleTreeComponentsLegacy', () => {
+  const components = HashingLogic.getSignedMerkleTreeComponentsLegacy(
     [emailAttestation, phoneAttestation],
     alicePrivkey
   )
@@ -731,19 +888,202 @@ test('HashingLogic.getSignedMerkleTreeComponents', () => {
   )
   expect(layer2Hash).toBe(components.layer2Hash)
 
+  const rootHashFromComponents = HashingLogic.getMerkleTreeFromComponentsLegacy(
+    components
+  ).getRoot()
+  expect(rootHashFromComponents.equals(rootHash)).toBeTruthy()
+})
+
+test('HashingLogic.getSignedMerkleTreeComponents', () => {
+  const components = HashingLogic.getSignedMerkleTreeComponents(
+    [emailAttestation, phoneAttestation],
+    emailIssuedClaimNode.issuance.issuanceDate,
+    emailIssuedClaimNode.issuance.expirationDate,
+    alicePrivkey
+  )
+
+  expect(validComponentVersions.indexOf(components.version)).toBeGreaterThan(-1)
+
+  expect(components.paddingNodes.length).toBe(13)
+  components.paddingNodes.forEach(p => {
+    expect(p.length).toBe(66)
+  })
+
+  const checksum = HashingLogic.getChecksum(
+    components.claimNodes.map(a => HashingLogic.hashMessage(a.attesterSig))
+  )
+  const checksumSigner = HashingLogic.recoverHashSigner(
+    checksum,
+    components.checksumSig
+  )
+  expect(checksumSigner.toLowerCase()).toBe(
+    aliceWallet.getAddressString().toLowerCase()
+  )
+
+  const rootHash = HashingLogic.getBloomMerkleTree(
+    components.claimNodes.map(a => HashingLogic.hashMessage(a.attesterSig)),
+    components.paddingNodes,
+    HashingLogic.hashMessage(components.checksumSig)
+  ).getRoot()
+
+  expect(ethUtil.bufferToHex(rootHash)).toBe(components.rootHash)
+
+  const rootHashSigner = HashingLogic.recoverHashSigner(
+    rootHash,
+    components.signedRootHash
+  )
+  expect(rootHashSigner.toLowerCase()).toBe(
+    aliceWallet.getAddressString().toLowerCase()
+  )
+
+  const layer2Hash = HashingLogic.hashMessage(
+    HashingLogic.orderedStringify({
+      rootHash: ethUtil.bufferToHex(rootHash),
+      nonce: components.rootHashNonce,
+    })
+  )
+  expect(layer2Hash).toBe(components.layer2Hash)
+
   const rootHashFromComponents = HashingLogic.getMerkleTreeFromComponents(
     components
   ).getRoot()
   expect(rootHashFromComponents.equals(rootHash)).toBeTruthy()
 })
 
+test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
+  const components = HashingLogic.getSignedMerkleTreeComponents(
+    [emailAttestation, phoneAttestation],
+    emailIssuedClaimNode.issuance.issuanceDate,
+    emailIssuedClaimNode.issuance.expirationDate,
+    alicePrivkey
+  )
+
+  const bobSubjectSig = ethSigUtil.signTypedData(bobPrivkey, {
+    data: HashingLogic.getAttestationAgreement(
+      contractAddress,
+      1,
+      components.rootHash,
+      components.rootHashNonce
+    ),
+  })
+
+  const batchComponents = HashingLogic.getSignedBatchMerkleTreeComponents(
+    components,
+    contractAddress,
+    bobSubjectSig,
+    bobAddress,
+    alicePrivkey
+  )
+
+  expect(
+    validBatchComponentVersions.indexOf(batchComponents.version)
+  ).toBeGreaterThan(-1)
+
+  // batch should have same length as non-batch
+  expect(batchComponents.paddingNodes.length).toBe(
+    components.paddingNodes.length
+  )
+
+  batchComponents.paddingNodes.forEach(p => {
+    expect(p.length).toBe(66)
+  })
+
+  // checksum should be the same as non-batch
+  const checksum = HashingLogic.getChecksum(
+    batchComponents.claimNodes.map(a => HashingLogic.hashMessage(a.attesterSig))
+  )
+
+  expect(ethUtil.bufferToHex(checksum)).toBe(
+    ethUtil.bufferToHex(
+      HashingLogic.getChecksum(
+        components.claimNodes.map(a => HashingLogic.hashMessage(a.attesterSig))
+      )
+    )
+  )
+
+  expect(batchComponents.checksumSig).toBe(components.checksumSig)
+
+  expect(batchComponents.rootHash).toBe(components.rootHash)
+  expect(batchComponents.rootHashNonce).toBe(components.rootHashNonce)
+
+  const layer2Hash = HashingLogic.hashMessage(
+    HashingLogic.orderedStringify({
+      subjectSig: batchComponents.subjectSig,
+      attesterSig: batchComponents.attesterSig,
+    })
+  )
+  expect(layer2Hash).toBe(batchComponents.batchLayer2Hash)
+  expect(batchComponents.batchLayer2Hash).not.toBe(components.layer2Hash)
+
+  const rootHashFromComponents = HashingLogic.getMerkleTreeFromComponents(
+    batchComponents
+  ).getRoot()
+  expect(
+    rootHashFromComponents.equals(
+      HashingLogic.getMerkleTreeFromComponents(components).getRoot()
+    )
+  ).toBeTruthy()
+
+  const recoveredAttester = HashingLogic.recoverHashSigner(
+    ethUtil.toBuffer(
+      HashingLogic.hashMessage(
+        HashingLogic.orderedStringify({
+          subject: bobAddress,
+          rootHash: batchComponents.rootHash,
+        })
+      )
+    ),
+    batchComponents.attesterSig
+  )
+  expect(recoveredAttester.toLowerCase()).toBe(
+    aliceWallet.getAddressString().toLowerCase()
+  )
+  const recoveredSubject = ethSigUtil.recoverTypedSignature({
+    data: HashingLogic.getAttestationAgreement(
+      batchComponents.contractAddress,
+      1,
+      batchComponents.rootHash,
+      batchComponents.rootHashNonce
+    ),
+    sig: batchComponents.subjectSig,
+  })
+  expect(recoveredSubject.toLowerCase()).toBe(batchComponents.subject)
+})
+
+test('HashingLogic.getSignedBatchMerkleTreeComponents sig validation', () => {
+  const components = HashingLogic.getSignedMerkleTreeComponents(
+    [emailAttestation, phoneAttestation],
+    emailIssuedClaimNode.issuance.issuanceDate,
+    emailIssuedClaimNode.issuance.expirationDate,
+    alicePrivkey
+  )
+
+  const bobInvalidSubjectSig = ethSigUtil.signTypedData(bobPrivkey, {
+    data: HashingLogic.getAttestationAgreement(
+      contractAddress,
+      1,
+      '0xe6d7e6ae812a8ff7bd44f928b199806446c2170412df381efb41d8f47fcd045c',
+      components.rootHashNonce
+    ),
+  })
+
+  expect(() => {
+    HashingLogic.getSignedBatchMerkleTreeComponents(
+      components,
+      contractAddress,
+      bobInvalidSubjectSig,
+      bobAddress,
+      alicePrivkey
+    )
+  }).toThrowError(new Error('Invalid subject sig'))
+})
+
 test(
-  'HashingLogic getAttestationAgreement' +
-    ' - has not been modified',
+  'HashingLogic getAttestationAgreement' + ' - has not been modified',
   () => {
-    const contractAddress = '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC'
     const dataHash = preComputedHashes.rootHash
-    const nonce = '0xd5d7e6ae812a8ff7bd44f928b199806446c2170412df381efb41d8f47fcd044b'
+    const nonce =
+      '0xd5d7e6ae812a8ff7bd44f928b199806446c2170412df381efb41d8f47fcd044b'
 
     const agreementParams = JSON.stringify(
       HashingLogic.getAttestationAgreement(contractAddress, 1, dataHash, nonce)

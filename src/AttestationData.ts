@@ -122,12 +122,13 @@ export interface IBaseAttPhone extends IBaseAtt {
 // Email attestation dataStr type
 ///////////////////////////////////////////////////
 export interface IBaseAttEmailData extends IBaseAttDataObj {
-  email?: string
+  email: string
   start_date?: TDateOrTime
   end_date?: TDateOrTime
 }
+export type TBaseAttEmailData = string | IBaseAttEmailData
 export interface IBaseAttEmail extends IBaseAtt {
-  data: IBaseAttEmailData | Array<IBaseAttEmailData>
+  data: TBaseAttEmailData | Array<TBaseAttEmailData>
 }
 
 ///////////////////////////////////////////////////
