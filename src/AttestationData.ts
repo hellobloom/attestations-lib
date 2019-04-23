@@ -6,7 +6,7 @@ export type TContextField = string | {type: string; data: string}
 export interface IBaseAtt {
   '@context': TContextField | Array<TContextField>
   // Date/time attestation was performed
-  date?: TDate
+  date?: TDateOrTime
 
   // Secondary provider
   provider?: string
@@ -15,18 +15,18 @@ export interface IBaseAtt {
   id?: number | string
 
   // Date/time when attestation should be considered void (e.g., for credential expiry)
-  expiry_date?: TDate
+  expiry_date?: TDateOrTime
 
   // Optional summary object (often useful for multiple-account types - otherwise, the data field is preferable for most of these fields, for simplicity's sake
   summary?: {
-    // Single date/time during which attestation was applicable
-    date?: TDate
+    // Single date/time during which attestation was applicable or ascertained
+    date?: TDateOrTime
 
     // Start date/time of period during which attestation was applicable
-    start_date?: TDate
+    start_date?: TDateOrTime
 
     // End date/time of period during which attestation was applicable
-    end_date?: TDate
+    end_date?: TDateOrTime
 
     // Different levels of generality - zero-indexed, with increasing numbers indicating less generality, to allow for unlimited levels of depth (in practice, 3-5 should be sufficient for most cases).  This allows for arbitrary levels or amounts of generality within sub-attestations, to promote an attestation subject's ability to partially disclose the amount of data provided in an attestation.
     generality?: number
@@ -59,9 +59,11 @@ export type TPersonalName =  // Designed to be flexible - as a rule, a basic {gi
       generational?: string | Array<string>
 
       // For name changes
-      start_date?: TDate
-      end_date?: TDate
+      start_date?: TDateOrTime
+      end_date?: TDateOrTime
     }
+
+export type TDateOrTime = TDate | TDatetime
 
 export type TDate =
   | string // ISO-8601 date in YYYY-MM-DD format
@@ -121,8 +123,8 @@ export interface IBaseAttPhone extends IBaseAtt {
 ///////////////////////////////////////////////////
 export interface IBaseAttEmailData extends IBaseAttDataObj {
   email?: string
-  start_date?: TDate
-  end_date?: TDate
+  start_date?: TDateOrTime
+  end_date?: TDateOrTime
 }
 export interface IBaseAttEmail extends IBaseAtt {
   data: IBaseAttEmailData | Array<IBaseAttEmailData>
@@ -151,7 +153,7 @@ export interface IBaseAttSSN extends IBaseAtt {
 // Date of birth attestation dataStr type
 ///////////////////////////////////////////////////
 export interface IBaseAttDOB extends IBaseAtt {
-  data: TDate
+  data: TDateOrTime
 }
 
 ///////////////////////////////////////////////////
@@ -162,8 +164,8 @@ export interface IBaseAttAccountData extends IBaseAttDataObj {
   email?: string
 
   name?: TPersonalName
-  start_date?: TDate
-  end_date?: TDate
+  start_date?: TDateOrTime
+  end_date?: TDateOrTime
 }
 export interface IBaseAttAccount extends IBaseAtt {
   data: IBaseAttAccountData | Array<IBaseAttAccountData>
@@ -174,7 +176,7 @@ export interface IBaseAttAccount extends IBaseAtt {
 ///////////////////////////////////////////////////
 export interface IBaseAttSanctionScreenData extends IBaseAttDataObj {
   name: TPersonalName
-  birthday: TDate
+  birthday: TDateOrTime
 }
 export interface IBaseAttSanctionScreen extends IBaseAtt {
   data: IBaseAttSanctionScreenData | Array<IBaseAttSanctionScreenData>
@@ -184,7 +186,7 @@ export interface IBaseAttSanctionScreen extends IBaseAtt {
 // PEP screen attestation dataStr type
 ///////////////////////////////////////////////////
 export interface IBaseAttPEPData extends IBaseAttDataObj {
-  date: TDate
+  date: TDateOrTime
   name: TPersonalName
   country: string
 
@@ -213,7 +215,7 @@ export interface IBaseAttPEP extends IBaseAtt {
 // ID document attestation dataStr type
 ///////////////////////////////////////////////////
 export interface IBaseAttIDDocData extends IBaseAttDataObj {
-  date: TDate
+  date: TDateOrTime
   name: TPersonalName
   country: string
 
@@ -226,8 +228,8 @@ export interface IBaseAttIDDocData extends IBaseAttDataObj {
     | 'attention' // IAssureIDResult.AuthenticationResult
   biographic?: {
     age?: number
-    dob?: TDate
-    expiration_date?: TDate
+    dob?: TDateOrTime
+    expiration_date?: TDateOrTime
     name?: TPersonalName
     gender?: string
     photo?: string
@@ -250,7 +252,7 @@ export type TBaseAttUtilitySummary = {
   currency?: string
   total_paid?: number
   account_numbers?: Array<string>
-  statement_dates: Array<TDate>
+  statement_dates: Array<TDate> | Array<TDatetime>
   addresses?: Array<TAddress>
 }
 export interface TBaseAttUtilityData extends IBaseAttDataObj {
@@ -260,8 +262,8 @@ export interface TBaseAttUtilityData extends IBaseAttDataObj {
   service_address: TAddress
   total_bill?: number
   balance_adjustments?: number
-  due_date?: TDate
-  statement_date: TDate
+  due_date?: TDateOrTime
+  statement_date: TDateOrTime
 }
 export interface IBaseAttUtility extends IBaseAtt {
   summary?: TBaseAttUtilitySummary
@@ -292,8 +294,8 @@ export interface IBaseAttAddress extends IBaseAtt {
 ///////////////////////////////////////////////////
 export type TBaseAttIncomeSummary = {
   generality: number
-  start_date: TDate
-  end_date: TDate
+  start_date: TDateOrTime
+  end_date: TDateOrTime
   net?: TBaseAttIncomeIncome
   gross?: TBaseAttIncomeIncome
   expenses?: TBaseAttIncomeIncome
@@ -306,8 +308,8 @@ export type TBaseAttIncomeIncome = {
 }
 export type TBaseAttIncomeStream = {
   id?: number
-  start_date: TDate
-  end_date: TDate
+  start_date: TDateOrTime
+  end_date: TDateOrTime
 
   cashflow_category?: string
   cashflow_subcategory?: string
@@ -329,7 +331,7 @@ export type TBaseAttIncomeStream = {
 
   transactions?: Array<{
     currency?: string
-    date: TDate
+    date: TDateOrTime
     value: number
   }>
 }
@@ -342,7 +344,7 @@ export interface IBaseAttIncome extends IBaseAtt {
 // Assets attestation dataStr type (total, gross, or expenses)
 ///////////////////////////////////////////////////
 export interface IBaseAttAssetsSummary {
-  date?: TDate
+  date?: TDateOrTime
   value?: number
   num_accounts?: number
 }
