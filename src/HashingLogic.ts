@@ -5,6 +5,7 @@ import MerkleTree, {IProof} from 'merkletreejs'
 import {validateDateTime} from './RFC3339DateTime'
 const ethUtil = require('ethereumjs-util')
 const ethSigUtil = require('eth-sig-util')
+import * as ethereumjsWallet from 'ethereumjs-wallet'
 
 export const hashMessage = (message: string): string =>
   ethUtil.addHexPrefix(keccak256(message))
@@ -113,10 +114,12 @@ export interface IIssuedClaimNode extends IClaimNode {
 
 export interface ISignedClaimNode {
   claimNode: IIssuedClaimNode
+  attester: string
   attesterSig: string // Root hash of claim tree signed by attester
 }
 
 export interface IBloomMerkleTreeComponents {
+  attester: string
   attesterSig: string
   checksumSig: string // Attester signature of ordered array of dataNode hashes
   claimNodes: ISignedClaimNode[]
@@ -263,8 +266,10 @@ export const getSignedClaimNode = (
   }
   const claimHash = hashClaimTree(issuedClaimNode)
   const attesterSig = signHash(claimHash, privKey)
+  const attester = ethereumjsWallet.fromPrivateKey(privKey)
   return {
     claimNode: issuedClaimNode,
+    attester: attester.getAddressString(),
     attesterSig: attesterSig,
   }
 }
@@ -477,7 +482,9 @@ export const getSignedMerkleTreeComponents = (
       nonce: rootHashNonce,
     })
   )
+  const attester = ethereumjsWallet.fromPrivateKey(privKey)
   return {
+    attester: attester.getAddressString(),
     layer2Hash: layer2Hash,
     attesterSig: signedRootHash,
     rootHashNonce: rootHashNonce,
@@ -507,19 +514,19 @@ export const getSignedBatchMerkleTreeComponents = (
     !validateSignedAgreement(
       subjectSig,
       contractAddress,
-      components.rootHash,
+      components.layer2Hash,
       requestNonce,
       subject
     )
   ) {
     throw new Error('Invalid subject sig')
   }
-  const attesterSig = signHash(
+  const batchAttesterSig = signHash(
     ethUtil.toBuffer(
       hashMessage(
         orderedStringify({
           subject: subject,
-          rootHash: components.rootHash,
+          rootHash: components.layer2Hash,
         })
       )
     ),
@@ -527,13 +534,14 @@ export const getSignedBatchMerkleTreeComponents = (
   )
   const batchLayer2Hash = hashMessage(
     orderedStringify({
-      attesterSig: attesterSig,
+      attesterSig: batchAttesterSig,
       subjectSig: subjectSig,
     })
   )
+  const attester = ethereumjsWallet.fromPrivateKey(privKey)
   return {
     attesterSig: components.attesterSig,
-    batchAttesterSig: attesterSig,
+    batchAttesterSig: batchAttesterSig,
     batchLayer2Hash: batchLayer2Hash,
     checksumSig: components.checksumSig,
     claimNodes: components.claimNodes,
@@ -543,6 +551,7 @@ export const getSignedBatchMerkleTreeComponents = (
     requestNonce: requestNonce,
     rootHash: components.rootHash,
     rootHashNonce: components.rootHashNonce,
+    attester: attester.getAddressString(),
     subject: subject,
     subjectSig: subjectSig,
     version: 'Batch-Attestation-Tree-1.0.0',

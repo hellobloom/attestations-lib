@@ -1,6 +1,7 @@
 import * as Validation from './Validation'
 import * as HashingLogic from './HashingLogic'
 import * as ethereumjsWallet from 'ethereumjs-wallet'
+const ethSigUtil = require('eth-sig-util')
 
 const aliceWallet = ethereumjsWallet.fromPrivateKey(
   new Buffer(
@@ -9,6 +10,15 @@ const aliceWallet = ethereumjsWallet.fromPrivateKey(
   )
 )
 const alicePrivkey = aliceWallet.getPrivateKey()
+const bobWallet = ethereumjsWallet.fromPrivateKey(
+  new Buffer(
+    'ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f',
+    'hex'
+  )
+)
+
+const bobPrivkey = bobWallet.getPrivateKey()
+const bobAddress = bobWallet.getAddressString()
 
 const emailAttestationData: HashingLogic.IAttestationData = {
   data: 'test@bloom.co',
@@ -71,6 +81,8 @@ const phoneAttestation: HashingLogic.IAttestationLegacy = {
   aux: phoneAuxHash,
 }
 
+const contractAddress = '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC'
+
 test('Validation.validateBloomMerkleTreeComponents', () => {
   const components = HashingLogic.getSignedMerkleTreeComponents(
     [emailAttestation, phoneAttestation],
@@ -80,5 +92,39 @@ test('Validation.validateBloomMerkleTreeComponents', () => {
   )
 
   const validated = Validation.validateBloomMerkleTreeComponents(components)
-  console.log(JSON.stringify(validated))
+  expect(validated.kind).toBe('validated')
+})
+
+test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
+  const components = HashingLogic.getSignedMerkleTreeComponents(
+    [emailAttestation, phoneAttestation],
+    emailIssuedClaimNode.issuance.issuanceDate,
+    emailIssuedClaimNode.issuance.expirationDate,
+    alicePrivkey
+  )
+
+  const requestNonce = HashingLogic.generateNonce()
+
+  const bobSubjectSig = ethSigUtil.signTypedData(bobPrivkey, {
+    data: HashingLogic.getAttestationAgreement(
+      contractAddress,
+      1,
+      components.layer2Hash,
+      requestNonce
+    ),
+  })
+
+  const batchComponents = HashingLogic.getSignedBatchMerkleTreeComponents(
+    components,
+    contractAddress,
+    bobSubjectSig,
+    bobAddress,
+    requestNonce,
+    alicePrivkey
+  )
+
+  const validated = Validation.validateBloomBatchMerkleTreeComponents(
+    batchComponents
+  )
+  expect(validated.kind).toBe('validated')
 })

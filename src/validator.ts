@@ -40,7 +40,9 @@ export const genParamsValidator = <ParamType>(
         if (outcome) {
           return true
         }
-        throw new Error(`Invalid ${fieldName}: ${data[fieldName]}`)
+        throw new Error(
+          `Invalid ${fieldName}: ${JSON.stringify(data[fieldName])}`
+        )
       }
     )
 

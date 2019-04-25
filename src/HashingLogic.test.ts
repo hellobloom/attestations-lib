@@ -964,7 +964,7 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
     data: HashingLogic.getAttestationAgreement(
       contractAddress,
       1,
-      components.rootHash,
+      components.layer2Hash,
       requestNonce
     ),
   })
@@ -1033,7 +1033,7 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
       HashingLogic.hashMessage(
         HashingLogic.orderedStringify({
           subject: bobAddress,
-          rootHash: batchComponents.rootHash,
+          rootHash: batchComponents.layer2Hash,
         })
       )
     ),
@@ -1046,7 +1046,7 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
     data: HashingLogic.getAttestationAgreement(
       batchComponents.contractAddress,
       1,
-      batchComponents.rootHash,
+      batchComponents.layer2Hash,
       batchComponents.requestNonce
     ),
     sig: batchComponents.subjectSig,
