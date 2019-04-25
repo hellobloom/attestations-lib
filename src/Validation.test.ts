@@ -83,48 +83,168 @@ const phoneAttestation: HashingLogic.IAttestationLegacy = {
 
 const contractAddress = '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC'
 
-test('Validation.validateBloomMerkleTreeComponents', () => {
-  const components = HashingLogic.getSignedMerkleTreeComponents(
-    [emailAttestation, phoneAttestation],
-    emailIssuedClaimNode.issuance.issuanceDate,
-    emailIssuedClaimNode.issuance.expirationDate,
-    alicePrivkey
-  )
+const components = HashingLogic.getSignedMerkleTreeComponents(
+  [emailAttestation, phoneAttestation],
+  emailIssuedClaimNode.issuance.issuanceDate,
+  emailIssuedClaimNode.issuance.expirationDate,
+  alicePrivkey
+)
 
+const requestNonce = HashingLogic.generateNonce()
+
+const bobSubjectSig = ethSigUtil.signTypedData(bobPrivkey, {
+  data: HashingLogic.getAttestationAgreement(
+    contractAddress,
+    1,
+    components.layer2Hash,
+    requestNonce
+  ),
+})
+
+const batchComponents = HashingLogic.getSignedBatchMerkleTreeComponents(
+  components,
+  contractAddress,
+  bobSubjectSig,
+  bobAddress,
+  requestNonce,
+  alicePrivkey
+)
+
+test('Validation.validateBloomMerkleTreeComponents', () => {
   const validated = Validation.validateBloomMerkleTreeComponents(components)
   expect(validated.kind).toBe('validated')
 })
 
 test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
-  const components = HashingLogic.getSignedMerkleTreeComponents(
-    [emailAttestation, phoneAttestation],
-    emailIssuedClaimNode.issuance.issuanceDate,
-    emailIssuedClaimNode.issuance.expirationDate,
-    alicePrivkey
-  )
-
-  const requestNonce = HashingLogic.generateNonce()
-
-  const bobSubjectSig = ethSigUtil.signTypedData(bobPrivkey, {
-    data: HashingLogic.getAttestationAgreement(
-      contractAddress,
-      1,
-      components.layer2Hash,
-      requestNonce
-    ),
-  })
-
-  const batchComponents = HashingLogic.getSignedBatchMerkleTreeComponents(
-    components,
-    contractAddress,
-    bobSubjectSig,
-    bobAddress,
-    requestNonce,
-    alicePrivkey
-  )
-
   const validated = Validation.validateBloomBatchMerkleTreeComponents(
     batchComponents
   )
   expect(validated.kind).toBe('validated')
+})
+
+test('Validation.isNotEmptyString', () => {
+  expect(Validation.isNotEmptyString('')).toBeFalsy()
+  expect(Validation.isNotEmptyString('a')).toBeTruthy()
+})
+
+test('Validation.isValidEthHexString', () => {
+  expect(Validation.isValidEthHexString('abc')).toBeFalsy()
+  expect(Validation.isValidEthHexString('0xabc')).toBeTruthy()
+})
+
+test('Validation.isValidHash', () => {
+  expect(Validation.isValidHash('abc')).toBeFalsy()
+  expect(
+    Validation.isValidHash(
+      '9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658'
+    )
+  ).toBeFalsy()
+  expect(
+    Validation.isValidHash(
+      '0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb65'
+    )
+  ).toBeFalsy()
+  expect(
+    Validation.isValidHash(
+      '0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658'
+    )
+  ).toBeTruthy()
+})
+
+test('Validation.isArrayOfPaddingNodes', () => {
+  const validPadding = HashingLogic.getPadding(1)
+  expect(Validation.isArrayOfPaddingNodes(validPadding)).toBeTruthy()
+  expect(Validation.isArrayOfPaddingNodes([])).toBeFalsy()
+  const invalidPadding = validPadding.map(a =>
+    a.substring(0, Math.round(Math.random() * a.length))
+  )
+  expect(Validation.isArrayOfPaddingNodes(invalidPadding)).toBeFalsy()
+})
+
+test('Validation.isValidTypeString', () => {
+  expect(Validation.isValidTypeString('phone')).toBeTruthy()
+  expect(Validation.isValidTypeString('sms')).toBeFalsy()
+})
+
+test('Validation.validateAttesterClaimSig', () => {
+  expect(
+    Validation.validateAttesterClaimSig(
+      components.claimNodes[0].attesterSig,
+      components.claimNodes[0]
+    )
+  ).toBeTruthy()
+  expect(
+    Validation.validateAttesterClaimSig(
+      components.claimNodes[0].attesterSig,
+      components.claimNodes[1]
+    )
+  ).toBeFalsy()
+})
+
+test('Validation.validateAttesterRootSig', () => {
+  expect(
+    Validation.validateAttesterRootSig(components.attesterSig, components)
+  ).toBeTruthy()
+  expect(
+    Validation.validateAttesterRootSig(
+      components.claimNodes[0].attesterSig,
+      components
+    )
+  ).toBeFalsy()
+})
+
+test('Validation.validateBatchAttesterSig', () => {
+  expect(
+    Validation.validateBatchAttesterSig(
+      batchComponents.batchAttesterSig,
+      batchComponents
+    )
+  ).toBeTruthy()
+  expect(
+    Validation.validateBatchAttesterSig(
+      batchComponents.attesterSig,
+      batchComponents
+    )
+  ).toBeFalsy()
+})
+
+test('Validation.validateSubjectSig', () => {
+  expect(
+    Validation.validateSubjectSig(batchComponents.subjectSig, batchComponents)
+  ).toBeTruthy()
+  expect(
+    Validation.validateSubjectSig(batchComponents.attesterSig, batchComponents)
+  ).toBeFalsy()
+})
+
+test('Validation.validateChecksumSig', () => {
+  expect(
+    Validation.validateChecksumSig(batchComponents.checksumSig, batchComponents)
+  ).toBeTruthy()
+  expect(
+    Validation.validateChecksumSig(batchComponents.attesterSig, batchComponents)
+  ).toBeFalsy()
+  expect(
+    Validation.validateChecksumSig(components.checksumSig, components)
+  ).toBeTruthy()
+  expect(
+    Validation.validateChecksumSig(components.attesterSig, components)
+  ).toBeFalsy()
+})
+
+test('Validation.isValidSignatureString', () => {
+  expect(Validation.isValidSignatureString(components.attesterSig)).toBeTruthy()
+  expect(
+    Validation.isValidSignatureString(components.rootHashNonce)
+  ).toBeFalsy()
+})
+
+test('Validation.isValidArrayOfClaimNodes', () => {
+  expect(
+    Validation.isValidArrayOfClaimNodes(components.claimNodes)
+  ).toBeTruthy()
+  expect(
+    Validation.isValidArrayOfClaimNodes(components.paddingNodes)
+  ).toBeFalsy()
+  expect(Validation.isValidArrayOfClaimNodes([])).toBeFalsy()
 })
