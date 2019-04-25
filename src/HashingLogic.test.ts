@@ -930,7 +930,7 @@ test('HashingLogic.getSignedMerkleTreeComponents', () => {
 
   const rootHashSigner = HashingLogic.recoverHashSigner(
     rootHash,
-    components.signedRootHash
+    components.attesterSig
   )
   expect(rootHashSigner.toLowerCase()).toBe(
     aliceWallet.getAddressString().toLowerCase()
@@ -958,12 +958,14 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
     alicePrivkey
   )
 
+  const requestNonce = HashingLogic.generateNonce()
+
   const bobSubjectSig = ethSigUtil.signTypedData(bobPrivkey, {
     data: HashingLogic.getAttestationAgreement(
       contractAddress,
       1,
-      components.rootHash,
-      components.rootHashNonce
+      components.layer2Hash,
+      requestNonce
     ),
   })
 
@@ -972,6 +974,7 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
     contractAddress,
     bobSubjectSig,
     bobAddress,
+    requestNonce,
     alicePrivkey
   )
 
@@ -1004,12 +1007,13 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
   expect(batchComponents.checksumSig).toBe(components.checksumSig)
 
   expect(batchComponents.rootHash).toBe(components.rootHash)
-  expect(batchComponents.rootHashNonce).toBe(components.rootHashNonce)
+  expect(batchComponents.requestNonce).toBe(requestNonce)
+  expect(batchComponents.requestNonce).not.toBe(components.rootHashNonce)
 
   const layer2Hash = HashingLogic.hashMessage(
     HashingLogic.orderedStringify({
       subjectSig: batchComponents.subjectSig,
-      attesterSig: batchComponents.attesterSig,
+      attesterSig: batchComponents.batchAttesterSig,
     })
   )
   expect(layer2Hash).toBe(batchComponents.batchLayer2Hash)
@@ -1029,11 +1033,11 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
       HashingLogic.hashMessage(
         HashingLogic.orderedStringify({
           subject: bobAddress,
-          rootHash: batchComponents.rootHash,
+          rootHash: batchComponents.layer2Hash,
         })
       )
     ),
-    batchComponents.attesterSig
+    batchComponents.batchAttesterSig
   )
   expect(recoveredAttester.toLowerCase()).toBe(
     aliceWallet.getAddressString().toLowerCase()
@@ -1042,8 +1046,8 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
     data: HashingLogic.getAttestationAgreement(
       batchComponents.contractAddress,
       1,
-      batchComponents.rootHash,
-      batchComponents.rootHashNonce
+      batchComponents.layer2Hash,
+      batchComponents.requestNonce
     ),
     sig: batchComponents.subjectSig,
   })
@@ -1058,12 +1062,14 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents sig validation', () => {
     alicePrivkey
   )
 
+  const requestNonce = HashingLogic.generateNonce()
+
   const bobInvalidSubjectSig = ethSigUtil.signTypedData(bobPrivkey, {
     data: HashingLogic.getAttestationAgreement(
       contractAddress,
       1,
       '0xe6d7e6ae812a8ff7bd44f928b199806446c2170412df381efb41d8f47fcd045c',
-      components.rootHashNonce
+      requestNonce
     ),
   })
 
@@ -1073,6 +1079,7 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents sig validation', () => {
       contractAddress,
       bobInvalidSubjectSig,
       bobAddress,
+      requestNonce,
       alicePrivkey
     )
   }).toThrowError(new Error('Invalid subject sig'))

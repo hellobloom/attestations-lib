@@ -5,6 +5,7 @@ import MerkleTree, {IProof} from 'merkletreejs'
 import {validateDateTime} from './RFC3339DateTime'
 const ethUtil = require('ethereumjs-util')
 const ethSigUtil = require('eth-sig-util')
+import * as ethereumjsWallet from 'ethereumjs-wallet'
 
 export const hashMessage = (message: string): string =>
   ethUtil.addHexPrefix(keccak256(message))
@@ -113,32 +114,30 @@ export interface IIssuedClaimNode extends IClaimNode {
 
 export interface ISignedClaimNode {
   claimNode: IIssuedClaimNode
+  attester: string
   attesterSig: string // Root hash of claim tree signed by attester
 }
 
-export interface IBloomBatchMerkleTreeComponents {
-  batchLayer2Hash: string // Hash of attester sig and subject sig
+export interface IBloomMerkleTreeComponents {
+  attester: string
   attesterSig: string
-  subjectSig: string
-  subject: string
-  rootHashNonce: string
-  rootHash: string // The root the Merkle tree
-  claimNodes: ISignedClaimNode[] // TODO make IClaimNode
   checksumSig: string // Attester signature of ordered array of dataNode hashes
+  claimNodes: ISignedClaimNode[]
+  layer2Hash: string // Hash of merkle root and nonce
   paddingNodes: string[]
-  contractAddress: string
+  rootHash: string // The root the Merkle tree
+  rootHashNonce: string
   version: string
 }
 
-export interface IBloomMerkleTreeComponents {
-  layer2Hash: string // Hash of merkle root and nonce
-  signedRootHash: string
-  rootHashNonce: string
-  rootHash: string // The root the Merkle tree
-  claimNodes: ISignedClaimNode[]
-  checksumSig: string // Attester signature of ordered array of dataNode hashes
-  paddingNodes: string[]
-  version: string
+export interface IBloomBatchMerkleTreeComponents
+  extends IBloomMerkleTreeComponents {
+  batchAttesterSig: string
+  batchLayer2Hash: string // Hash of attester sig and subject sig
+  contractAddress: string
+  requestNonce: string
+  subject: string
+  subjectSig: string
 }
 
 export interface IAuthorization {
@@ -267,8 +266,10 @@ export const getSignedClaimNode = (
   }
   const claimHash = hashClaimTree(issuedClaimNode)
   const attesterSig = signHash(claimHash, privKey)
+  const attester = ethereumjsWallet.fromPrivateKey(privKey)
   return {
     claimNode: issuedClaimNode,
+    attester: attester.getAddressString(),
     attesterSig: attesterSig,
   }
 }
@@ -481,9 +482,11 @@ export const getSignedMerkleTreeComponents = (
       nonce: rootHashNonce,
     })
   )
+  const attester = ethereumjsWallet.fromPrivateKey(privKey)
   return {
+    attester: attester.getAddressString(),
     layer2Hash: layer2Hash,
-    signedRootHash: signedRootHash,
+    attesterSig: signedRootHash,
     rootHashNonce: rootHashNonce,
     rootHash: ethUtil.bufferToHex(rootHash),
     claimNodes: signedClaimNodes,
@@ -504,25 +507,26 @@ export const getSignedBatchMerkleTreeComponents = (
   contractAddress: string,
   subjectSig: string,
   subject: string,
+  requestNonce: string,
   privKey: Buffer
 ): IBloomBatchMerkleTreeComponents => {
   if (
     !validateSignedAgreement(
       subjectSig,
       contractAddress,
-      components.rootHash,
-      components.rootHashNonce,
+      components.layer2Hash,
+      requestNonce,
       subject
     )
   ) {
     throw new Error('Invalid subject sig')
   }
-  const attesterSig = signHash(
+  const batchAttesterSig = signHash(
     ethUtil.toBuffer(
       hashMessage(
         orderedStringify({
           subject: subject,
-          rootHash: components.rootHash,
+          rootHash: components.layer2Hash,
         })
       )
     ),
@@ -530,21 +534,26 @@ export const getSignedBatchMerkleTreeComponents = (
   )
   const batchLayer2Hash = hashMessage(
     orderedStringify({
-      attesterSig: attesterSig,
+      attesterSig: batchAttesterSig,
       subjectSig: subjectSig,
     })
   )
+  const attester = ethereumjsWallet.fromPrivateKey(privKey)
   return {
+    attesterSig: components.attesterSig,
+    batchAttesterSig: batchAttesterSig,
     batchLayer2Hash: batchLayer2Hash,
-    attesterSig: attesterSig,
-    subjectSig: subjectSig,
-    subject: subject,
-    contractAddress: contractAddress,
-    rootHashNonce: components.rootHashNonce,
-    rootHash: components.rootHash,
-    claimNodes: components.claimNodes,
     checksumSig: components.checksumSig,
+    claimNodes: components.claimNodes,
+    contractAddress: contractAddress,
+    layer2Hash: components.layer2Hash,
     paddingNodes: components.paddingNodes,
+    requestNonce: requestNonce,
+    rootHash: components.rootHash,
+    rootHashNonce: components.rootHashNonce,
+    attester: attester.getAddressString(),
+    subject: subject,
+    subjectSig: subjectSig,
     version: 'Batch-Attestation-Tree-1.0.0',
   }
 }

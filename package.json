@@ -1,6 +1,6 @@
 {
   "name": "@bloomprotocol/attestations-lib",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Shared types and logic between blooms dApp and implementation of attestation-kit.",
@@ -33,6 +33,7 @@
     "watch": "./node_modules/.bin/tsc --watch"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.123",
     "eth-sig-util": "^2.1.0",
     "ethereumjs-util": "^6.0.0",
     "js-sha3": "^0.8.0",
