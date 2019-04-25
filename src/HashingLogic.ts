@@ -116,29 +116,25 @@ export interface ISignedClaimNode {
   attesterSig: string // Root hash of claim tree signed by attester
 }
 
-export interface IBloomBatchMerkleTreeComponents {
-  batchLayer2Hash: string // Hash of attester sig and subject sig
+export interface IBloomMerkleTreeComponents {
   attesterSig: string
-  subjectSig: string
-  subject: string
-  rootHashNonce: string
-  rootHash: string // The root the Merkle tree
-  claimNodes: ISignedClaimNode[] // TODO make IClaimNode
   checksumSig: string // Attester signature of ordered array of dataNode hashes
+  claimNodes: ISignedClaimNode[]
+  layer2Hash: string // Hash of merkle root and nonce
   paddingNodes: string[]
-  contractAddress: string
+  rootHash: string // The root the Merkle tree
+  rootHashNonce: string
   version: string
 }
 
-export interface IBloomMerkleTreeComponents {
-  layer2Hash: string // Hash of merkle root and nonce
-  signedRootHash: string
-  rootHashNonce: string
-  rootHash: string // The root the Merkle tree
-  claimNodes: ISignedClaimNode[]
-  checksumSig: string // Attester signature of ordered array of dataNode hashes
-  paddingNodes: string[]
-  version: string
+export interface IBloomBatchMerkleTreeComponents
+  extends IBloomMerkleTreeComponents {
+  batchAttesterSig: string
+  batchLayer2Hash: string // Hash of attester sig and subject sig
+  contractAddress: string
+  requestNonce: string
+  subject: string
+  subjectSig: string
 }
 
 export interface IAuthorization {
@@ -483,7 +479,7 @@ export const getSignedMerkleTreeComponents = (
   )
   return {
     layer2Hash: layer2Hash,
-    signedRootHash: signedRootHash,
+    attesterSig: signedRootHash,
     rootHashNonce: rootHashNonce,
     rootHash: ethUtil.bufferToHex(rootHash),
     claimNodes: signedClaimNodes,
@@ -504,6 +500,7 @@ export const getSignedBatchMerkleTreeComponents = (
   contractAddress: string,
   subjectSig: string,
   subject: string,
+  requestNonce: string,
   privKey: Buffer
 ): IBloomBatchMerkleTreeComponents => {
   if (
@@ -511,7 +508,7 @@ export const getSignedBatchMerkleTreeComponents = (
       subjectSig,
       contractAddress,
       components.rootHash,
-      components.rootHashNonce,
+      requestNonce,
       subject
     )
   ) {
@@ -535,16 +532,19 @@ export const getSignedBatchMerkleTreeComponents = (
     })
   )
   return {
+    attesterSig: components.attesterSig,
+    batchAttesterSig: attesterSig,
     batchLayer2Hash: batchLayer2Hash,
-    attesterSig: attesterSig,
-    subjectSig: subjectSig,
-    subject: subject,
-    contractAddress: contractAddress,
-    rootHashNonce: components.rootHashNonce,
-    rootHash: components.rootHash,
-    claimNodes: components.claimNodes,
     checksumSig: components.checksumSig,
+    claimNodes: components.claimNodes,
+    contractAddress: contractAddress,
+    layer2Hash: components.layer2Hash,
     paddingNodes: components.paddingNodes,
+    requestNonce: requestNonce,
+    rootHash: components.rootHash,
+    rootHashNonce: components.rootHashNonce,
+    subject: subject,
+    subjectSig: subjectSig,
     version: 'Batch-Attestation-Tree-1.0.0',
   }
 }
