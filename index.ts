@@ -15,7 +15,7 @@ import {
 } from './src/AttestationTypes'
 import * as AttestationData from './src/AttestationData'
 import * as HashingLogic from './src/HashingLogic'
-import {validateDateTime} from './src/RFC3339DateTime'
+import * as RFC3339DateTime from './src/RFC3339DateTime'
 
 export {
   AttestationData,
@@ -33,5 +33,5 @@ export {
   getFormattedName,
   AttestationStatus,
   HashingLogic,
-  validateDateTime,
+  RFC3339DateTime
 }
