@@ -244,7 +244,8 @@ export const getSignedClaimNode = (
   globalRevocationLink: string,
   privKey: Buffer,
   issuanceDate: string,
-  expirationDate: string
+  expirationDate: string,
+  localRevocationLink?: string
 ): ISignedClaimNode => {
   // validateDates
   if (!validateDateTime(issuanceDate)) throw new Error('Invalid issuance date')
@@ -256,7 +257,7 @@ export const getSignedClaimNode = (
     type: claimNode.type,
     aux: claimNode.aux,
     issuance: {
-      localRevocationToken: generateNonce(),
+      localRevocationToken: localRevocationLink || generateNonce(),
       globalRevocationToken: globalRevocationLink,
       dataHash: hashMessage(orderedStringify(claimNode.data)),
       typeHash: hashMessage(orderedStringify(claimNode.type)),
@@ -450,23 +451,34 @@ export const getSignedMerkleTreeComponents = (
   claimNodes: IClaimNode[],
   issuanceDate: string,
   expirationDate: string,
-  privKey: Buffer
+  privKey: Buffer,
+  opts?: {
+    paddingNodes?: string[]
+    localRevocationLinks?: string[]
+    globalRevocationLink?: string
+    rootHashNonce?: string
+  }
 ): IBloomMerkleTreeComponents => {
-  const globalRevocationLink = generateNonce()
-  const signedClaimNodes: ISignedClaimNode[] = claimNodes.map(a => {
+  const globalRevocationLink =
+    (opts && opts.globalRevocationLink) || generateNonce()
+  const signedClaimNodes: ISignedClaimNode[] = claimNodes.map((a, i) => {
     return getSignedClaimNode(
       a,
       globalRevocationLink,
       privKey,
       issuanceDate,
-      expirationDate
+      expirationDate,
+      opts && opts.localRevocationLinks
+        ? opts.localRevocationLinks[i]
+        : undefined
     )
   })
   const attesterClaimSigHashes = signedClaimNodes.map(a =>
     hashMessage(a.attesterSig)
   )
 
-  const paddingNodes = getPadding(attesterClaimSigHashes.length)
+  const paddingNodes =
+    (opts && opts.paddingNodes) || getPadding(attesterClaimSigHashes.length)
   const signedChecksum = signChecksum(attesterClaimSigHashes, privKey)
   const signedChecksumHash = hashMessage(signedChecksum)
   const rootHash = getBloomMerkleTree(
@@ -475,7 +487,7 @@ export const getSignedMerkleTreeComponents = (
     signedChecksumHash
   ).getRoot()
   const signedRootHash = signHash(rootHash, privKey)
-  const rootHashNonce = generateNonce()
+  const rootHashNonce = (opts && opts.rootHashNonce) || generateNonce()
   const layer2Hash = hashMessage(
     orderedStringify({
       rootHash: ethUtil.bufferToHex(rootHash),
