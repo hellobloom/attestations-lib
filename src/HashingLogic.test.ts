@@ -1007,9 +1007,12 @@ test('HashingLogic.getSignedMerkleTreeComponents with options', () => {
 
   expect(components.rootHashNonce).toBe(rootHashNonce)
 
-  components.claimNodes.forEach(c => {
+  components.claimNodes.forEach((c, i) => {
     expect(c.claimNode.issuance.globalRevocationToken).toBe(
       globalRevocationLink
+    )
+    expect(c.claimNode.issuance.localRevocationToken).toBe(
+      localRevocationLinks[i]
     )
   })
 
