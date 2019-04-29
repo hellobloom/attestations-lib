@@ -772,6 +772,13 @@ test('HashingLogic.getSignedClaimNode', () => {
     emailIssuedClaimNode.issuance.expirationDate
   )
 
+  validateIssuedClaimNode(globalLink, issuedClaimNode)
+})
+
+function validateIssuedClaimNode(
+  globalLink: string,
+  issuedClaimNode: HashingLogic.ISignedClaimNode
+) {
   expect(issuedClaimNode.claimNode.issuance.globalRevocationToken).toBe(
     globalLink
   )
@@ -789,6 +796,24 @@ test('HashingLogic.getSignedClaimNode', () => {
   )
   expect(sender.toLowerCase()).toBe(
     aliceWallet.getAddressString().toLowerCase()
+  )
+}
+
+test('HashingLogic.getSignedClaimNode with revocation link', () => {
+  const globalLink = HashingLogic.generateNonce()
+  const localLink = HashingLogic.generateNonce()
+  const issuedClaimNode = HashingLogic.getSignedClaimNode(
+    emailAttestation,
+    globalLink,
+    alicePrivkey,
+    emailIssuedClaimNode.issuance.issuanceDate,
+    emailIssuedClaimNode.issuance.expirationDate,
+    localLink
+  )
+  validateIssuedClaimNode(globalLink, issuedClaimNode)
+
+  expect(issuedClaimNode.claimNode.issuance.localRevocationToken).toBe(
+    localLink
   )
 })
 
@@ -902,6 +927,12 @@ test('HashingLogic.getSignedMerkleTreeComponents', () => {
     alicePrivkey
   )
 
+  validateSignedMerkleTreeComponents(components)
+})
+
+function validateSignedMerkleTreeComponents(
+  components: HashingLogic.IBloomMerkleTreeComponents
+) {
   expect(validComponentVersions.indexOf(components.version)).toBeGreaterThan(-1)
 
   expect(components.paddingNodes.length).toBe(13)
@@ -948,6 +979,80 @@ test('HashingLogic.getSignedMerkleTreeComponents', () => {
     components
   ).getRoot()
   expect(rootHashFromComponents.equals(rootHash)).toBeTruthy()
+}
+
+test('HashingLogic.getSignedMerkleTreeComponents with options', () => {
+  const paddingNodes = HashingLogic.getPadding(2)
+  const localRevocationLinks = [
+    HashingLogic.generateNonce(),
+    HashingLogic.generateNonce(),
+  ]
+  const globalRevocationLink = HashingLogic.generateNonce()
+  const rootHashNonce = HashingLogic.generateNonce()
+
+  const components = HashingLogic.getSignedMerkleTreeComponents(
+    [emailAttestation, phoneAttestation],
+    emailIssuedClaimNode.issuance.issuanceDate,
+    emailIssuedClaimNode.issuance.expirationDate,
+    alicePrivkey,
+    {
+      paddingNodes,
+      localRevocationLinks,
+      globalRevocationLink,
+      rootHashNonce,
+    }
+  )
+
+  validateSignedMerkleTreeComponents(components)
+
+  expect(components.rootHashNonce).toBe(rootHashNonce)
+
+  components.claimNodes.forEach((c, i) => {
+    expect(c.claimNode.issuance.globalRevocationToken).toBe(
+      globalRevocationLink
+    )
+    expect(c.claimNode.issuance.localRevocationToken).toBe(
+      localRevocationLinks[i]
+    )
+  })
+
+  components.paddingNodes.forEach((p, i) => {
+    expect(p).toBe(paddingNodes[i])
+  })
+
+  const identicalComponents = HashingLogic.getSignedMerkleTreeComponents(
+    [emailAttestation, phoneAttestation],
+    emailIssuedClaimNode.issuance.issuanceDate,
+    emailIssuedClaimNode.issuance.expirationDate,
+    alicePrivkey,
+    {
+      paddingNodes,
+      localRevocationLinks,
+      globalRevocationLink,
+      rootHashNonce,
+    }
+  )
+
+  expect(identicalComponents.layer2Hash).toBe(components.layer2Hash)
+
+  const componentsWithdifferentPadding = HashingLogic.getSignedMerkleTreeComponents(
+    [emailAttestation, phoneAttestation],
+    emailIssuedClaimNode.issuance.issuanceDate,
+    emailIssuedClaimNode.issuance.expirationDate,
+    alicePrivkey,
+    {
+      localRevocationLinks,
+      globalRevocationLink,
+      rootHashNonce,
+    }
+  )
+
+  expect(
+    componentsWithdifferentPadding.layer2Hash === components.layer2Hash
+  ).toBeFalsy()
+  expect(componentsWithdifferentPadding.rootHashNonce).toBe(
+    components.rootHashNonce
+  )
 })
 
 test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
