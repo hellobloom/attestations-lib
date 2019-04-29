@@ -18,7 +18,7 @@
 // but the years 1600 and 2000 are.
 //
 const leapYear = (year: number): boolean => {
-  return ((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0)
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0
 }
 
 // Function that checks whether a time-string is RFC 3339 compliant.
@@ -131,7 +131,8 @@ export const validateDateTime = (dateTimeString: string): boolean => {
 
   // Check if it is a correct date using the javascript Date parse() method.
   const time = Date.parse(dateTimeString)
-  if (time !== time) { // eslint-disable-line
+  if (time !== time) {
+    // eslint-disable-line
     return false
   }
   // Split the date-time-string up into the string-date and time-string part.
@@ -139,5 +140,5 @@ export const validateDateTime = (dateTimeString: string): boolean => {
   const index = dateTimeString.indexOf('T')
   const dateString = dateTimeString.substr(0, index)
   const timeString = dateTimeString.substr(index + 1)
-  return (validateDate(dateString) && validateTime(timeString))
+  return validateDate(dateString) && validateTime(timeString)
 }
