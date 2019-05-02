@@ -86,15 +86,17 @@ export type TDatetime =
 
 export type TPhoneNumber =
   | string // Valid internationally-formatted phone number
-  | {
-      full?: string
-      country?: string
-      subscriber?: string
-      area?: string
-      prefix?: string
-      line?: string
-      ext?: string
-    }
+  | TPhoneNumberObj
+
+export type TPhoneNumberObj = {
+  full?: string
+  country?: string
+  subscriber?: string
+  area?: string
+  prefix?: string
+  line?: string
+  ext?: string
+}
 
 export type TGender = string // 'male', 'female', ...
 
