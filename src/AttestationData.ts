@@ -39,9 +39,7 @@ export interface IBaseAtt {
   // ...extensible with other fields.  Other fields explicating general data about the attestation, such as location, shelf life, common units, etc., should be placed here.
 }
 
-export interface IBaseAttDataObj {
-  [key: string]: any
-}
+export interface IBaseAttDataObj {}
 export type TBaseAttData = IBaseAttDataObj | string | number
 
 ///////////////////////////////////////////////////
