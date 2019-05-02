@@ -39,7 +39,9 @@ export interface IBaseAtt {
   // ...extensible with other fields.  Other fields explicating general data about the attestation, such as location, shelf life, common units, etc., should be placed here.
 }
 
-export interface IBaseAttDataObj {}
+export interface IBaseAttDataObj {
+  [key: string]: any
+}
 export type TBaseAttData = IBaseAttDataObj | string | number
 
 ///////////////////////////////////////////////////
@@ -86,15 +88,17 @@ export type TDatetime =
 
 export type TPhoneNumber =
   | string // Valid internationally-formatted phone number
-  | {
-      full?: string
-      country?: string
-      subscriber?: string
-      area?: string
-      prefix?: string
-      line?: string
-      ext?: string
-    }
+  | TPhoneNumberObj
+
+export type TPhoneNumberObj = {
+  full?: string
+  country?: string
+  subscriber?: string
+  area?: string
+  prefix?: string
+  line?: string
+  ext?: string
+}
 
 export type TGender = string // 'male', 'female', ...
 
