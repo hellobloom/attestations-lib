@@ -131,6 +131,13 @@ export const validateAttestationTypeNode = genValidateFn([
   ['nonce', isNotEmptyString, false],
 ])
 
+export const validateLinkNode = genValidateFn([
+  ['local', isValidHash, false],
+  ['global', isValidHash, false],
+  ['dataHash', isValidHash, false],
+  ['typeHash', isValidHash, false],
+])
+
 export const validateAttestationIssuanceNode = genValidateFn([
   ['localRevocationToken', isValidHash, false],
   ['localRevocationToken', isValidEthHexString, false],
@@ -155,6 +162,20 @@ export const isValidAttestationTypeNode = (value: any): boolean =>
 export const isValidAttestationIssuanceNode = (value: any): boolean =>
   validateAttestationIssuanceNode(value).kind === 'validated'
 
+export const isValidLinkNode = (value: any): boolean =>
+  validateLinkNode(value).kind === 'validated'
+
+export const validateLegacyAttestationNode = genValidateFn([
+  ['data', isValidAttestationDataNode, false],
+  ['type', isValidAttestationTypeNode, false],
+  ['link', isValidLinkNode, false],
+  ['aux', isValidEthHexString, false],
+  ['aux', isValidHash, false],
+])
+
+export const isValidLegacyAttestationNode = (value: any): boolean =>
+  validateLegacyAttestationNode(value).kind === 'validated'
+
 export const validateIssueClaimNode = genValidateFn([
   ['data', isValidAttestationDataNode, false],
   ['type', isValidAttestationTypeNode, false],
@@ -177,6 +198,28 @@ export const isValidArrayOfClaimNodes = (value: any): boolean => {
   if (value.length === 0) return false
   return value.every(v => validateClaimNode(v).kind === 'validated')
 }
+
+export const validateDataNodeLegacy = genValidateFn([
+  ['signedAttestation', isValidSignatureString, false],
+  // cannot validate attestation sig matches attester here. missing in data structure
+  ['attestationNode', isValidLegacyAttestationNode, false],
+])
+
+export const isValidArrayOfLegacyDataNodes = (value: any): boolean => {
+  if (!Array.isArray(value)) return false
+  if (value.length === 0) return false
+  return value.every(v => validateDataNodeLegacy(v).kind === 'validated')
+}
+
+export const validateBloomLegacyMerkleTreeComponents = genValidateFn([
+  ['layer2Hash', isValidHash, false],
+  ['signedRootHash', isValidSignatureString, false],
+  ['rootHashNonce', isValidHash, false],
+  ['rootHash', isValidHash, false],
+  ['dataNodes', isValidArrayOfLegacyDataNodes, false],
+  ['checksumSig', isValidSignatureString, false],
+  ['paddingNodes', isArrayOfPaddingNodes, false],
+])
 
 export const validateBloomMerkleTreeComponents = genValidateFn([
   ['attesterSig', isValidSignatureString, false],

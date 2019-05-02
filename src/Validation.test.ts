@@ -83,6 +83,11 @@ const phoneAttestation: HashingLogic.IAttestationLegacy = {
 
 const contractAddress = '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC'
 
+const legacyComponents = HashingLogic.getSignedMerkleTreeComponentsLegacy(
+  [emailAttestation, phoneAttestation],
+  alicePrivkey
+)
+
 const components = HashingLogic.getSignedMerkleTreeComponents(
   [emailAttestation, phoneAttestation],
   emailIssuedClaimNode.issuance.issuanceDate,
@@ -247,4 +252,14 @@ test('Validation.isValidArrayOfClaimNodes', () => {
     Validation.isValidArrayOfClaimNodes(components.paddingNodes)
   ).toBeFalsy()
   expect(Validation.isValidArrayOfClaimNodes([])).toBeFalsy()
+})
+
+test('Validation.isValidArrayOfLegacyDataNodes', () => {
+  expect(
+    Validation.isValidArrayOfLegacyDataNodes(legacyComponents.dataNodes)
+  ).toBeTruthy()
+  expect(
+    Validation.isValidArrayOfLegacyDataNodes(components.claimNodes)
+  ).toBeFalsy()
+  expect(Validation.isValidArrayOfLegacyDataNodes([])).toBeFalsy()
 })
