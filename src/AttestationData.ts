@@ -286,6 +286,7 @@ export interface IBaseAttAddressData {
     website?: string
     accounts?: Array<IBaseAttAddressDataProviderAccount>
   }
+  address?: TAddress
   addresses?: Array<TAddress>
 }
 export interface IBaseAttAddress extends IBaseAtt {
