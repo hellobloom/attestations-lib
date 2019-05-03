@@ -4,11 +4,6 @@ import {isString} from 'lodash'
 import {genValidateFn, TUnvalidated} from './validator'
 import {AttestationTypeID} from './AttestationTypes'
 import {validateDateTime} from './RFC3339DateTime'
-import {
-  IBloomMerkleTreeComponents,
-  ISignedClaimNode,
-  IBloomBatchMerkleTreeComponents,
-} from './HashingLogic'
 import * as HashingLogic from './HashingLogic'
 
 /**
@@ -54,7 +49,7 @@ export const isValidRFC3339DateTime = (value: any): boolean =>
 
 export const validateAttesterClaimSig = (
   attesterSig: string,
-  params: TUnvalidated<ISignedClaimNode>
+  params: TUnvalidated<HashingLogic.ISignedClaimNode>
 ) => {
   const claimHash = HashingLogic.hashClaimTree(params.claimNode)
   const recoveredSigner = HashingLogic.recoverHashSigner(claimHash, attesterSig)
@@ -63,7 +58,7 @@ export const validateAttesterClaimSig = (
 
 export const validateAttesterRootSig = (
   attesterSig: string,
-  params: TUnvalidated<IBloomMerkleTreeComponents>
+  params: TUnvalidated<HashingLogic.IBloomMerkleTreeComponents>
 ) => {
   const recoveredSigner = HashingLogic.recoverHashSigner(
     EthU.toBuffer(params.rootHash),
@@ -74,7 +69,7 @@ export const validateAttesterRootSig = (
 
 export const validateBatchAttesterSig = (
   batchAttesterSig: string,
-  params: TUnvalidated<IBloomBatchMerkleTreeComponents>
+  params: TUnvalidated<HashingLogic.IBloomBatchMerkleTreeComponents>
 ) => {
   const recoveredSigner = HashingLogic.recoverHashSigner(
     EthU.toBuffer(
@@ -92,7 +87,7 @@ export const validateBatchAttesterSig = (
 
 export const validateSubjectSig = (
   subjectSig: string,
-  params: TUnvalidated<IBloomBatchMerkleTreeComponents>
+  params: TUnvalidated<HashingLogic.IBloomBatchMerkleTreeComponents>
 ) => {
   const recoveredSigner = ethSigUtil.recoverTypedSignature({
     data: HashingLogic.getAttestationAgreement(
@@ -108,10 +103,10 @@ export const validateSubjectSig = (
 
 export const validateChecksumSig = (
   checksumSig: string,
-  params: TUnvalidated<IBloomMerkleTreeComponents>
+  params: TUnvalidated<HashingLogic.IBloomMerkleTreeComponents>
 ) => {
   const checksum = HashingLogic.getChecksum(
-    params.claimNodes.map((a: ISignedClaimNode) =>
+    params.claimNodes.map((a: HashingLogic.ISignedClaimNode) =>
       HashingLogic.hashMessage(a.attesterSig)
     )
   )
