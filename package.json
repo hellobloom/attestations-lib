@@ -1,6 +1,6 @@
 {
   "name": "@bloomprotocol/attestations-lib",
-  "version": "4.1.6",
+  "version": "4.1.7",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "Shared types and logic between blooms dApp and implementation of attestation-kit.",
@@ -21,12 +21,10 @@
     "prettier": "^1.13.7",
     "ts-jest": "^23.1.4",
     "tslint": "^5.11.0",
-    "typescript": "^2.9.2"
+    "typescript": "^3.4.5"
   },
   "scripts": {
     "build": "./bin/build",
-    "prepack": "yarn build",
-    "prepare": "yarn build",
     "test": "node_modules/.bin/jest --watch",
     "test:ci": "node_modules/.bin/jest",
     "watch": "./node_modules/.bin/tsc --watch"
