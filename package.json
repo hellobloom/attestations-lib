@@ -25,6 +25,7 @@
   },
   "scripts": {
     "build": "./bin/build",
+    "prepublishOnly": "./bin/build",
     "test": "node_modules/.bin/jest --watch",
     "test:ci": "node_modules/.bin/jest",
     "watch": "./node_modules/.bin/tsc --watch"
