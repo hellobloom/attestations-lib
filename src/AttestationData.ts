@@ -310,6 +310,10 @@ export type TBaseAttIncomeIncome = {
   irregular: number
   num_transactions: number
 }
+export type TBaseAttIncomeStreamWrapper = {
+  income_streams?: TBaseAttIncomeStream | Array<TBaseAttIncomeStream>
+  expense_streams?: TBaseAttIncomeStream | Array<TBaseAttIncomeStream>
+}
 export type TBaseAttIncomeStream = {
   id?: number
   start_date: TDateOrTime
@@ -341,7 +345,7 @@ export type TBaseAttIncomeStream = {
 }
 export interface IBaseAttIncome extends IBaseAtt {
   summary?: TBaseAttIncomeSummary
-  data: TBaseAttIncomeStream | Array<TBaseAttIncomeStream>
+  data: TBaseAttIncomeStreamWrapper
 }
 
 ///////////////////////////////////////////////////
@@ -353,18 +357,19 @@ export interface IBaseAttAssetsSummary {
   num_accounts?: number
 }
 export interface IBaseAttAssetsAccount {
-  category: string
-  institution_name: string
-  institution_id: number
-  owner_type: string
-  type: string
-  type_confidence: string
-  value: number
+  category?: string
+  institution_name?: string
+  institution_id?: number
+  owner_type?: string
+  type?: string
+  type_confidence?: string
+  value?: number
 }
 export interface IBaseAttAssets extends IBaseAtt {
   generality: number
   summary?: IBaseAttAssetsSummary
   data: IBaseAttAssetsAccount | Array<IBaseAttAssetsAccount>
+  currency?: string
 }
 
 ///////////////////////////////////////////////////
