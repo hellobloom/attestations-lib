@@ -256,7 +256,7 @@ export type TBaseAttUtilitySummary = {
   total_paid?: number
   account_numbers?: Array<string>
   statement_dates: Array<TDate> | Array<TDatetime>
-  addresses?: Array<TAddress>
+  address?: TAddress | Array<TAddress>
 }
 export interface TBaseAttUtilityData extends IBaseAttDataObj {
   account_number?: string | number
@@ -286,8 +286,7 @@ export interface IBaseAttAddressData {
     website?: string
     accounts?: Array<IBaseAttAddressDataProviderAccount>
   }
-  address?: TAddress
-  addresses?: Array<TAddress>
+  address?: TAddress | Array<TAddress>
 }
 export interface IBaseAttAddress extends IBaseAtt {
   data: IBaseAttAddressData | Array<IBaseAttAddressData>
@@ -311,8 +310,8 @@ export type TBaseAttIncomeIncome = {
   num_transactions: number
 }
 export type TBaseAttIncomeStreamWrapper = {
-  income_streams?: TBaseAttIncomeStream | Array<TBaseAttIncomeStream>
-  expense_streams?: TBaseAttIncomeStream | Array<TBaseAttIncomeStream>
+  income?: TBaseAttIncomeStream | Array<TBaseAttIncomeStream>
+  expense?: TBaseAttIncomeStream | Array<TBaseAttIncomeStream>
 }
 export type TBaseAttIncomeStream = {
   id?: number
