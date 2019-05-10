@@ -256,7 +256,7 @@ export type TBaseAttUtilitySummary = {
   total_paid?: number
   account_numbers?: Array<string>
   statement_dates: Array<TDate> | Array<TDatetime>
-  addresses?: Array<TAddress>
+  address?: TAddress | Array<TAddress>
 }
 export interface TBaseAttUtilityData extends IBaseAttDataObj {
   account_number?: string | number
@@ -286,8 +286,7 @@ export interface IBaseAttAddressData {
     website?: string
     accounts?: Array<IBaseAttAddressDataProviderAccount>
   }
-  address?: TAddress
-  addresses?: Array<TAddress>
+  address?: TAddress | Array<TAddress>
 }
 export interface IBaseAttAddress extends IBaseAtt {
   data: IBaseAttAddressData | Array<IBaseAttAddressData>
@@ -309,6 +308,10 @@ export type TBaseAttIncomeIncome = {
   regular: number
   irregular: number
   num_transactions: number
+}
+export type TBaseAttIncomeStreamWrapper = {
+  income?: TBaseAttIncomeStream | Array<TBaseAttIncomeStream>
+  expense?: TBaseAttIncomeStream | Array<TBaseAttIncomeStream>
 }
 export type TBaseAttIncomeStream = {
   id?: number
@@ -341,7 +344,7 @@ export type TBaseAttIncomeStream = {
 }
 export interface IBaseAttIncome extends IBaseAtt {
   summary?: TBaseAttIncomeSummary
-  data: TBaseAttIncomeStream | Array<TBaseAttIncomeStream>
+  data: TBaseAttIncomeStreamWrapper
 }
 
 ///////////////////////////////////////////////////
@@ -353,18 +356,19 @@ export interface IBaseAttAssetsSummary {
   num_accounts?: number
 }
 export interface IBaseAttAssetsAccount {
-  category: string
-  institution_name: string
-  institution_id: number
-  owner_type: string
-  type: string
-  type_confidence: string
-  value: number
+  category?: string
+  institution_name?: string
+  institution_id?: number
+  owner_type?: string
+  type?: string
+  type_confidence?: string
+  value?: number
 }
 export interface IBaseAttAssets extends IBaseAtt {
   generality: number
   summary?: IBaseAttAssetsSummary
   data: IBaseAttAssetsAccount | Array<IBaseAttAssetsAccount>
+  currency?: string
 }
 
 ///////////////////////////////////////////////////
