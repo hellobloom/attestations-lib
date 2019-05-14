@@ -178,6 +178,7 @@ export interface IBaseAttAccount extends IBaseAtt {
 // Sanction screen attestation dataStr type
 ///////////////////////////////////////////////////
 export interface IBaseAttSanctionScreenData extends IBaseAttDataObj {
+  id?: string
   name: TPersonalName
   birthday: TDateOrTime
 }
