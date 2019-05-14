@@ -17,6 +17,13 @@ export interface IBaseAtt {
   // Date/time when attestation should be considered void (e.g., for credential expiry)
   expiry_date?: TDateOrTime
 
+  // Different levels of generality - zero-indexed, with increasing numbers indicating less
+  // generality, to allow for unlimited levels of depth (in practice, 3-5 should be
+  // sufficient for most cases).  This allows for arbitrary levels or amounts of generality
+  // within sub-attestations, to promote an attestation subject's ability to partially disclose
+  // the amount of data provided in an attestation.
+  generality?: number
+
   // Optional summary object (often useful for multiple-account types - otherwise, the data
   // field is preferable for most of these fields, for simplicity's sake
   summary?: {
@@ -28,13 +35,6 @@ export interface IBaseAtt {
 
     // End date/time of period during which attestation was applicable
     end_date?: TDateOrTime
-
-    // Different levels of generality - zero-indexed, with increasing numbers indicating less
-    // generality, to allow for unlimited levels of depth (in practice, 3-5 should be
-    // sufficient for most cases).  This allows for arbitrary levels or amounts of generality
-    // within sub-attestations, to promote an attestation subject's ability to partially disclose
-    // the amount of data provided in an attestation.
-    generality?: number
 
     // ...extensible with other fields that summarize the content of the attestation - e.g., a
     // list of addresses, accounts, totals of statistics, etc.
@@ -258,7 +258,7 @@ export interface IBaseAttIDDoc extends IBaseAtt {
 // Utility bill attestation dataStr type
 ///////////////////////////////////////////////////
 export type TBaseAttUtilitySummary = {
-  generality: number
+  date?: TDateOrTime
   currency?: string
   total_paid?: number
   account_numbers?: Array<string>
@@ -276,6 +276,7 @@ export interface IBaseAttUtilityData extends IBaseAttDataObj {
   statement_date: TDateOrTime
 }
 export interface IBaseAttUtility extends IBaseAtt {
+  generality: number
   summary?: TBaseAttUtilitySummary
   data: IBaseAttUtilityData | Array<IBaseAttUtilityData>
 }
@@ -303,7 +304,6 @@ export interface IBaseAttAddress extends IBaseAtt {
 // Income attestation dataStr type (total, gross, or expenses)
 ///////////////////////////////////////////////////
 export type TBaseAttIncomeSummary = {
-  generality: number
   start_date: TDateOrTime
   end_date: TDateOrTime
   net?: TBaseAttIncomeIncome
@@ -352,12 +352,15 @@ export type TBaseAttIncomeStream = {
   }>
 }
 export interface IBaseAttIncome extends IBaseAtt {
+  generality: number
   summary?: TBaseAttIncomeSummary
   data: TBaseAttIncomeStreamWrapper
 }
 
 ///////////////////////////////////////////////////
 // Assets attestation dataStr type (total, gross, or expenses)
+// import {AttestationData as AD} from '@bloomprotocol/attestations-lib'
+
 ///////////////////////////////////////////////////
 export interface IBaseAttAssetsSummary {
   date?: TDateOrTime
