@@ -45,44 +45,42 @@ export type TBaseAttData = IBaseAttDataObj | string | number
 ///////////////////////////////////////////////////
 // Helper types
 ///////////////////////////////////////////////////
-export type TPersonalName =  // Designed to be flexible - as a rule, a basic {given: "x", middle: "x", family: "x"} is probably the easiest for most Western use cases
-  | string
-  | {
-      full?: string
-      given?: string | Array<string>
-      middle?: string | Array<string>
-      family?: string | Array<string>
-      title?: string | Array<string>
-      prefix?: string | Array<string>
-      suffix?: string | Array<string>
-      nickname?: string | Array<string>
-      generational?: string | Array<string>
+// Designed to be flexible - as a rule, a basic {given: "x", middle: "x", family: "x"} is probably the easiest for most Western use cases
+export type TPersonalNameObj = {
+  full?: string
+  given?: string | Array<string>
+  middle?: string | Array<string>
+  family?: string | Array<string>
+  title?: string | Array<string>
+  prefix?: string | Array<string>
+  suffix?: string | Array<string>
+  nickname?: string | Array<string>
+  generational?: string | Array<string>
 
-      // For name changes
-      start_date?: TDateOrTime
-      end_date?: TDateOrTime
-    }
+  // For name changes
+  start_date?: TDateOrTime
+  end_date?: TDateOrTime
+}
+export type TPersonalName = TPersonalNameObj | string
 
 export type TDateOrTime = TDate | TDatetime
 
-export type TDate =
-  | string // ISO-8601 date in YYYY-MM-DD format
-  | {
-      year: string // YYYY
-      month: string // MM
-      day: string // DD
-    }
+export type TDate = TDateObj | string // ISO-8601 date in YYYY-MM-DD format
+export type TDateObj = {
+  year: string // YYYY
+  month: string // MM
+  day: string // DD
+}
 
-export type TDatetime =
-  | string // ISO-8601 datetime in YYYY-MM-DDTHH:MM:SSZ format
-  | {
-      year: string // YYYY
-      month: string // MM
-      day: string // DD
-      hour: string // HH
-      minute: string // MM
-      second: string // SS
-    }
+export type TDatetime = TDatetimeObj | string // ISO-8601 datetime in YYYY-MM-DDTHH:MM:SSZ format
+export type TDatetimeObj = {
+  year: string // YYYY
+  month: string // MM
+  day: string // DD
+  hour: string // HH
+  minute: string // MM
+  second: string // SS
+}
 
 export type TPhoneNumber =
   | string // Valid internationally-formatted phone number
