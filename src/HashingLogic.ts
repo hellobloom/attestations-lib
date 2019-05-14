@@ -514,62 +514,6 @@ export const getSignedMerkleTreeComponents = (
  * @param claimNodes - Complete attestation nodes
  * @param privKey - Attester private key
  */
-export const getSignedBatchMerkleTreeComponents = (
-  components: IBloomMerkleTreeComponents,
-  contractAddress: string,
-  subjectSig: string,
-  subject: string,
-  requestNonce: string,
-  privKey: Buffer
-): IBloomBatchMerkleTreeComponents => {
-  if (
-    !validateSignedAgreement(
-      subjectSig,
-      contractAddress,
-      components.layer2Hash,
-      requestNonce,
-      subject
-    )
-  ) {
-    throw new Error('Invalid subject sig')
-  }
-  const batchAttesterSig = signHash(
-    ethUtil.toBuffer(
-      hashMessage(
-        orderedStringify({
-          subject: subject,
-          rootHash: components.layer2Hash,
-        })
-      )
-    ),
-    privKey
-  )
-  const batchLayer2Hash = hashMessage(
-    orderedStringify({
-      attesterSig: batchAttesterSig,
-      subjectSig: subjectSig,
-    })
-  )
-  const attester = ethereumjsWallet.fromPrivateKey(privKey)
-  return {
-    attesterSig: components.attesterSig,
-    batchAttesterSig: batchAttesterSig,
-    batchLayer2Hash: batchLayer2Hash,
-    checksumSig: components.checksumSig,
-    claimNodes: components.claimNodes,
-    contractAddress: contractAddress,
-    layer2Hash: components.layer2Hash,
-    paddingNodes: components.paddingNodes,
-    requestNonce: requestNonce,
-    rootHash: components.rootHash,
-    rootHashNonce: components.rootHashNonce,
-    attester: attester.getAddressString(),
-    subject: subject,
-    subjectSig: subjectSig,
-    version: 'Batch-Attestation-Tree-1.0.0',
-  }
-}
-
 /**
  * Given attestation data and the attester's private key, construct the entire Bloom Merkle tree
  * and return the components needed to generate proofs
@@ -752,4 +696,60 @@ export const validateSignedAgreement = (
     sig: subjectSig,
   })
   return recoveredEthAddress.toLowerCase() === subject.toLowerCase()
+}
+
+export const getSignedBatchMerkleTreeComponents = (
+  components: IBloomMerkleTreeComponents,
+  contractAddress: string,
+  subjectSig: string,
+  subject: string,
+  requestNonce: string,
+  privKey: Buffer
+): IBloomBatchMerkleTreeComponents => {
+  if (
+    !validateSignedAgreement(
+      subjectSig,
+      contractAddress,
+      components.layer2Hash,
+      requestNonce,
+      subject
+    )
+  ) {
+    throw new Error('Invalid subject sig')
+  }
+  const batchAttesterSig = signHash(
+    ethUtil.toBuffer(
+      hashMessage(
+        orderedStringify({
+          subject: subject,
+          rootHash: components.layer2Hash,
+        })
+      )
+    ),
+    privKey
+  )
+  const batchLayer2Hash = hashMessage(
+    orderedStringify({
+      attesterSig: batchAttesterSig,
+      subjectSig: subjectSig,
+    })
+  )
+  const attester = ethereumjsWallet.fromPrivateKey(privKey)
+  return {
+    attesterSig: components.attesterSig,
+    batchAttesterSig: batchAttesterSig,
+    batchLayer2Hash: batchLayer2Hash,
+    checksumSig: components.checksumSig,
+    claimNodes: components.claimNodes,
+    contractAddress: contractAddress,
+    layer2Hash: components.layer2Hash,
+    paddingNodes: components.paddingNodes,
+    requestNonce: requestNonce,
+    rootHash: components.rootHash,
+    rootHashNonce: components.rootHashNonce,
+    attester: attester.getAddressString(),
+    subject: subject,
+    subjectSig: subjectSig,
+    version: 'Batch-Attestation-Tree-1.0.0',
+  }
 }

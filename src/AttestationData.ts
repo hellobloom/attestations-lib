@@ -17,7 +17,8 @@ export interface IBaseAtt {
   // Date/time when attestation should be considered void (e.g., for credential expiry)
   expiry_date?: TDateOrTime
 
-  // Optional summary object (often useful for multiple-account types - otherwise, the data field is preferable for most of these fields, for simplicity's sake
+  // Optional summary object (often useful for multiple-account types - otherwise, the data
+  // field is preferable for most of these fields, for simplicity's sake
   summary?: {
     // Single date/time during which attestation was applicable or ascertained
     date?: TDateOrTime
@@ -28,15 +29,21 @@ export interface IBaseAtt {
     // End date/time of period during which attestation was applicable
     end_date?: TDateOrTime
 
-    // Different levels of generality - zero-indexed, with increasing numbers indicating less generality, to allow for unlimited levels of depth (in practice, 3-5 should be sufficient for most cases).  This allows for arbitrary levels or amounts of generality within sub-attestations, to promote an attestation subject's ability to partially disclose the amount of data provided in an attestation.
+    // Different levels of generality - zero-indexed, with increasing numbers indicating less
+    // generality, to allow for unlimited levels of depth (in practice, 3-5 should be
+    // sufficient for most cases).  This allows for arbitrary levels or amounts of generality
+    // within sub-attestations, to promote an attestation subject's ability to partially disclose
+    // the amount of data provided in an attestation.
     generality?: number
 
-    // ...extensible with other fields that summarize the content of the attestation - e.g., a list of addresses, accounts, totals of statistics, etc.
+    // ...extensible with other fields that summarize the content of the attestation - e.g., a
+    // list of addresses, accounts, totals of statistics, etc.
   }
 
   // Core attestation data, dependent on attestation type
   data?: Array<TBaseAttData> | TBaseAttData
-  // ...extensible with other fields.  Other fields explicating general data about the attestation, such as location, shelf life, common units, etc., should be placed here.
+  // ...extensible with other fields.  Other fields explicating general data about the attestation,
+  // such as location, shelf life, common units, etc., should be placed here.
 }
 
 export interface IBaseAttDataObj {}
@@ -45,7 +52,8 @@ export type TBaseAttData = IBaseAttDataObj | string | number
 ///////////////////////////////////////////////////
 // Helper types
 ///////////////////////////////////////////////////
-// Designed to be flexible - as a rule, a basic {given: "x", middle: "x", family: "x"} is probably the easiest for most Western use cases
+// Designed to be flexible - as a rule, a basic {given: "x", middle: "x", family: "x"} is probably
+// the easiest for most Western use cases
 export type TPersonalNameObj = {
   full?: string
   given?: string | Array<string>
@@ -257,7 +265,7 @@ export type TBaseAttUtilitySummary = {
   statement_dates: Array<TDate> | Array<TDatetime>
   address?: TAddress | Array<TAddress>
 }
-export interface TBaseAttUtilityData extends IBaseAttDataObj {
+export interface IBaseAttUtilityData extends IBaseAttDataObj {
   account_number?: string | number
   currency?: string
   billing_address: TAddress
@@ -269,7 +277,7 @@ export interface TBaseAttUtilityData extends IBaseAttDataObj {
 }
 export interface IBaseAttUtility extends IBaseAtt {
   summary?: TBaseAttUtilitySummary
-  data: TBaseAttUtilityData | Array<TBaseAttUtilityData>
+  data: IBaseAttUtilityData | Array<IBaseAttUtilityData>
 }
 
 ///////////////////////////////////////////////////
@@ -327,8 +335,10 @@ export type TBaseAttIncomeStream = {
   payer?: string
   rank?: string
 
-  frequency?: string // suggested: 'daily', 'weekly' 'biweekly', 'monthly', 'semi_monthly', 'multiple_months', 'irregular'
-  periodicity?: number // numerical alternative to above, in days
+  // suggested: 'daily', 'weekly' 'biweekly', 'monthly', 'semi_monthly', 'multiple_months', 'irregular'
+  frequency?: string
+  // numerical alternative to "frequency" above, in days
+  periodicity?: number
 
   stdev_value?: number
   total_value?: number
@@ -422,4 +432,4 @@ export interface IBaseAttGender extends IBaseAtt {
  *   X 'address' = 33,
  *   - 'correction' = 34,
  *   X 'account' = 35,
- **/
+ */
