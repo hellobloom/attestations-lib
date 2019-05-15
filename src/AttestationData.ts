@@ -182,7 +182,7 @@ export interface IBaseAttAccount extends IBaseAtt {
 
 // Lists (for Sanction/PEP)
 export interface IBaseAttList {
-  name: string
+  name?: string
   url?: string
 }
 
