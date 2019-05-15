@@ -180,13 +180,31 @@ export interface IBaseAttAccount extends IBaseAtt {
   data: IBaseAttAccountData | Array<IBaseAttAccountData>
 }
 
+// Lists (for Sanction/PEP)
+export interface IBaseAttList {
+  name?: string
+  url?: string
+}
+
 ///////////////////////////////////////////////////
 // Sanction screen attestation dataStr type
 ///////////////////////////////////////////////////
 export interface IBaseAttSanctionScreenData extends IBaseAttDataObj {
   id?: string
-  name: TPersonalName
-  birthday: TDateOrTime
+  name?: TPersonalName
+  birthday?: TDateOrTime
+  search_summary?: {
+    hit_location?: string
+    hit_number?: number
+    lists?: Array<IBaseAttList>
+    score?: string
+    hits?: Array<{
+      id?: string
+      hit_name?: string
+    }>
+    flag_type?: string
+    comment?: string
+  }
 }
 export interface IBaseAttSanctionScreen extends IBaseAtt {
   data: IBaseAttSanctionScreenData | Array<IBaseAttSanctionScreenData>
@@ -204,8 +222,7 @@ export interface IBaseAttPEPData extends IBaseAttDataObj {
   search_summary: {
     hit_location?: string
     hit_number?: number
-    list_name?: string
-    list_url?: string
+    lists: Array<IBaseAttList>
     record_id?: string
     search_reference_id?: string
     score?: string
