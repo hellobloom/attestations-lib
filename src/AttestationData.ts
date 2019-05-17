@@ -285,8 +285,8 @@ export type TBaseAttUtilitySummary = {
 export interface IBaseAttUtilityStatement {
   account_number?: string | number
   currency?: string
-  billing_address: TAddress
-  service_address: TAddress
+  billing_address?: TAddress
+  service_address?: TAddress
   total_bill?: number
   balance_adjustments?: number
   due_date?: TDateOrTime
