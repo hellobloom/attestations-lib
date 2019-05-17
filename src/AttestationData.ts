@@ -334,6 +334,7 @@ export interface IBaseAttAddress extends IBaseAtt {
 export type TBaseAttIncomeSummary = {
   start_date: TDateOrTime
   end_date: TDateOrTime
+  currency?: string
   net?: TBaseAttIncomeIncome
   gross?: TBaseAttIncomeIncome
   expenses?: TBaseAttIncomeIncome
