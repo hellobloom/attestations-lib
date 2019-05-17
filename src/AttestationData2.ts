@@ -327,13 +327,11 @@ export interface IBaseAttAddressAccount {
   statements?: Array<IBaseAttAddressStatement>
 }
 export interface IBaseAttAddressProvider {
-  provider?: {
-    name: string
-    id?: string
-    country?: string
-    service_types?: Array<string>
-    website?: string
-  }
+  name: string
+  id?: string
+  country?: string
+  service_types?: Array<string>
+  website?: string
   accounts?: Array<IBaseAttAddressAccount>
   address?: TAddress | Array<TAddress>
 }
