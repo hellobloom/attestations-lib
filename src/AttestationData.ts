@@ -321,7 +321,7 @@ export interface IBaseAttUtility extends IBaseAtt {
 export interface IBaseAttAddressStatement {
   billing_address?: TAddress | Array<TAddress>
   service_address?: TAddress | Array<TAddress>
-  statement_date?: Array<IBaseAttAddressStatement>
+  statement_date?: TDateOrTime
 }
 export interface IBaseAttAddressAccount {
   statements?: Array<IBaseAttAddressStatement>
