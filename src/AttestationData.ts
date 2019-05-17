@@ -73,22 +73,9 @@ export type TPersonalName = TPersonalNameObj | string
 
 export type TDateOrTime = TDate | TDatetime
 
-export type TDate = TDateObj | string // ISO-8601 date in YYYY-MM-DD format
-export type TDateObj = {
-  year: string // YYYY
-  month: string // MM
-  day: string // DD
-}
+export type TDate = string // ISO-8601 date in YYYY-MM-DD format
 
-export type TDatetime = TDatetimeObj | string // ISO-8601 datetime in YYYY-MM-DDTHH:MM:SSZ format
-export type TDatetimeObj = {
-  year: string // YYYY
-  month: string // MM
-  day: string // DD
-  hour: string // HH
-  minute: string // MM
-  second: string // SS
-}
+export type TDatetime = string // ISO-8601 datetime in YYYY-MM-DDTHH:MM:SSZ format
 
 export type TPhoneNumber =
   | string // Valid internationally-formatted phone number
