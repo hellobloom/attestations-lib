@@ -282,7 +282,7 @@ export type TBaseAttUtilitySummary = {
   statement_dates: Array<TDate> | Array<TDatetime>
   address?: TAddress | Array<TAddress>
 }
-export interface IBaseAttUtilityData extends IBaseAttDataObj {
+export interface IBaseAttUtilityStatement {
   account_number?: string | number
   currency?: string
   billing_address: TAddress
@@ -292,29 +292,53 @@ export interface IBaseAttUtilityData extends IBaseAttDataObj {
   due_date?: TDateOrTime
   statement_date: TDateOrTime
 }
+export interface IBaseAttUtilityPayment {
+  currency?: string
+  amount?: number
+  date?: string
+}
+export interface IBaseAttUtilityAccount {
+  statements?: Array<IBaseAttUtilityStatement>
+  payments?: Array<IBaseAttUtilityPayment>
+}
+export interface IBaseAttUtilityProvider extends IBaseAttDataObj {
+  name?: string
+  id?: string
+  country?: string
+  service_types?: string
+  website?: string
+  accounts?: Array<IBaseAttUtilityAccount>
+}
 export interface IBaseAttUtility extends IBaseAtt {
   generality: number
   summary?: TBaseAttUtilitySummary
-  data: IBaseAttUtilityData | Array<IBaseAttUtilityData>
+  data?: IBaseAttUtilityProvider | Array<IBaseAttUtilityProvider>
 }
 
 ///////////////////////////////////////////////////
 // Address attestation dataStr type
 ///////////////////////////////////////////////////
-export interface IBaseAttAddressDataProviderAccount {}
-export interface IBaseAttAddressData {
+export interface IBaseAttAddressStatement {
+  billing_address?: TAddress | Array<TAddress>
+  service_address?: TAddress | Array<TAddress>
+  statement_date?: Array<IBaseAttAddressStatement>
+}
+export interface IBaseAttAddressAccount {
+  statements?: Array<IBaseAttAddressStatement>
+}
+export interface IBaseAttAddressProvider {
   provider?: {
     name: string
     id?: string
     country?: string
     service_types?: Array<string>
     website?: string
-    accounts?: Array<IBaseAttAddressDataProviderAccount>
   }
+  accounts?: Array<IBaseAttAddressAccount>
   address?: TAddress | Array<TAddress>
 }
 export interface IBaseAttAddress extends IBaseAtt {
-  data: IBaseAttAddressData | Array<IBaseAttAddressData>
+  data: IBaseAttAddressProvider | Array<IBaseAttAddressProvider>
 }
 
 ///////////////////////////////////////////////////
