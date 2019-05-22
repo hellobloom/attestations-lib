@@ -233,7 +233,7 @@ export interface IBaseAttIDDocData extends IBaseAttDataObj {
   name: TPersonalName
   country: string
 
-  authenticationResult?:
+  authentication_result?:
     | 'unknown'
     | 'passed'
     | 'failed'
