@@ -179,7 +179,7 @@ export interface IBaseAttList {
 export interface IBaseAttSanctionScreenData extends IBaseAttDataObj {
   id?: string
   name?: TPersonalName
-  birthday?: TDateOrTime
+  dob?: TDateOrTime
   search_summary?: {
     hit_location?: string
     hit_number?: number
@@ -230,8 +230,8 @@ export interface IBaseAttPEP extends IBaseAtt {
 ///////////////////////////////////////////////////
 export interface IBaseAttIDDocData extends IBaseAttDataObj {
   date: TDateOrTime
-  name: TPersonalName
-  country: string
+  name?: TPersonalName
+  country?: string
 
   authentication_result?:
     | 'unknown'
