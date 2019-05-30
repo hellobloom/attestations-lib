@@ -232,6 +232,7 @@ export interface IBaseAttIDDocData extends IBaseAttDataObj {
   date: TDateOrTime
   name?: TPersonalName
   country?: string
+  document_type?: string
 
   authentication_result?:
     | 'unknown'
