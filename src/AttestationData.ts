@@ -46,6 +46,7 @@ export interface IBaseAtt {
   // such as location, shelf life, common units, etc., should be placed here.
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface IBaseAttDataObj {}
 export type TBaseAttData = IBaseAttDataObj | string | number
 
@@ -234,13 +235,7 @@ export interface IBaseAttIDDocData extends IBaseAttDataObj {
   country?: string
   document_type?: string
 
-  authentication_result?:
-    | 'unknown'
-    | 'passed'
-    | 'failed'
-    | 'skipped'
-    | 'caution'
-    | 'attention' // IAssureIDResult.AuthenticationResult
+  authentication_result?: 'unknown' | 'passed' | 'failed' | 'skipped' | 'caution' | 'attention' // IAssureIDResult.AuthenticationResult
   biographic?: {
     age?: number
     dob?: TDateOrTime

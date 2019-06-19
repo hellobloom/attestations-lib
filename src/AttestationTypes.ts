@@ -44,9 +44,7 @@ export enum AttestationTypeID {
   'account' = 35,
 }
 
-export type AttestationTypeManifest = {
-  [P in keyof typeof AttestationTypeID]: AttestationType
-}
+export type AttestationTypeManifest = {[P in keyof typeof AttestationTypeID]: AttestationType}
 
 export const AttestationTypes: AttestationTypeManifest = {
   phone: {
@@ -231,29 +229,23 @@ export const AttestationTypes: AttestationTypeManifest = {
   },
 }
 
-export const AttestationTypesByID = Object.keys(AttestationTypes).reduce(
-  (acc: any, key: string) => {
-    var def = (Object as any).assign({}, AttestationTypes[key], {
-      name: key,
-    })
-    return (Object as any).assign(acc, {[def.id.toString()]: def})
-  },
-  {}
-)
+export const AttestationTypesByID = Object.keys(AttestationTypes).reduce((acc: any, key: string) => {
+  const def = Object.assign({}, AttestationTypes[key as keyof typeof AttestationTypeID], {
+    name: key,
+  })
+  return Object.assign(acc, {[def.id.toString()]: def})
+}, {})
 
 export type TAttestationTypeNames = keyof typeof AttestationTypeID
 export const AttestationTypeNames = Object.keys(AttestationTypes)
 
-export const AttestationTypeIDs: AttestationTypeID[] = Object.keys(
-  AttestationTypes
-).map(k => AttestationTypes[k].id)
+export const AttestationTypeIDs: AttestationTypeID[] = Object.keys(AttestationTypes).map(
+  k => AttestationTypes[k as keyof typeof AttestationTypeID].id,
+)
 
 // Type accessors
 
-export const getAttestationTypeAttrib = (
-  typeId: AttestationTypeID,
-  attrib: keyof AttestationType
-) => {
+export const getAttestationTypeAttrib = (typeId: AttestationTypeID, attrib: keyof AttestationType) => {
   const val = AttestationTypesByID[typeId.toString()][attrib]
   if (val === undefined || val === null) {
     throw new Error(`AttestationTypeID ${typeId} not supported`)
@@ -261,9 +253,7 @@ export const getAttestationTypeAttrib = (
   return val
 }
 
-const attestationTypeAccessor = (attrib: keyof AttestationType) => (
-  typeId: AttestationTypeID
-) => getAttestationTypeAttrib(typeId, attrib)
+const attestationTypeAccessor = (attrib: keyof AttestationType) => (typeId: AttestationTypeID) => getAttestationTypeAttrib(typeId, attrib)
 
 export const getAttestationTypeStr = attestationTypeAccessor('name')
 

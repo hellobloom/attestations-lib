@@ -12,11 +12,11 @@ import {
   getBloomIDStrength,
   getFormattedName,
   AttestationStatus,
-} from './src/AttestationTypes'
-import * as AttestationData from './src/AttestationData'
-import * as HashingLogic from './src/HashingLogic'
-import * as Validation from './src/Validation'
-import * as RFC3339DateTime from './src/RFC3339DateTime'
+} from './AttestationTypes'
+import * as AttestationData from './AttestationData'
+import * as HashingLogic from './HashingLogic'
+import * as Validation from './Validation'
+import * as RFC3339DateTime from './RFC3339DateTime'
 
 export {
   AttestationData,
