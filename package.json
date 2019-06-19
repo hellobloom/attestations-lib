@@ -12,11 +12,14 @@
     "dist"
   ],
   "scripts": {
-    "start": "tsdx watch --tsconfig ./tsconfig.build.json",
-    "build": "tsdx build --tsconfig ./tsconfig.build.json",
+    "start": "npm run clean && tsdx watch --tsconfig ./tsconfig.build.json",
+    "build": "npm run clean && tsdx build --tsconfig ./tsconfig.build.json",
     "test": "tsdx test",
     "eslint": "./bin/eslint",
-    "eslint-fix": "./bin/eslint --fix"
+    "eslint-fix": "./bin/eslint --fix",
+    "clean": "rimraf dist",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run test && npm run eslint"
   },
   "dependencies": {
     "@types/ramda": "^0.26.9",
@@ -32,15 +35,18 @@
     "@types/jest": "^24.0.15",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "@typescript-eslint/parser": "^1.7.0",
+    "acorn": "^6.1.1",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.2.0",
     "eslint-plugin-prettier": "^3.0.1",
+    "jest-resolve": "^24.8.0",
     "prettier": "^1.17.0",
+    "rimraf": "^2.6.3",
+    "ts-node": "^7.0.1",
+    "tsconfig-paths": "^3.5.0",
     "tsdx": "^0.7.1",
     "tslib": "^1.10.0",
-    "typescript": "^3.5.2",
-    "ts-node": "^7.0.1",
-    "tsconfig-paths": "^3.5.0"
+    "typescript": "^3.5.2"
   },
   "jest": {
     "moduleFileExtensions": [
