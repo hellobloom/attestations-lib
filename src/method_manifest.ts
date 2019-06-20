@@ -308,13 +308,7 @@ export const AccountRegistryLogic: IContractMethodManifest = {
       },
     },
     addAddressToAccountFor: {
-      args_arr: [
-        '_newAddress',
-        '_newAddressSig',
-        '_senderSig',
-        '_sender',
-        '_nonce',
-      ],
+      args_arr: ['_newAddress', '_newAddressSig', '_senderSig', '_sender', '_nonce'],
       args: {
         _newAddress: {
           type: 'address',
@@ -732,14 +726,7 @@ export const AttestationLogic: IContractMethodManifest = {
       },
     },
     contestFor: {
-      args_arr: [
-        '_attester',
-        '_requester',
-        '_reward',
-        '_paymentNonce',
-        '_requesterSig',
-        '_delegationSig',
-      ],
+      args_arr: ['_attester', '_requester', '_reward', '_paymentNonce', '_requesterSig', '_delegationSig'],
       args: {
         _attester: {
           type: 'address',
@@ -768,15 +755,7 @@ export const AttestationLogic: IContractMethodManifest = {
       },
     },
     validateSubjectSig: {
-      args_arr: [
-        '_subject',
-        '_attester',
-        '_requester',
-        '_dataHash',
-        '_typeIds',
-        '_requestNonce',
-        '_subjectSig',
-      ],
+      args_arr: ['_subject', '_attester', '_requester', '_dataHash', '_typeIds', '_requestNonce', '_subjectSig'],
       args: {
         _subject: {
           type: 'address',
@@ -1088,14 +1067,7 @@ export const AttestationLogicUpgradeMode: IContractMethodManifest = {
     },
 
     proxyWriteAttestation: {
-      args_arr: [
-        '_subject',
-        '_attester',
-        '_requester',
-        '_dataHash',
-        '_typeIds',
-        '_timestamp',
-      ],
+      args_arr: ['_subject', '_attester', '_requester', '_dataHash', '_typeIds', '_timestamp'],
       args: {
         _subject: {
           type: 'address',
@@ -1185,13 +1157,7 @@ export const AttestationRepo: IContractMethodManifest = {
       },
     },
     writeAttestation: {
-      args_arr: [
-        '_subjectId',
-        '_attesterId',
-        '_timestamp',
-        '_stakeValue',
-        '_expiresAt',
-      ],
+      args_arr: ['_subjectId', '_attesterId', '_timestamp', '_stakeValue', '_expiresAt'],
       args: {
         _subjectId: {
           type: 'uint256',
@@ -1281,13 +1247,7 @@ export const AttestationRepo: IContractMethodManifest = {
 export const AttestationRepoInterface: IContractMethodManifest = {
   methods: {
     writeAttestation: {
-      args_arr: [
-        '_subjectId',
-        '_attesterId',
-        '_timestamp',
-        '_stakeValue',
-        '_expiresAt',
-      ],
+      args_arr: ['_subjectId', '_attesterId', '_timestamp', '_stakeValue', '_expiresAt'],
       args: {
         _subjectId: {
           type: 'uint256',
@@ -1555,13 +1515,7 @@ export const BLT: IContractMethodManifest = {
       },
     },
     createCloneToken: {
-      args_arr: [
-        '_cloneTokenName',
-        '_cloneDecimalUnits',
-        '_cloneTokenSymbol',
-        '_snapshotBlock',
-        '_transfersEnabled',
-      ],
+      args_arr: ['_cloneTokenName', '_cloneDecimalUnits', '_cloneTokenSymbol', '_snapshotBlock', '_transfersEnabled'],
       args: {
         _cloneTokenName: {
           type: 'string',
@@ -1625,15 +1579,7 @@ export const BLT: IContractMethodManifest = {
       args: {},
     },
     grantVestedTokens: {
-      args_arr: [
-        '_to',
-        '_value',
-        '_start',
-        '_cliff',
-        '_vesting',
-        '_revokable',
-        '_burnsOnRevoke',
-      ],
+      args_arr: ['_to', '_value', '_start', '_cliff', '_vesting', '_revokable', '_burnsOnRevoke'],
       args: {
         _to: {
           type: 'address',
@@ -2231,13 +2177,7 @@ export const MiniMeToken: IContractMethodManifest = {
       },
     },
     createCloneToken: {
-      args_arr: [
-        '_cloneTokenName',
-        '_cloneDecimalUnits',
-        '_cloneTokenSymbol',
-        '_snapshotBlock',
-        '_transfersEnabled',
-      ],
+      args_arr: ['_cloneTokenName', '_cloneDecimalUnits', '_cloneTokenSymbol', '_snapshotBlock', '_transfersEnabled'],
       args: {
         _cloneTokenName: {
           type: 'string',
@@ -2311,14 +2251,7 @@ export const MiniMeToken: IContractMethodManifest = {
 export const MiniMeTokenFactory: IContractMethodManifest = {
   methods: {
     createCloneToken: {
-      args_arr: [
-        '_parentToken',
-        '_snapshotBlock',
-        '_tokenName',
-        '_decimalUnits',
-        '_tokenSymbol',
-        '_transfersEnabled',
-      ],
+      args_arr: ['_parentToken', '_snapshotBlock', '_tokenName', '_decimalUnits', '_tokenSymbol', '_transfersEnabled'],
       args: {
         _parentToken: {
           type: 'address',
@@ -2429,13 +2362,7 @@ export const MiniMeVestedToken: IContractMethodManifest = {
       args: {},
     },
     createCloneToken: {
-      args_arr: [
-        '_cloneTokenName',
-        '_cloneDecimalUnits',
-        '_cloneTokenSymbol',
-        '_snapshotBlock',
-        '_transfersEnabled',
-      ],
+      args_arr: ['_cloneTokenName', '_cloneDecimalUnits', '_cloneTokenSymbol', '_snapshotBlock', '_transfersEnabled'],
       args: {
         _cloneTokenName: {
           type: 'string',
@@ -2620,15 +2547,7 @@ export const MiniMeVestedToken: IContractMethodManifest = {
       },
     },
     grantVestedTokens: {
-      args_arr: [
-        '_to',
-        '_value',
-        '_start',
-        '_cliff',
-        '_vesting',
-        '_revokable',
-        '_burnsOnRevoke',
-      ],
+      args_arr: ['_to', '_value', '_start', '_cliff', '_vesting', '_revokable', '_burnsOnRevoke'],
       args: {
         _to: {
           type: 'address',
@@ -3007,14 +2926,7 @@ export const SafeMath: IContractMethodManifest = {
 export const SigningLogic: IContractMethodManifest = {
   methods: {
     generateRequestAttestationSchemaHash: {
-      args_arr: [
-        '_subject',
-        '_attester',
-        '_requester',
-        '_dataHash',
-        '_typeIds',
-        '_nonce',
-      ],
+      args_arr: ['_subject', '_attester', '_requester', '_dataHash', '_typeIds', '_nonce'],
       args: {
         _subject: {
           type: 'address',
@@ -3077,15 +2989,7 @@ export const SigningLogic: IContractMethodManifest = {
       },
     },
     generateAttestForDelegationSchemaHash: {
-      args_arr: [
-        '_subject',
-        '_requester',
-        '_reward',
-        '_paymentNonce',
-        '_dataHash',
-        '_typeIds',
-        '_requestNonce',
-      ],
+      args_arr: ['_subject', '_requester', '_reward', '_paymentNonce', '_dataHash', '_typeIds', '_requestNonce'],
       args: {
         _subject: {
           type: 'address',
@@ -3135,15 +3039,7 @@ export const SigningLogic: IContractMethodManifest = {
       },
     },
     generateStakeForDelegationSchemaHash: {
-      args_arr: [
-        '_subject',
-        '_value',
-        '_paymentNonce',
-        '_dataHash',
-        '_typeIds',
-        '_requestNonce',
-        '_stakeDuration',
-      ],
+      args_arr: ['_subject', '_value', '_paymentNonce', '_dataHash', '_typeIds', '_requestNonce', '_stakeDuration'],
       args: {
         _subject: {
           type: 'address',
@@ -3258,14 +3154,7 @@ export const SigningLogicInterface: IContractMethodManifest = {
       },
     },
     generateRequestAttestationSchemaHash: {
-      args_arr: [
-        '_subject',
-        '_attester',
-        '_requester',
-        '_dataHash',
-        '_typeIds',
-        '_nonce',
-      ],
+      args_arr: ['_subject', '_attester', '_requester', '_dataHash', '_typeIds', '_nonce'],
       args: {
         _subject: {
           type: 'address',
@@ -3294,15 +3183,7 @@ export const SigningLogicInterface: IContractMethodManifest = {
       },
     },
     generateAttestForDelegationSchemaHash: {
-      args_arr: [
-        '_subject',
-        '_requester',
-        '_reward',
-        '_paymentNonce',
-        '_dataHash',
-        '_typeIds',
-        '_requestNonce',
-      ],
+      args_arr: ['_subject', '_requester', '_reward', '_paymentNonce', '_dataHash', '_typeIds', '_requestNonce'],
       args: {
         _subject: {
           type: 'address',
@@ -3352,15 +3233,7 @@ export const SigningLogicInterface: IContractMethodManifest = {
       },
     },
     generateStakeForDelegationSchemaHash: {
-      args_arr: [
-        '_subject',
-        '_value',
-        '_paymentNonce',
-        '_dataHash',
-        '_typeIds',
-        '_requestNonce',
-        '_stakeDuration',
-      ],
+      args_arr: ['_subject', '_value', '_paymentNonce', '_dataHash', '_typeIds', '_requestNonce', '_stakeDuration'],
       args: {
         _subject: {
           type: 'address',
@@ -3483,14 +3356,7 @@ export const SigningLogicInterface: IContractMethodManifest = {
 export const SigningLogicLegacy: IContractMethodManifest = {
   methods: {
     generateRequestAttestationSchemaHash: {
-      args_arr: [
-        '_subject',
-        '_attester',
-        '_requester',
-        '_dataHash',
-        '_typeIds',
-        '_nonce',
-      ],
+      args_arr: ['_subject', '_attester', '_requester', '_dataHash', '_typeIds', '_nonce'],
       args: {
         _subject: {
           type: 'address',
@@ -3553,15 +3419,7 @@ export const SigningLogicLegacy: IContractMethodManifest = {
       },
     },
     generateAttestForDelegationSchemaHash: {
-      args_arr: [
-        '_subject',
-        '_requester',
-        '_reward',
-        '_paymentNonce',
-        '_dataHash',
-        '_typeIds',
-        '_requestNonce',
-      ],
+      args_arr: ['_subject', '_requester', '_reward', '_paymentNonce', '_dataHash', '_typeIds', '_requestNonce'],
       args: {
         _subject: {
           type: 'address',
@@ -3611,15 +3469,7 @@ export const SigningLogicLegacy: IContractMethodManifest = {
       },
     },
     generateStakeForDelegationSchemaHash: {
-      args_arr: [
-        '_subject',
-        '_value',
-        '_paymentNonce',
-        '_dataHash',
-        '_typeIds',
-        '_requestNonce',
-        '_stakeDuration',
-      ],
+      args_arr: ['_subject', '_value', '_paymentNonce', '_dataHash', '_typeIds', '_requestNonce', '_stakeDuration'],
       args: {
         _subject: {
           type: 'address',
@@ -4062,15 +3912,7 @@ export const VotingCenter: IContractMethodManifest = {
     },
 
     createPoll: {
-      args_arr: [
-        '_ipfsHash',
-        '_numOptions',
-        '_startTime',
-        '_endTime',
-        '_registry',
-        '_signingLogic',
-        '_pollAdmin',
-      ],
+      args_arr: ['_ipfsHash', '_numOptions', '_startTime', '_endTime', '_registry', '_signingLogic', '_pollAdmin'],
       args: {
         _ipfsHash: {
           type: 'bytes',

@@ -2,7 +2,7 @@ declare module 'ethereumjs-util' {
   import {Buffer} from 'buffer'
   import BN = require('bn.js')
 
-  interface Signature {
+  type Signature = {
     v: number
     r: Buffer
     s: Buffer
@@ -27,22 +27,10 @@ declare module 'ethereumjs-util' {
   export function zeros(bytes: number): Buffer
 
   export function setLength(msg: Buffer, length: number, right: boolean): Buffer
-  export function setLength(
-    msg: number[],
-    length: number,
-    right: boolean
-  ): number[]
+  export function setLength(msg: number[], length: number, right: boolean): number[]
 
-  export function setLengthLeft(
-    msg: Buffer,
-    length: number,
-    right?: boolean
-  ): Buffer
-  export function setLengthLeft(
-    msg: number[],
-    length: number,
-    right?: boolean
-  ): number[]
+  export function setLengthLeft(msg: Buffer, length: number, right?: boolean): Buffer
+  export function setLengthLeft(msg: number[], length: number, right?: boolean): number[]
 
   export function setLengthRight(msg: Buffer, length: number): Buffer
   export function setLengthRight(msg: number[], length: number): number[]
@@ -61,17 +49,11 @@ declare module 'ethereumjs-util' {
 
   export function toUnsigned(num: BN): Buffer
 
-  export function sha3(
-    a: Buffer | string | number | number[],
-    bits?: number
-  ): Buffer
+  export function sha3(a: Buffer | string | number | number[], bits?: number): Buffer
 
   export function sha256(a: Buffer | string | number | number[]): Buffer
 
-  export function ripemd160(
-    a: Buffer | string | number | number[],
-    padded?: boolean
-  ): Buffer
+  export function ripemd160(a: Buffer | string | number | number[], padded?: boolean): Buffer
 
   export function rlphash(a: Buffer | string | number | number[]): Buffer
 
@@ -90,12 +72,7 @@ declare module 'ethereumjs-util' {
 
   export function hashPersonalMessage(message: Buffer | string): Buffer
 
-  export function ecrecover(
-    msgHash: Buffer,
-    v: number,
-    r: Buffer,
-    s: Buffer
-  ): string
+  export function ecrecover(msgHash: Buffer, v: number, r: Buffer, s: Buffer): string
 
   export function toRpcSig(v: number, r: Buffer, s: Buffer): string
 
@@ -109,22 +86,14 @@ declare module 'ethereumjs-util' {
 
   export function isValidChecksumAddress(address: string): boolean
 
-  export function generateAddress(
-    from: Buffer | string,
-    nonce: number | string | number[] | Buffer
-  ): Buffer
+  export function generateAddress(from: Buffer | string, nonce: number | string | number[] | Buffer): Buffer
 
   export function isPrecompiled(address: Buffer | string): boolean
 
   export function addHexPrefix(str: string): string
   export function stripHexPrefix(str: string): string
 
-  export function isValidSignature(
-    v: number,
-    r: Buffer | string,
-    s: Buffer | string,
-    homestead?: boolean
-  ): boolean
+  export function isValidSignature(v: number, r: Buffer | string, s: Buffer | string, homestead?: boolean): boolean
 
   export function baToJSON(ba: Buffer): string
   export function baToJSON(ba: any[]): string[]
