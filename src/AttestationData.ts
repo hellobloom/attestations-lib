@@ -260,6 +260,48 @@ export interface IBaseAttIDDoc extends IBaseAtt {
 }
 
 ///////////////////////////////////////////////////
+// Loan bill attestation dataStr type
+///////////////////////////////////////////////////
+export interface IBaseAttLoanPayment {
+  amount?: number
+  date?: string
+}
+export interface IBaseAttLoanAccount {
+  loan_date?: TDateOrTime
+  interest_size?: number // if 'fixed', a flat number, if 'simple' or 'compound', a percent
+  interest_variable?: boolean // variable-rate vs. fixed rate
+  interest_variable_benchmark?: string // unspecified; e.g. "libor"
+  interest_type?: string // 'fixed', 'simple', 'compound'...
+  interest_accrual_interval?: string // 'daily', 'weekly', 'monthly', 'quarterly', 'yearly'...
+  payment_interval?: string // 'daily', 'weekly', 'monthly', 'quarterly', 'yearly'...
+  currency?: string
+  principal?: number
+  prepayment_allowed?: boolean
+  amount_paid?: number
+  amount_remaining?: number
+  payments?: Array<IBaseAttLoanPayment>
+}
+export interface IBaseAttLoanProvider extends IBaseAttDataObj {
+  name?: string
+  id?: string
+  country?: string
+  website?: string
+  accounts?: Array<IBaseAttLoanAccount>
+}
+export interface IBaseAttLoanSummary {
+  date?: string
+  currency?: string
+  total_original_balance?: number
+  total_amount_paid?: number
+  total_balance?: number
+}
+export interface IBaseAttLoan extends IBaseAtt {
+  generality: number
+  summary?: IBaseAttLoanSummary
+  data?: IBaseAttLoanProvider | Array<IBaseAttLoanProvider>
+}
+
+///////////////////////////////////////////////////
 // Utility bill attestation dataStr type
 ///////////////////////////////////////////////////
 export type TBaseAttUtilitySummary = {
