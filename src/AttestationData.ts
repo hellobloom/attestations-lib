@@ -1,3 +1,9 @@
+import {
+  IBloomMerkleTreeComponents,
+  IAttestationData,
+  IAttestationType,
+} from './HashingLogic'
+
 export type TContextField = string | {type: string; data: string}
 
 ///////////////////////////////////////////////////
@@ -90,6 +96,8 @@ export type TPhoneNumberObj = {
   line?: string
   ext?: string
 }
+
+export type TEthAddr = string // "did:eth:0x...", "0x..."
 
 export type TGender = string // 'male', 'female', ...
 
@@ -266,6 +274,11 @@ export interface IBaseAttLoanPayment {
   amount?: number
   date?: string
 }
+export interface IBaseAttLoanLien {
+  amount?: number
+  type?: string
+  preference?: number
+}
 export interface IBaseAttLoanAccount {
   loan_date?: TDateOrTime
   interest_size?: number // if 'fixed', a flat number, if 'simple' or 'compound', a percent
@@ -279,6 +292,13 @@ export interface IBaseAttLoanAccount {
   prepayment_allowed?: boolean
   amount_paid?: number
   amount_remaining?: number
+  num_late_payments?: number // Number of late payments total
+  num_months_behind?: number // Number of months behind on payments
+  delinquent?: boolean // Is loan delinquent
+  defaulted?: boolean // Is loan in default
+  foreclosure?: boolean // Has a property been foreclosed on
+  preference?: number // Preference of payment in event of default
+  liens?: Array<IBaseAttLoanLien>
   payments?: Array<IBaseAttLoanPayment>
 }
 export interface IBaseAttLoanProvider extends IBaseAttDataObj {
@@ -431,8 +451,6 @@ export interface IBaseAttIncome extends IBaseAtt {
 
 ///////////////////////////////////////////////////
 // Assets attestation dataStr type (total, gross, or expenses)
-// import {AttestationData as AD} from '@bloomprotocol/attestations-lib'
-
 ///////////////////////////////////////////////////
 export interface IBaseAttAssetsSummary {
   date?: TDateOrTime
@@ -460,6 +478,40 @@ export interface IBaseAttAssets extends IBaseAtt {
 ///////////////////////////////////////////////////
 export interface IBaseAttGender extends IBaseAtt {
   data: TGender
+}
+
+///////////////////////////////////////////////////
+// Meta attestation dataStr type
+///////////////////////////////////////////////////
+export interface IBaseAttMetaAttestation {
+  // For single claims
+  data?: IAttestationData
+  type?: IAttestationType
+
+  // For multi/wrapped/proved claims
+  meta_attestation_root_hash?: string
+  attestation_root_hash?: string
+  components?: Partial<IBloomMerkleTreeComponents>
+
+  onchain_proof?: 0
+
+  attester?: TEthAddr
+  subject?: TEthAddr
+}
+export interface IBaseAttMetaMeta {}
+export interface IBaseAttMetaSummary {
+  date?: TDateOrTime
+  num_attestations?: number
+}
+export interface IBaseMetaData {
+  meta?: IBaseAttMetaMeta
+  attestations: Array<IBaseAttMetaAttestation>
+}
+export interface IBaseAttMeta extends IBaseAtt {
+  generality: number
+  summary?: IBaseAttMetaSummary
+  data: IBaseMetaData
+  currency?: string
 }
 
 /**
