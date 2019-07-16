@@ -1,14 +1,6 @@
 import * as VK from '@bloomprotocol/verify-kit'
 import * as HL from './HashingLogic'
 
-type RecursivePartial<T> = {
-  [P in keyof T]?: T[P] extends (infer U)[]
-    ? RecursivePartial<U>[]
-    : T[P] extends object | undefined
-    ? RecursivePartial<T[P]>
-    : T[P]
-}
-
 export type TContextField = string | {type: string; data: string}
 
 ///////////////////////////////////////////////////
@@ -493,11 +485,13 @@ export interface IBaseAttMetaSummary {
   date?: TDateOrTime
   num_attestations?: number
 }
+export interface IBaseMetaClaim {
+  type: 'claim_only' | 'single_attestation' | 'batch_attestation' | 'hash_only'
+  data: string | HL.ISignedClaimNode | VK.IVerifiableCredential
+}
 export interface IBaseMetaData {
   meta?: IBaseAttMetaMeta
-  attestations: Array<
-    RecursivePartial<string | HL.ISignedClaimNode | VK.IVerifiableCredential>
-  >
+  attestations: Array<IBaseMetaClaim>
 }
 export interface IBaseAttMeta extends IBaseAtt {
   generality: number
