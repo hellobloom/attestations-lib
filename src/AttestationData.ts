@@ -1,4 +1,5 @@
 import * as VK from '@bloomprotocol/verify-kit'
+import * as HL from './HashingLogic'
 
 type RecursivePartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[]
@@ -494,7 +495,9 @@ export interface IBaseAttMetaSummary {
 }
 export interface IBaseMetaData {
   meta?: IBaseAttMetaMeta
-  attestations: Array<RecursivePartial<VK.IVerifiableCredential>>
+  attestations: Array<
+    RecursivePartial<string | HL.ISignedClaimNode | VK.IVerifiableCredential>
+  >
 }
 export interface IBaseAttMeta extends IBaseAtt {
   generality: number
