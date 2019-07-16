@@ -486,7 +486,7 @@ export interface IBaseAttMetaSummary {
 }
 export interface IBaseMetaData {
   meta?: IBaseAttMetaMeta
-  attestations: Array<VK.IVerifiableCredential>
+  attestations: Array<Partial<VK.IVerifiableCredential>>
 }
 export interface IBaseAttMeta extends IBaseAtt {
   generality: number
