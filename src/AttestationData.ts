@@ -1,5 +1,13 @@
 import * as VK from '@bloomprotocol/verify-kit'
 
+type RecursivePartial<T> = {
+  [P in keyof T]?: T[P] extends (infer U)[]
+    ? RecursivePartial<U>[]
+    : T[P] extends object | undefined
+    ? RecursivePartial<T[P]>
+    : T[P]
+}
+
 export type TContextField = string | {type: string; data: string}
 
 ///////////////////////////////////////////////////
@@ -486,7 +494,7 @@ export interface IBaseAttMetaSummary {
 }
 export interface IBaseMetaData {
   meta?: IBaseAttMetaMeta
-  attestations: Array<Partial<VK.IVerifiableCredential>>
+  attestations: Array<RecursivePartial<VK.IVerifiableCredential>>
 }
 export interface IBaseAttMeta extends IBaseAtt {
   generality: number
