@@ -1,8 +1,4 @@
-import {
-  IBloomMerkleTreeComponents,
-  IAttestationData,
-  IAttestationType,
-} from './HashingLogic'
+import * as VK from '@bloomprotocol/verify-kit'
 
 export type TContextField = string | {type: string; data: string}
 
@@ -483,21 +479,6 @@ export interface IBaseAttGender extends IBaseAtt {
 ///////////////////////////////////////////////////
 // Meta attestation dataStr type
 ///////////////////////////////////////////////////
-export interface IBaseAttMetaAttestation {
-  // For single claims
-  data?: IAttestationData
-  type?: IAttestationType
-
-  // For multi/wrapped/proved claims
-  meta_attestation_root_hash?: string
-  attestation_root_hash?: string
-  components?: Partial<IBloomMerkleTreeComponents>
-
-  onchain_proof?: 0
-
-  attester?: TEthAddr
-  subject?: TEthAddr
-}
 export interface IBaseAttMetaMeta {}
 export interface IBaseAttMetaSummary {
   date?: TDateOrTime
@@ -505,13 +486,12 @@ export interface IBaseAttMetaSummary {
 }
 export interface IBaseMetaData {
   meta?: IBaseAttMetaMeta
-  attestations: Array<IBaseAttMetaAttestation>
+  attestations: Array<VK.IVerifiableCredential>
 }
 export interface IBaseAttMeta extends IBaseAtt {
   generality: number
   summary?: IBaseAttMetaSummary
   data: IBaseMetaData
-  currency?: string
 }
 
 /**

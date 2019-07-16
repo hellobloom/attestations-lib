@@ -31,10 +31,11 @@
     "watch": "./node_modules/.bin/tsc --watch"
   },
   "dependencies": {
-    "ethereumjs-wallet": "^0.6.2",
+    "@bloomprotocol/verify-kit": "^1.0.0",
     "@types/lodash": "^4.14.123",
     "eth-sig-util": "^2.1.0",
     "ethereumjs-util": "^6.0.0",
+    "ethereumjs-wallet": "^0.6.2",
     "js-sha3": "^0.8.0",
     "merkletreejs": "^0.0.11",
     "ts-node": "^7.0.1",
