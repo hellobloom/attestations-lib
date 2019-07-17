@@ -1,52 +1,32 @@
-import * as HashingLogic from './HashingLogic'
 import * as ethereumjsWallet from 'ethereumjs-wallet'
 const ethUtil = require('ethereumjs-util')
 const ethSigUtil = require('eth-sig-util')
 
-const aliceWallet = ethereumjsWallet.fromPrivateKey(
-  new Buffer(
-    'c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3',
-    'hex'
-  )
-)
+import * as HashingLogic from '../src/HashingLogic'
+
+const aliceWallet = ethereumjsWallet.fromPrivateKey(new Buffer('c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3', 'hex'))
 const alicePrivkey = aliceWallet.getPrivateKey()
 
-const bobWallet = ethereumjsWallet.fromPrivateKey(
-  new Buffer(
-    'ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f',
-    'hex'
-  )
-)
+const bobWallet = ethereumjsWallet.fromPrivateKey(new Buffer('ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f', 'hex'))
 
 const bobPrivkey = bobWallet.getPrivateKey()
 const bobAddress = bobWallet.getAddressString()
 
 // tslint:disable:max-line-length
 const preComputedHashes = {
-  hashTest:
-    '0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658',
-  emailAttestationType:
-    '0xb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf6',
-  emailAttestationDataHash:
-    '0xd1696aa0222c2ee299efa58d265eaecc4677d8c88cb3a5c7e60bc5957fff514a',
-  emailAttestationTypeHash:
-    '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
-  phoneAttestationType:
-    '0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563',
-  phoneAttestationDataHash:
-    '0x1d3ad3b73cddc7948cb0adfbbf6ce74dda20e42e864ecd67088985b339557461',
-  phoneAttestationTypeHash:
-    '0x90f61ca5746fc0223e9a7564fd75c2336f902a78c59dfeb04cf119b204f2a404',
-  treeARootHash:
-    '0xeff7cf589aa83bb524c9daeb776d171558b77a17ada025a94a67b0086dac5ede',
-  emailDataTreeHash:
-    '0x0ef39bc9c680c01dbf61db1186ea4632bb195b85575eb205670cb146ee181275',
-  emailClaimTreeHash:
-    '0xf7c60d8617a2221b96f566d9251a2146315fbae08c385737d3575914dccb3d08',
+  hashTest: '0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658',
+  emailAttestationType: '0xb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf6',
+  emailAttestationDataHash: '0xd1696aa0222c2ee299efa58d265eaecc4677d8c88cb3a5c7e60bc5957fff514a',
+  emailAttestationTypeHash: '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
+  phoneAttestationType: '0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563',
+  phoneAttestationDataHash: '0x1d3ad3b73cddc7948cb0adfbbf6ce74dda20e42e864ecd67088985b339557461',
+  phoneAttestationTypeHash: '0x90f61ca5746fc0223e9a7564fd75c2336f902a78c59dfeb04cf119b204f2a404',
+  treeARootHash: '0xeff7cf589aa83bb524c9daeb776d171558b77a17ada025a94a67b0086dac5ede',
+  emailDataTreeHash: '0x0ef39bc9c680c01dbf61db1186ea4632bb195b85575eb205670cb146ee181275',
+  emailClaimTreeHash: '0xf7c60d8617a2221b96f566d9251a2146315fbae08c385737d3575914dccb3d08',
   emailDataTreeHashAliceSigned:
     '0x124af1877444cbfea5a31a323449e76ab341c4df4d9943588fbe289c5eaf1bd339216d2e34c73d8d4f8f9f7bc939b1f127591ef25c4f1ce57d2e0af1a4cd8b561b',
-  rootHash:
-    '0xe72cf1f9a85fbc529cd17cded83d0021beb12359c7f238276d8e20aea603e928',
+  rootHash: '0xe72cf1f9a85fbc529cd17cded83d0021beb12359c7f238276d8e20aea603e928',
 }
 // tslint:enable:max-line-length
 
@@ -60,10 +40,7 @@ const preComputedAgreement = {
       {name: 'chainId', type: 'uint256'},
       {name: 'verifyingContract', type: 'address'},
     ],
-    AttestationRequest: [
-      {name: 'dataHash', type: 'bytes32'},
-      {name: 'nonce', type: 'bytes32'},
-    ],
+    AttestationRequest: [{name: 'dataHash', type: 'bytes32'}, {name: 'nonce', type: 'bytes32'}],
   },
   primaryType: 'AttestationRequest',
   domain: {
@@ -73,8 +50,7 @@ const preComputedAgreement = {
     verifyingContract: contractAddress,
   },
   message: {
-    dataHash:
-      '0xe72cf1f9a85fbc529cd17cded83d0021beb12359c7f238276d8e20aea603e928',
+    dataHash: '0xe72cf1f9a85fbc529cd17cded83d0021beb12359c7f238276d8e20aea603e928',
     nonce: '0xd5d7e6ae812a8ff7bd44f928b199806446c2170412df381efb41d8f47fcd044b',
   },
 }
@@ -97,27 +73,20 @@ const emailAttestationType: HashingLogic.IAttestationType = {
 const emailRevocationLinks: HashingLogic.IRevocationLinks = {
   local: '0x5a35e46865c7a4e0a5443b03d17d60c528896881646e6d58d3c4ad90ef84448e',
   global: '0xe04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
-  dataHash:
-    '0xd1696aa0222c2ee299efa58d265eaecc4677d8c88cb3a5c7e60bc5957fff514a',
-  typeHash:
-    '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
+  dataHash: '0xd1696aa0222c2ee299efa58d265eaecc4677d8c88cb3a5c7e60bc5957fff514a',
+  typeHash: '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
 }
 
 const emailIssuanceNode: HashingLogic.IIssuanceNode = {
-  localRevocationToken:
-    '0x5a35e46865c7a4e0a5443b03d17d60c528896881646e6d58d3c4ad90ef84448e',
-  globalRevocationToken:
-    '0xe04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
-  dataHash:
-    '0xd1696aa0222c2ee299efa58d265eaecc4677d8c88cb3a5c7e60bc5957fff514a',
-  typeHash:
-    '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
+  localRevocationToken: '0x5a35e46865c7a4e0a5443b03d17d60c528896881646e6d58d3c4ad90ef84448e',
+  globalRevocationToken: '0xe04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
+  dataHash: '0xd1696aa0222c2ee299efa58d265eaecc4677d8c88cb3a5c7e60bc5957fff514a',
+  typeHash: '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
   issuanceDate: '2016-02-01T00:00:00.000Z',
   expirationDate: '2018-02-01T00:00:00.000Z',
 }
 
-const emailAuxHash =
-  '0x3a25e46865c7a4e0a5445b03b17d68c529826881647e6d58d3c4ad91ef83440f'
+const emailAuxHash = '0x3a25e46865c7a4e0a5445b03b17d68c529826881647e6d58d3c4ad91ef83440f'
 
 const emailAttestation: HashingLogic.IAttestationLegacy = {
   data: emailAttestationData,
@@ -153,14 +122,11 @@ const phoneAttestationType: HashingLogic.IAttestationType = {
 const phoneRevocationLinks: HashingLogic.IRevocationLinks = {
   local: '0xb85448fe09da4c3d85d6e646188698825c06d71d30b3445a0e4a7c56864e52a4',
   global: '0xe04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
-  dataHash:
-    '0x1d3ad3b73cddc7948cb0adfbbf6ce74dda20e42e864ecd67088985b339557461',
-  typeHash:
-    '0x90f61ca5746fc0223e9a7564fd75c2336f902a78c59dfeb04cf119b204f2a404',
+  dataHash: '0x1d3ad3b73cddc7948cb0adfbbf6ce74dda20e42e864ecd67088985b339557461',
+  typeHash: '0x90f61ca5746fc0223e9a7564fd75c2336f902a78c59dfeb04cf119b204f2a404',
 }
 
-const phoneAuxHash =
-  '0x303438fe19da4c3d85d6e746188618925c86d71b30b5443a0e4a7c56864e52b5'
+const phoneAuxHash = '0x303438fe19da4c3d85d6e746188618925c86d71b30b5443a0e4a7c56864e52b5'
 
 const phoneAttestation: HashingLogic.IAttestationLegacy = {
   data: phoneAttestationData,
@@ -236,20 +202,12 @@ test('HashingLogic orderedStringify', () => {
   }
 
   // serialized objects a, b, and c should be equal because of orderedStringify
-  expect(HashingLogic.orderedStringify(objectA)).toBe(
-    HashingLogic.orderedStringify(objectB)
-  )
-  expect(HashingLogic.orderedStringify(objectA)).toBe(
-    HashingLogic.orderedStringify(objectC)
-  )
-  expect(HashingLogic.orderedStringify(objectB)).toBe(
-    HashingLogic.orderedStringify(objectC)
-  )
+  expect(HashingLogic.orderedStringify(objectA)).toBe(HashingLogic.orderedStringify(objectB))
+  expect(HashingLogic.orderedStringify(objectA)).toBe(HashingLogic.orderedStringify(objectC))
+  expect(HashingLogic.orderedStringify(objectB)).toBe(HashingLogic.orderedStringify(objectC))
 
   // serialized objects will not equal because the data isn't the same
-  expect(HashingLogic.orderedStringify(objectA)).not.toBe(
-    HashingLogic.orderedStringify(objectD)
-  )
+  expect(HashingLogic.orderedStringify(objectA)).not.toBe(HashingLogic.orderedStringify(objectD))
 })
 
 test('HashingLogic.getMerkleTreeFromLeaves', () => {
@@ -272,9 +230,7 @@ test('HashingLogic.getMerkleTreeFromLeaves', () => {
   expect(treeA.getRoot().equals(treeC.getRoot())).toBeFalsy()
 
   // If this doesn't match something changed
-  expect(ethUtil.bufferToHex(treeA.getRoot())).toBe(
-    preComputedHashes.treeARootHash
-  )
+  expect(ethUtil.bufferToHex(treeA.getRoot())).toBe(preComputedHashes.treeARootHash)
 })
 
 test('HashingLogic.getClaimTree & hashClaimTree', () => {
@@ -307,14 +263,10 @@ test('HashingLogic.getClaimTree & hashClaimTree', () => {
     data: emailAttestationData,
     type: emailAttestationType,
     issuance: {
-      localRevocationToken:
-        '0x5a35e46865c7a4e0a5443b03d17d60c528896881646e6d58d3c4ad90ef84448e',
-      globalRevocationToken:
-        '0xe04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
-      dataHash:
-        '0xd1696aa0222c2ee299efa58d265eaecc4677d8c88cb3a5c7e60bc5957fff514a',
-      typeHash:
-        '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
+      localRevocationToken: '0x5a35e46865c7a4e0a5443b03d17d60c528896881646e6d58d3c4ad90ef84448e',
+      globalRevocationToken: '0xe04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
+      dataHash: '0xd1696aa0222c2ee299efa58d265eaecc4677d8c88cb3a5c7e60bc5957fff514a',
+      typeHash: '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
       issuanceDate: '2017-02-01T00:00:00.000Z',
       expirationDate: '2018-02-01T00:00:00.000Z',
     },
@@ -329,18 +281,12 @@ test('HashingLogic.getClaimTree & hashClaimTree', () => {
   })
 
   expect(claimTreeA.getRoot().equals(claimTreeWrongNonce.getRoot())).toBeFalsy()
-  expect(
-    claimTreeA.getRoot().equals(claimTreeWrongTypeNonce.getRoot())
-  ).toBeFalsy()
-  expect(
-    claimTreeA.getRoot().equals(claimTreeWrongIssuance.getRoot())
-  ).toBeFalsy()
+  expect(claimTreeA.getRoot().equals(claimTreeWrongTypeNonce.getRoot())).toBeFalsy()
+  expect(claimTreeA.getRoot().equals(claimTreeWrongIssuance.getRoot())).toBeFalsy()
   expect(claimTreeA.getRoot().equals(claimTreeWrongAux.getRoot())).toBeFalsy()
 
   // If this doesn't match something changed
-  expect(ethUtil.bufferToHex(claimTreeA.getRoot())).toBe(
-    preComputedHashes.emailClaimTreeHash
-  )
+  expect(ethUtil.bufferToHex(claimTreeA.getRoot())).toBe(preComputedHashes.emailClaimTreeHash)
 
   expect(claimTreeA.getRoot().equals(claimTreeHash)).toBeTruthy()
 })
@@ -375,14 +321,10 @@ test('HashingLogic.getDataTree & hashAttestationNode', () => {
     data: emailAttestationData,
     type: emailAttestationType,
     link: {
-      local:
-        '0x6a35e46865c7a4e0a5443b03d17d60c528896881646e6d58d3c4ad90ef84448e',
-      global:
-        '0xe04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
-      dataHash:
-        '0xd1696aa0222c2ee299efa58d265eaecc4677d8c88cb3a5c7e60bc5957fff514a',
-      typeHash:
-        '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
+      local: '0x6a35e46865c7a4e0a5443b03d17d60c528896881646e6d58d3c4ad90ef84448e',
+      global: '0xe04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
+      dataHash: '0xd1696aa0222c2ee299efa58d265eaecc4677d8c88cb3a5c7e60bc5957fff514a',
+      typeHash: '0x5aa3911df2dd532a0a03c7c6b6a234bb435a31dd9616477ef6cddacf014929df',
     },
     aux: emailAuxHash,
   })
@@ -394,19 +336,13 @@ test('HashingLogic.getDataTree & hashAttestationNode', () => {
     aux: '0xf04448fe19da4c3d85d6e646188628825c86d71b30b5445a0e4a7c56864e53a7',
   })
 
-  expect(
-    dataTreeA.getRoot().equals(dataTreeWrongDataNonce.getRoot())
-  ).toBeFalsy()
-  expect(
-    dataTreeA.getRoot().equals(dataTreeWrongTypeNonce.getRoot())
-  ).toBeFalsy()
+  expect(dataTreeA.getRoot().equals(dataTreeWrongDataNonce.getRoot())).toBeFalsy()
+  expect(dataTreeA.getRoot().equals(dataTreeWrongTypeNonce.getRoot())).toBeFalsy()
   expect(dataTreeA.getRoot().equals(dataTreeWrongLink.getRoot())).toBeFalsy()
   expect(dataTreeA.getRoot().equals(dataTreeWrongAux.getRoot())).toBeFalsy()
 
   // If this doesn't match something changed
-  expect(ethUtil.bufferToHex(dataTreeA.getRoot())).toBe(
-    preComputedHashes.emailDataTreeHash
-  )
+  expect(ethUtil.bufferToHex(dataTreeA.getRoot())).toBe(preComputedHashes.emailDataTreeHash)
 
   expect(dataTreeA.getRoot().equals(dataTreeHash)).toBeTruthy()
 })
@@ -417,12 +353,8 @@ test('HashingLogic.signHash & recoverHashSigner', () => {
 
   const sender = HashingLogic.recoverHashSigner(emailDataRoot, signedEmailRoot)
 
-  expect(sender.toLowerCase()).toBe(
-    aliceWallet.getAddressString().toLowerCase()
-  )
-  expect(sender.toLowerCase()).not.toBe(
-    bobWallet.getAddressString().toLowerCase()
-  )
+  expect(sender.toLowerCase()).toBe(aliceWallet.getAddressString().toLowerCase())
+  expect(sender.toLowerCase()).not.toBe(bobWallet.getAddressString().toLowerCase())
 
   // If this doesn't match something changed
   expect(signedEmailRoot).toBe(preComputedHashes.emailDataTreeHashAliceSigned)
@@ -434,21 +366,12 @@ test('HashingLogic.getBloomMerkleTree', () => {
   const phoneDataRoot = HashingLogic.hashAttestationNode(phoneAttestationNode)
   const signedPhoneRoot = HashingLogic.signHash(phoneDataRoot, alicePrivkey)
 
-  const dataHashes = [
-    HashingLogic.hashMessage(signedEmailRoot),
-    HashingLogic.hashMessage(signedPhoneRoot),
-  ]
+  const dataHashes = [HashingLogic.hashMessage(signedEmailRoot), HashingLogic.hashMessage(signedPhoneRoot)]
 
   const checksum = HashingLogic.getChecksum(dataHashes)
-  const signedChecksumHash = HashingLogic.hashMessage(
-    HashingLogic.signHash(checksum, alicePrivkey)
-  )
+  const signedChecksumHash = HashingLogic.hashMessage(HashingLogic.signHash(checksum, alicePrivkey))
 
-  const tree = HashingLogic.getBloomMerkleTree(
-    dataHashes,
-    sample13PaddingNodes,
-    signedChecksumHash
-  )
+  const tree = HashingLogic.getBloomMerkleTree(dataHashes, sample13PaddingNodes, signedChecksumHash)
   expect(ethUtil.bufferToHex(tree.getRoot())).toBe(preComputedHashes.rootHash)
 
   const leaves = tree.getLeaves()
@@ -464,41 +387,25 @@ test('HashingLogic.getBloomMerkleTree', () => {
 
 test('HashingLogic.getChecksum', () => {
   const fourRootChecksum = HashingLogic.getChecksum(fourRootHashes)
-  const fourRootChecksumDifferentOrder = HashingLogic.getChecksum(
-    fourRootHashesDifferentOrder
-  )
+  const fourRootChecksumDifferentOrder = HashingLogic.getChecksum(fourRootHashesDifferentOrder)
 
   expect(ethUtil.bufferToHex(fourRootChecksum).length).toBe(66)
   expect(fourRootChecksumDifferentOrder.equals(fourRootChecksum)).toBeTruthy()
 
-  const oneRootHash = [
-    '0x7a35e46865c7a4e0a5445b03d17d60c528896881646e6d58d3c4ad90ef84440e',
-  ]
+  const oneRootHash = ['0x7a35e46865c7a4e0a5445b03d17d60c528896881646e6d58d3c4ad90ef84440e']
   const oneRootChecksum = HashingLogic.getChecksum(oneRootHash)
   expect(ethUtil.bufferToHex(oneRootChecksum).length).toBe(66)
 
   const noRootChecksum = HashingLogic.getChecksum([])
-  expect(ethUtil.bufferToHex(noRootChecksum)).toBe(
-    '0x518674ab2b227e5f11e9084f615d57663cde47bce1ba168b4c19c7ee22a73d70'
-  )
+  expect(ethUtil.bufferToHex(noRootChecksum)).toBe('0x518674ab2b227e5f11e9084f615d57663cde47bce1ba168b4c19c7ee22a73d70')
 })
 
 test('HashingLogic.getSignedChecksum', () => {
-  const signedChecksumHash = HashingLogic.signChecksum(
-    fourRootHashes,
-    alicePrivkey
-  )
-  const sender = HashingLogic.recoverHashSigner(
-    HashingLogic.getChecksum(fourRootHashes),
-    signedChecksumHash
-  )
+  const signedChecksumHash = HashingLogic.signChecksum(fourRootHashes, alicePrivkey)
+  const sender = HashingLogic.recoverHashSigner(HashingLogic.getChecksum(fourRootHashes), signedChecksumHash)
 
-  expect(sender.toLowerCase()).toBe(
-    aliceWallet.getAddressString().toLowerCase()
-  )
-  expect(sender.toLowerCase()).not.toBe(
-    bobWallet.getAddressString().toLowerCase()
-  )
+  expect(sender.toLowerCase()).toBe(aliceWallet.getAddressString().toLowerCase())
+  expect(sender.toLowerCase()).not.toBe(bobWallet.getAddressString().toLowerCase())
 })
 
 test('HashingLogic.getPadding', () => {
@@ -546,15 +453,9 @@ test('Bloom Merkle Tree Proofs', () => {
   const dataHashes = [hashedEmailAttestation, hashedPhoneAttestation]
 
   const checksum = HashingLogic.getChecksum(dataHashes)
-  const signedChecksumHash = HashingLogic.hashMessage(
-    HashingLogic.signHash(checksum, alicePrivkey)
-  )
+  const signedChecksumHash = HashingLogic.hashMessage(HashingLogic.signHash(checksum, alicePrivkey))
 
-  const tree = HashingLogic.getBloomMerkleTree(
-    dataHashes,
-    sample13PaddingNodes,
-    signedChecksumHash
-  )
+  const tree = HashingLogic.getBloomMerkleTree(dataHashes, sample13PaddingNodes, signedChecksumHash)
   const root = tree.getRoot()
   const leaves = tree.getLeaves()
   const emailProof = tree.getProof(ethUtil.toBuffer(hashedEmailAttestation))
@@ -567,67 +468,25 @@ test('Bloom Merkle Tree Proofs', () => {
   const checksumPosition = stringLeaves.indexOf(signedChecksumHash)
   const phonePosition = stringLeaves.indexOf(hashedPhoneAttestation)
 
-  expect(
-    HashingLogic.verifyMerkleProof(
-      emailProof,
-      tree.getLeaves()[emailPosition],
-      root
-    )
-  ).toBeTruthy()
-  expect(
-    HashingLogic.verifyMerkleProof(
-      emailProof,
-      tree.getLeaves()[phonePosition],
-      root
-    )
-  ).toBeFalsy()
-  expect(
-    HashingLogic.verifyMerkleProof(
-      emailProof,
-      tree.getLeaves()[checksumPosition],
-      root
-    )
-  ).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(emailProof, tree.getLeaves()[emailPosition], root)).toBeTruthy()
+  expect(HashingLogic.verifyMerkleProof(emailProof, tree.getLeaves()[phonePosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(emailProof, tree.getLeaves()[checksumPosition], root)).toBeFalsy()
 
-  expect(
-    HashingLogic.verifyMerkleProof(checksumProof, leaves[emailPosition], root)
-  ).toBeFalsy()
-  expect(
-    HashingLogic.verifyMerkleProof(
-      checksumProof,
-      leaves[checksumPosition],
-      root
-    )
-  ).toBeTruthy()
-  expect(
-    HashingLogic.verifyMerkleProof(checksumProof, leaves[phonePosition], root)
-  ).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(checksumProof, leaves[emailPosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(checksumProof, leaves[checksumPosition], root)).toBeTruthy()
+  expect(HashingLogic.verifyMerkleProof(checksumProof, leaves[phonePosition], root)).toBeFalsy()
 
-  expect(
-    HashingLogic.verifyMerkleProof(phoneProof, leaves[checksumPosition], root)
-  ).toBeFalsy()
-  expect(
-    HashingLogic.verifyMerkleProof(phoneProof, leaves[emailPosition], root)
-  ).toBeFalsy()
-  expect(
-    HashingLogic.verifyMerkleProof(phoneProof, leaves[phonePosition], root)
-  ).toBeTruthy()
+  expect(HashingLogic.verifyMerkleProof(phoneProof, leaves[checksumPosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(phoneProof, leaves[emailPosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(phoneProof, leaves[phonePosition], root)).toBeTruthy()
 
-  expect(
-    HashingLogic.verifyMerkleProof([], Buffer.from(''), Buffer.from(''))
-  ).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof([], Buffer.from(''), Buffer.from(''))).toBeFalsy()
 })
 
 test('Attestation Data Tree Proofs', () => {
-  const dataHash = HashingLogic.hashMessage(
-    HashingLogic.orderedStringify(emailAttestationNode.data)
-  )
-  const typeHash = HashingLogic.hashMessage(
-    HashingLogic.orderedStringify(emailAttestationNode.type)
-  )
-  const linkHash = HashingLogic.hashMessage(
-    HashingLogic.orderedStringify(emailAttestationNode.link)
-  )
+  const dataHash = HashingLogic.hashMessage(HashingLogic.orderedStringify(emailAttestationNode.data))
+  const typeHash = HashingLogic.hashMessage(HashingLogic.orderedStringify(emailAttestationNode.type))
+  const linkHash = HashingLogic.hashMessage(HashingLogic.orderedStringify(emailAttestationNode.link))
   const auxHash = HashingLogic.hashMessage(emailAttestationNode.aux)
 
   const tree = HashingLogic.getDataTree(emailAttestationNode)
@@ -645,121 +504,25 @@ test('Attestation Data Tree Proofs', () => {
   const linkPosition = stringLeaves.indexOf(linkHash)
   const auxPosition = stringLeaves.indexOf(auxHash)
 
-  expect(
-    HashingLogic.verifyMerkleProof(
-      dataProof,
-      tree.getLeaves()[dataPosition],
-      root
-    )
-  ).toBeTruthy()
-  expect(
-    HashingLogic.verifyMerkleProof(
-      dataProof,
-      tree.getLeaves()[typePosition],
-      root
-    )
-  ).toBeFalsy()
-  expect(
-    HashingLogic.verifyMerkleProof(
-      dataProof,
-      tree.getLeaves()[linkPosition],
-      root
-    )
-  ).toBeFalsy()
-  expect(
-    HashingLogic.verifyMerkleProof(
-      dataProof,
-      tree.getLeaves()[auxPosition],
-      root
-    )
-  ).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(dataProof, tree.getLeaves()[dataPosition], root)).toBeTruthy()
+  expect(HashingLogic.verifyMerkleProof(dataProof, tree.getLeaves()[typePosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(dataProof, tree.getLeaves()[linkPosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(dataProof, tree.getLeaves()[auxPosition], root)).toBeFalsy()
 
-  expect(
-    HashingLogic.verifyMerkleProof(
-      typeProof,
-      tree.getLeaves()[typePosition],
-      root
-    )
-  ).toBeTruthy()
-  expect(
-    HashingLogic.verifyMerkleProof(
-      typeProof,
-      tree.getLeaves()[dataPosition],
-      root
-    )
-  ).toBeFalsy()
-  expect(
-    HashingLogic.verifyMerkleProof(
-      typeProof,
-      tree.getLeaves()[linkPosition],
-      root
-    )
-  ).toBeFalsy()
-  expect(
-    HashingLogic.verifyMerkleProof(
-      typeProof,
-      tree.getLeaves()[auxPosition],
-      root
-    )
-  ).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(typeProof, tree.getLeaves()[typePosition], root)).toBeTruthy()
+  expect(HashingLogic.verifyMerkleProof(typeProof, tree.getLeaves()[dataPosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(typeProof, tree.getLeaves()[linkPosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(typeProof, tree.getLeaves()[auxPosition], root)).toBeFalsy()
 
-  expect(
-    HashingLogic.verifyMerkleProof(
-      linkProof,
-      tree.getLeaves()[linkPosition],
-      root
-    )
-  ).toBeTruthy()
-  expect(
-    HashingLogic.verifyMerkleProof(
-      linkProof,
-      tree.getLeaves()[dataPosition],
-      root
-    )
-  ).toBeFalsy()
-  expect(
-    HashingLogic.verifyMerkleProof(
-      linkProof,
-      tree.getLeaves()[typePosition],
-      root
-    )
-  ).toBeFalsy()
-  expect(
-    HashingLogic.verifyMerkleProof(
-      linkProof,
-      tree.getLeaves()[auxPosition],
-      root
-    )
-  ).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(linkProof, tree.getLeaves()[linkPosition], root)).toBeTruthy()
+  expect(HashingLogic.verifyMerkleProof(linkProof, tree.getLeaves()[dataPosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(linkProof, tree.getLeaves()[typePosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(linkProof, tree.getLeaves()[auxPosition], root)).toBeFalsy()
 
-  expect(
-    HashingLogic.verifyMerkleProof(
-      auxProof,
-      tree.getLeaves()[auxPosition],
-      root
-    )
-  ).toBeTruthy()
-  expect(
-    HashingLogic.verifyMerkleProof(
-      auxProof,
-      tree.getLeaves()[dataPosition],
-      root
-    )
-  ).toBeFalsy()
-  expect(
-    HashingLogic.verifyMerkleProof(
-      auxProof,
-      tree.getLeaves()[typePosition],
-      root
-    )
-  ).toBeFalsy()
-  expect(
-    HashingLogic.verifyMerkleProof(
-      auxProof,
-      tree.getLeaves()[linkPosition],
-      root
-    )
-  ).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(auxProof, tree.getLeaves()[auxPosition], root)).toBeTruthy()
+  expect(HashingLogic.verifyMerkleProof(auxProof, tree.getLeaves()[dataPosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(auxProof, tree.getLeaves()[typePosition], root)).toBeFalsy()
+  expect(HashingLogic.verifyMerkleProof(auxProof, tree.getLeaves()[linkPosition], root)).toBeFalsy()
 })
 
 test('HashingLogic.getSignedClaimNode', () => {
@@ -769,34 +532,22 @@ test('HashingLogic.getSignedClaimNode', () => {
     globalLink,
     alicePrivkey,
     emailIssuedClaimNode.issuance.issuanceDate,
-    emailIssuedClaimNode.issuance.expirationDate
+    emailIssuedClaimNode.issuance.expirationDate,
   )
 
   validateIssuedClaimNode(globalLink, issuedClaimNode)
 })
 
-function validateIssuedClaimNode(
-  globalLink: string,
-  issuedClaimNode: HashingLogic.ISignedClaimNode
-) {
-  expect(issuedClaimNode.claimNode.issuance.globalRevocationToken).toBe(
-    globalLink
-  )
-  expect(issuedClaimNode.claimNode.issuance.localRevocationToken.length).toBe(
-    66
-  )
+function validateIssuedClaimNode(globalLink: string, issuedClaimNode: HashingLogic.ISignedClaimNode) {
+  expect(issuedClaimNode.claimNode.issuance.globalRevocationToken).toBe(globalLink)
+  expect(issuedClaimNode.claimNode.issuance.localRevocationToken.length).toBe(66)
   expect(issuedClaimNode.claimNode.data).toEqual(emailAttestation.data)
   expect(issuedClaimNode.claimNode.type).toEqual(emailAttestation.type)
   expect(issuedClaimNode.claimNode.aux).toEqual(emailAttestation.aux)
 
   const claimHash = HashingLogic.hashClaimTree(issuedClaimNode.claimNode)
-  const sender = HashingLogic.recoverHashSigner(
-    claimHash,
-    issuedClaimNode.attesterSig
-  )
-  expect(sender.toLowerCase()).toBe(
-    aliceWallet.getAddressString().toLowerCase()
-  )
+  const sender = HashingLogic.recoverHashSigner(claimHash, issuedClaimNode.attesterSig)
+  expect(sender.toLowerCase()).toBe(aliceWallet.getAddressString().toLowerCase())
 }
 
 test('HashingLogic.getSignedClaimNode with revocation link', () => {
@@ -808,13 +559,11 @@ test('HashingLogic.getSignedClaimNode with revocation link', () => {
     alicePrivkey,
     emailIssuedClaimNode.issuance.issuanceDate,
     emailIssuedClaimNode.issuance.expirationDate,
-    localLink
+    localLink,
   )
   validateIssuedClaimNode(globalLink, issuedClaimNode)
 
-  expect(issuedClaimNode.claimNode.issuance.localRevocationToken).toBe(
-    localLink
-  )
+  expect(issuedClaimNode.claimNode.issuance.localRevocationToken).toBe(localLink)
 })
 
 test('HashingLogic.getSignedClaimNode date validation', () => {
@@ -825,27 +574,17 @@ test('HashingLogic.getSignedClaimNode date validation', () => {
       globalLink,
       alicePrivkey,
       'March 2, 2016',
-      emailIssuedClaimNode.issuance.expirationDate
+      emailIssuedClaimNode.issuance.expirationDate,
     )
   }).toThrowError('Invalid issuance date')
   expect(() => {
-    HashingLogic.getSignedClaimNode(
-      emailAttestation,
-      globalLink,
-      alicePrivkey,
-      emailIssuedClaimNode.issuance.issuanceDate,
-      'March 2, 2018'
-    )
+    HashingLogic.getSignedClaimNode(emailAttestation, globalLink, alicePrivkey, emailIssuedClaimNode.issuance.issuanceDate, 'March 2, 2018')
   }).toThrowError('Invalid expiration date')
 })
 
 test('HashingLogic.getSignedDataNodes', () => {
   const globalLink = HashingLogic.generateNonce()
-  const dataNode = HashingLogic.getSignedDataNode(
-    emailAttestation,
-    globalLink,
-    alicePrivkey
-  )
+  const dataNode = HashingLogic.getSignedDataNode(emailAttestation, globalLink, alicePrivkey)
 
   expect(dataNode.attestationNode.link.global).toBe(globalLink)
   expect(dataNode.attestationNode.link.local.length).toBe(66)
@@ -853,69 +592,43 @@ test('HashingLogic.getSignedDataNodes', () => {
   expect(dataNode.attestationNode.type).toEqual(emailAttestation.type)
   expect(dataNode.attestationNode.aux).toEqual(emailAttestation.aux)
 
-  const attestationHash = HashingLogic.hashAttestationNode(
-    dataNode.attestationNode
-  )
-  const sender = HashingLogic.recoverHashSigner(
-    attestationHash,
-    dataNode.signedAttestation
-  )
-  expect(sender.toLowerCase()).toBe(
-    aliceWallet.getAddressString().toLowerCase()
-  )
+  const attestationHash = HashingLogic.hashAttestationNode(dataNode.attestationNode)
+  const sender = HashingLogic.recoverHashSigner(attestationHash, dataNode.signedAttestation)
+  expect(sender.toLowerCase()).toBe(aliceWallet.getAddressString().toLowerCase())
 })
 
 test('HashingLogic.getSignedMerkleTreeComponentsLegacy', () => {
-  const components = HashingLogic.getSignedMerkleTreeComponentsLegacy(
-    [emailAttestation, phoneAttestation],
-    alicePrivkey
-  )
+  const components = HashingLogic.getSignedMerkleTreeComponentsLegacy([emailAttestation, phoneAttestation], alicePrivkey)
 
   expect(components.paddingNodes.length).toBe(13)
   components.paddingNodes.forEach(p => {
     expect(p.length).toBe(66)
   })
 
-  const checksum = HashingLogic.getChecksum(
-    components.dataNodes.map(a => HashingLogic.hashMessage(a.signedAttestation))
-  )
-  const checksumSigner = HashingLogic.recoverHashSigner(
-    checksum,
-    components.checksumSig
-  )
-  expect(checksumSigner.toLowerCase()).toBe(
-    aliceWallet.getAddressString().toLowerCase()
-  )
+  const checksum = HashingLogic.getChecksum(components.dataNodes.map(a => HashingLogic.hashMessage(a.signedAttestation)))
+  const checksumSigner = HashingLogic.recoverHashSigner(checksum, components.checksumSig)
+  expect(checksumSigner.toLowerCase()).toBe(aliceWallet.getAddressString().toLowerCase())
 
   const rootHash = HashingLogic.getBloomMerkleTree(
-    components.dataNodes.map(a =>
-      HashingLogic.hashMessage(a.signedAttestation)
-    ),
+    components.dataNodes.map(a => HashingLogic.hashMessage(a.signedAttestation)),
     components.paddingNodes,
-    HashingLogic.hashMessage(components.checksumSig)
+    HashingLogic.hashMessage(components.checksumSig),
   ).getRoot()
 
   expect(ethUtil.bufferToHex(rootHash)).toBe(components.rootHash)
 
-  const rootHashSigner = HashingLogic.recoverHashSigner(
-    rootHash,
-    components.signedRootHash
-  )
-  expect(rootHashSigner.toLowerCase()).toBe(
-    aliceWallet.getAddressString().toLowerCase()
-  )
+  const rootHashSigner = HashingLogic.recoverHashSigner(rootHash, components.signedRootHash)
+  expect(rootHashSigner.toLowerCase()).toBe(aliceWallet.getAddressString().toLowerCase())
 
   const layer2Hash = HashingLogic.hashMessage(
     HashingLogic.orderedStringify({
       rootHash: ethUtil.bufferToHex(rootHash),
       nonce: components.rootHashNonce,
-    })
+    }),
   )
   expect(layer2Hash).toBe(components.layer2Hash)
 
-  const rootHashFromComponents = HashingLogic.getMerkleTreeFromComponentsLegacy(
-    components
-  ).getRoot()
+  const rootHashFromComponents = HashingLogic.getMerkleTreeFromComponentsLegacy(components).getRoot()
   expect(rootHashFromComponents.equals(rootHash)).toBeTruthy()
 })
 
@@ -924,15 +637,13 @@ test('HashingLogic.getSignedMerkleTreeComponents', () => {
     [emailAttestation, phoneAttestation],
     emailIssuedClaimNode.issuance.issuanceDate,
     emailIssuedClaimNode.issuance.expirationDate,
-    alicePrivkey
+    alicePrivkey,
   )
 
   validateSignedMerkleTreeComponents(components)
 })
 
-function validateSignedMerkleTreeComponents(
-  components: HashingLogic.IBloomMerkleTreeComponents
-) {
+function validateSignedMerkleTreeComponents(components: HashingLogic.IBloomMerkleTreeComponents) {
   expect(validComponentVersions.indexOf(components.version)).toBeGreaterThan(-1)
 
   expect(components.paddingNodes.length).toBe(13)
@@ -940,53 +651,36 @@ function validateSignedMerkleTreeComponents(
     expect(p.length).toBe(66)
   })
 
-  const checksum = HashingLogic.getChecksum(
-    components.claimNodes.map(a => HashingLogic.hashMessage(a.attesterSig))
-  )
-  const checksumSigner = HashingLogic.recoverHashSigner(
-    checksum,
-    components.checksumSig
-  )
-  expect(checksumSigner.toLowerCase()).toBe(
-    aliceWallet.getAddressString().toLowerCase()
-  )
+  const checksum = HashingLogic.getChecksum(components.claimNodes.map(a => HashingLogic.hashMessage(a.attesterSig)))
+  const checksumSigner = HashingLogic.recoverHashSigner(checksum, components.checksumSig)
+  expect(checksumSigner.toLowerCase()).toBe(aliceWallet.getAddressString().toLowerCase())
 
   const rootHash = HashingLogic.getBloomMerkleTree(
     components.claimNodes.map(a => HashingLogic.hashMessage(a.attesterSig)),
     components.paddingNodes,
-    HashingLogic.hashMessage(components.checksumSig)
+    HashingLogic.hashMessage(components.checksumSig),
   ).getRoot()
 
   expect(ethUtil.bufferToHex(rootHash)).toBe(components.rootHash)
 
-  const rootHashSigner = HashingLogic.recoverHashSigner(
-    rootHash,
-    components.attesterSig
-  )
-  expect(rootHashSigner.toLowerCase()).toBe(
-    aliceWallet.getAddressString().toLowerCase()
-  )
+  const rootHashSigner = HashingLogic.recoverHashSigner(rootHash, components.attesterSig)
+  expect(rootHashSigner.toLowerCase()).toBe(aliceWallet.getAddressString().toLowerCase())
 
   const layer2Hash = HashingLogic.hashMessage(
     HashingLogic.orderedStringify({
       rootHash: ethUtil.bufferToHex(rootHash),
       nonce: components.rootHashNonce,
-    })
+    }),
   )
   expect(layer2Hash).toBe(components.layer2Hash)
 
-  const rootHashFromComponents = HashingLogic.getMerkleTreeFromComponents(
-    components
-  ).getRoot()
+  const rootHashFromComponents = HashingLogic.getMerkleTreeFromComponents(components).getRoot()
   expect(rootHashFromComponents.equals(rootHash)).toBeTruthy()
 }
 
 test('HashingLogic.getSignedMerkleTreeComponents with options', () => {
   const paddingNodes = HashingLogic.getPadding(2)
-  const localRevocationLinks = [
-    HashingLogic.generateNonce(),
-    HashingLogic.generateNonce(),
-  ]
+  const localRevocationLinks = [HashingLogic.generateNonce(), HashingLogic.generateNonce()]
   const globalRevocationLink = HashingLogic.generateNonce()
   const rootHashNonce = HashingLogic.generateNonce()
 
@@ -1000,7 +694,7 @@ test('HashingLogic.getSignedMerkleTreeComponents with options', () => {
       localRevocationLinks,
       globalRevocationLink,
       rootHashNonce,
-    }
+    },
   )
 
   validateSignedMerkleTreeComponents(components)
@@ -1008,12 +702,8 @@ test('HashingLogic.getSignedMerkleTreeComponents with options', () => {
   expect(components.rootHashNonce).toBe(rootHashNonce)
 
   components.claimNodes.forEach((c, i) => {
-    expect(c.claimNode.issuance.globalRevocationToken).toBe(
-      globalRevocationLink
-    )
-    expect(c.claimNode.issuance.localRevocationToken).toBe(
-      localRevocationLinks[i]
-    )
+    expect(c.claimNode.issuance.globalRevocationToken).toBe(globalRevocationLink)
+    expect(c.claimNode.issuance.localRevocationToken).toBe(localRevocationLinks[i])
   })
 
   components.paddingNodes.forEach((p, i) => {
@@ -1030,7 +720,7 @@ test('HashingLogic.getSignedMerkleTreeComponents with options', () => {
       localRevocationLinks,
       globalRevocationLink,
       rootHashNonce,
-    }
+    },
   )
 
   expect(identicalComponents.layer2Hash).toBe(components.layer2Hash)
@@ -1044,15 +734,11 @@ test('HashingLogic.getSignedMerkleTreeComponents with options', () => {
       localRevocationLinks,
       globalRevocationLink,
       rootHashNonce,
-    }
+    },
   )
 
-  expect(
-    componentsWithdifferentPadding.layer2Hash === components.layer2Hash
-  ).toBeFalsy()
-  expect(componentsWithdifferentPadding.rootHashNonce).toBe(
-    components.rootHashNonce
-  )
+  expect(componentsWithdifferentPadding.layer2Hash === components.layer2Hash).toBeFalsy()
+  expect(componentsWithdifferentPadding.rootHashNonce).toBe(components.rootHashNonce)
 })
 
 test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
@@ -1060,18 +746,13 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
     [emailAttestation, phoneAttestation],
     emailIssuedClaimNode.issuance.issuanceDate,
     emailIssuedClaimNode.issuance.expirationDate,
-    alicePrivkey
+    alicePrivkey,
   )
 
   const requestNonce = HashingLogic.generateNonce()
 
   const bobSubjectSig = ethSigUtil.signTypedData(bobPrivkey, {
-    data: HashingLogic.getAttestationAgreement(
-      contractAddress,
-      1,
-      components.layer2Hash,
-      requestNonce
-    ),
+    data: HashingLogic.getAttestationAgreement(contractAddress, 1, components.layer2Hash, requestNonce),
   })
 
   const batchComponents = HashingLogic.getSignedBatchMerkleTreeComponents(
@@ -1080,33 +761,23 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
     bobSubjectSig,
     bobAddress,
     requestNonce,
-    alicePrivkey
+    alicePrivkey,
   )
 
-  expect(
-    validBatchComponentVersions.indexOf(batchComponents.version)
-  ).toBeGreaterThan(-1)
+  expect(validBatchComponentVersions.indexOf(batchComponents.version)).toBeGreaterThan(-1)
 
   // batch should have same length as non-batch
-  expect(batchComponents.paddingNodes.length).toBe(
-    components.paddingNodes.length
-  )
+  expect(batchComponents.paddingNodes.length).toBe(components.paddingNodes.length)
 
   batchComponents.paddingNodes.forEach(p => {
     expect(p.length).toBe(66)
   })
 
   // checksum should be the same as non-batch
-  const checksum = HashingLogic.getChecksum(
-    batchComponents.claimNodes.map(a => HashingLogic.hashMessage(a.attesterSig))
-  )
+  const checksum = HashingLogic.getChecksum(batchComponents.claimNodes.map(a => HashingLogic.hashMessage(a.attesterSig)))
 
   expect(ethUtil.bufferToHex(checksum)).toBe(
-    ethUtil.bufferToHex(
-      HashingLogic.getChecksum(
-        components.claimNodes.map(a => HashingLogic.hashMessage(a.attesterSig))
-      )
-    )
+    ethUtil.bufferToHex(HashingLogic.getChecksum(components.claimNodes.map(a => HashingLogic.hashMessage(a.attesterSig)))),
   )
 
   expect(batchComponents.checksumSig).toBe(components.checksumSig)
@@ -1119,19 +790,13 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
     HashingLogic.orderedStringify({
       subjectSig: batchComponents.subjectSig,
       attesterSig: batchComponents.batchAttesterSig,
-    })
+    }),
   )
   expect(layer2Hash).toBe(batchComponents.batchLayer2Hash)
   expect(batchComponents.batchLayer2Hash).not.toBe(components.layer2Hash)
 
-  const rootHashFromComponents = HashingLogic.getMerkleTreeFromComponents(
-    batchComponents
-  ).getRoot()
-  expect(
-    rootHashFromComponents.equals(
-      HashingLogic.getMerkleTreeFromComponents(components).getRoot()
-    )
-  ).toBeTruthy()
+  const rootHashFromComponents = HashingLogic.getMerkleTreeFromComponents(batchComponents).getRoot()
+  expect(rootHashFromComponents.equals(HashingLogic.getMerkleTreeFromComponents(components).getRoot())).toBeTruthy()
 
   const recoveredAttester = HashingLogic.recoverHashSigner(
     ethUtil.toBuffer(
@@ -1139,20 +804,18 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
         HashingLogic.orderedStringify({
           subject: bobAddress,
           rootHash: batchComponents.layer2Hash,
-        })
-      )
+        }),
+      ),
     ),
-    batchComponents.batchAttesterSig
+    batchComponents.batchAttesterSig,
   )
-  expect(recoveredAttester.toLowerCase()).toBe(
-    aliceWallet.getAddressString().toLowerCase()
-  )
+  expect(recoveredAttester.toLowerCase()).toBe(aliceWallet.getAddressString().toLowerCase())
   const recoveredSubject = ethSigUtil.recoverTypedSignature({
     data: HashingLogic.getAttestationAgreement(
       batchComponents.contractAddress,
       1,
       batchComponents.layer2Hash,
-      batchComponents.requestNonce
+      batchComponents.requestNonce,
     ),
     sig: batchComponents.subjectSig,
   })
@@ -1164,7 +827,7 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents sig validation', () => {
     [emailAttestation, phoneAttestation],
     emailIssuedClaimNode.issuance.issuanceDate,
     emailIssuedClaimNode.issuance.expirationDate,
-    alicePrivkey
+    alicePrivkey,
   )
 
   const requestNonce = HashingLogic.generateNonce()
@@ -1174,7 +837,7 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents sig validation', () => {
       contractAddress,
       1,
       '0xe6d7e6ae812a8ff7bd44f928b199806446c2170412df381efb41d8f47fcd045c',
-      requestNonce
+      requestNonce,
     ),
   })
 
@@ -1185,22 +848,16 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents sig validation', () => {
       bobInvalidSubjectSig,
       bobAddress,
       requestNonce,
-      alicePrivkey
+      alicePrivkey,
     )
   }).toThrowError(new Error('Invalid subject sig'))
 })
 
-test(
-  'HashingLogic getAttestationAgreement' + ' - has not been modified',
-  () => {
-    const dataHash = preComputedHashes.rootHash
-    const nonce =
-      '0xd5d7e6ae812a8ff7bd44f928b199806446c2170412df381efb41d8f47fcd044b'
+test('HashingLogic getAttestationAgreement' + ' - has not been modified', () => {
+  const dataHash = preComputedHashes.rootHash
+  const nonce = '0xd5d7e6ae812a8ff7bd44f928b199806446c2170412df381efb41d8f47fcd044b'
 
-    const agreementParams = JSON.stringify(
-      HashingLogic.getAttestationAgreement(contractAddress, 1, dataHash, nonce)
-    )
-    // If this fails something changed
-    expect(agreementParams).toBe(JSON.stringify(preComputedAgreement))
-  }
-)
+  const agreementParams = JSON.stringify(HashingLogic.getAttestationAgreement(contractAddress, 1, dataHash, nonce))
+  // If this fails something changed
+  expect(agreementParams).toBe(JSON.stringify(preComputedAgreement))
+})

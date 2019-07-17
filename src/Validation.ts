@@ -1,6 +1,7 @@
 import * as EthU from 'ethereumjs-util'
+
 const ethSigUtil = require('eth-sig-util')
-import {isString} from 'lodash'
+
 import {genValidateFn, TUnvalidated} from './validator'
 import {AttestationTypeID} from './AttestationTypes'
 import {validateDateTime} from './RFC3339DateTime'
@@ -23,15 +24,13 @@ export const isValidSignatureString = (signatureString: string): boolean => {
 }
 
 const isNotEmpty = (value: string) => value.replace(/\s+/g, '') !== ''
-export const isNotEmptyString = (value: any) =>
-  isString(value) && isNotEmpty(value)
+export const isNotEmptyString = (value: any) => typeof value === 'string' && isNotEmpty(value)
 
 export const isValidEthHexString = (hexString: string): boolean => {
   return hexString.slice(0, 2) === '0x'
 }
 
-export const isValidHash = (value: string) =>
-  isValidEthHexString(value) && value.length === 66
+export const isValidHash = (value: string) => isValidEthHexString(value) && value.length === 66
 
 export const isArrayOfPaddingNodes = (value: any): boolean => {
   if (!Array.isArray(value)) {
@@ -41,74 +40,47 @@ export const isArrayOfPaddingNodes = (value: any): boolean => {
   return value.every(v => v.length === 66)
 }
 
-export const isValidTypeString = (value: any): boolean =>
-  (<any>Object).values(AttestationTypeID).includes(value)
+export const isValidTypeString = (value: any): boolean => Object.values(AttestationTypeID).includes(value)
 
-export const isValidRFC3339DateTime = (value: any): boolean =>
-  validateDateTime(value)
+export const isValidRFC3339DateTime = (value: any): boolean => validateDateTime(value)
 
-export const validateAttesterClaimSig = (
-  attesterSig: string,
-  params: TUnvalidated<HashingLogic.ISignedClaimNode>
-) => {
+export const validateAttesterClaimSig = (attesterSig: string, params: TUnvalidated<HashingLogic.ISignedClaimNode>) => {
   const claimHash = HashingLogic.hashClaimTree(params.claimNode)
   const recoveredSigner = HashingLogic.recoverHashSigner(claimHash, attesterSig)
   return recoveredSigner.toLowerCase() === params.attester.toLowerCase()
 }
 
-export const validateAttesterRootSig = (
-  attesterSig: string,
-  params: TUnvalidated<HashingLogic.IBloomMerkleTreeComponents>
-) => {
-  const recoveredSigner = HashingLogic.recoverHashSigner(
-    EthU.toBuffer(params.rootHash),
-    attesterSig
-  )
+export const validateAttesterRootSig = (attesterSig: string, params: TUnvalidated<HashingLogic.IBloomMerkleTreeComponents>) => {
+  const recoveredSigner = HashingLogic.recoverHashSigner(EthU.toBuffer(params.rootHash), attesterSig)
   return recoveredSigner.toLowerCase() === params.attester.toLowerCase()
 }
 
-export const validateBatchAttesterSig = (
-  batchAttesterSig: string,
-  params: TUnvalidated<HashingLogic.IBloomBatchMerkleTreeComponents>
-) => {
+export const validateBatchAttesterSig = (batchAttesterSig: string, params: TUnvalidated<HashingLogic.IBloomBatchMerkleTreeComponents>) => {
   const recoveredSigner = HashingLogic.recoverHashSigner(
     EthU.toBuffer(
       HashingLogic.hashMessage(
         HashingLogic.orderedStringify({
           subject: params.subject,
           rootHash: params.layer2Hash,
-        })
-      )
+        }),
+      ),
     ),
-    batchAttesterSig
+    batchAttesterSig,
   )
   return recoveredSigner.toLowerCase() === params.attester.toLowerCase()
 }
 
-export const validateSubjectSig = (
-  subjectSig: string,
-  params: TUnvalidated<HashingLogic.IBloomBatchMerkleTreeComponents>
-) => {
+export const validateSubjectSig = (subjectSig: string, params: TUnvalidated<HashingLogic.IBloomBatchMerkleTreeComponents>) => {
   const recoveredSigner = ethSigUtil.recoverTypedSignature({
-    data: HashingLogic.getAttestationAgreement(
-      params.contractAddress,
-      1,
-      params.layer2Hash,
-      params.requestNonce
-    ),
+    data: HashingLogic.getAttestationAgreement(params.contractAddress, 1, params.layer2Hash, params.requestNonce),
     sig: subjectSig,
   })
   return recoveredSigner.toLowerCase() === params.subject.toLowerCase()
 }
 
-export const validateChecksumSig = (
-  checksumSig: string,
-  params: TUnvalidated<HashingLogic.IBloomMerkleTreeComponents>
-) => {
+export const validateChecksumSig = (checksumSig: string, params: TUnvalidated<HashingLogic.IBloomMerkleTreeComponents>) => {
   const checksum = HashingLogic.getChecksum(
-    params.claimNodes.map((a: HashingLogic.ISignedClaimNode) =>
-      HashingLogic.hashMessage(a.attesterSig)
-    )
+    params.claimNodes.map((a: HashingLogic.ISignedClaimNode) => HashingLogic.hashMessage(a.attesterSig)),
   )
   const recoveredSigner = HashingLogic.recoverHashSigner(checksum, checksumSig)
   return recoveredSigner.toLowerCase() === params.attester.toLowerCase()
@@ -148,17 +120,13 @@ export const validateAttestationIssuanceNode = genValidateFn([
   ['expirationDate', isValidRFC3339DateTime, false],
 ])
 
-export const isValidAttestationDataNode = (value: any): boolean =>
-  validateAttestationDataNode(value).kind === 'validated'
+export const isValidAttestationDataNode = (value: any): boolean => validateAttestationDataNode(value).kind === 'validated'
 
-export const isValidAttestationTypeNode = (value: any): boolean =>
-  validateAttestationTypeNode(value).kind === 'validated'
+export const isValidAttestationTypeNode = (value: any): boolean => validateAttestationTypeNode(value).kind === 'validated'
 
-export const isValidAttestationIssuanceNode = (value: any): boolean =>
-  validateAttestationIssuanceNode(value).kind === 'validated'
+export const isValidAttestationIssuanceNode = (value: any): boolean => validateAttestationIssuanceNode(value).kind === 'validated'
 
-export const isValidLinkNode = (value: any): boolean =>
-  validateLinkNode(value).kind === 'validated'
+export const isValidLinkNode = (value: any): boolean => validateLinkNode(value).kind === 'validated'
 
 export const validateLegacyAttestationNode = genValidateFn([
   ['data', isValidAttestationDataNode, false],
@@ -168,8 +136,7 @@ export const validateLegacyAttestationNode = genValidateFn([
   ['aux', isValidHash, false],
 ])
 
-export const isValidLegacyAttestationNode = (value: any): boolean =>
-  validateLegacyAttestationNode(value).kind === 'validated'
+export const isValidLegacyAttestationNode = (value: any): boolean => validateLegacyAttestationNode(value).kind === 'validated'
 
 export const validateIssueClaimNode = genValidateFn([
   ['data', isValidAttestationDataNode, false],
@@ -179,8 +146,7 @@ export const validateIssueClaimNode = genValidateFn([
   ['aux', isValidHash, false],
 ])
 
-export const isValidIssuedClaimNode = (value: any): boolean =>
-  validateIssueClaimNode(value).kind === 'validated'
+export const isValidIssuedClaimNode = (value: any): boolean => validateIssueClaimNode(value).kind === 'validated'
 
 export const validateClaimNode = genValidateFn([
   ['attesterSig', isValidSignatureString, false],

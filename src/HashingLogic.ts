@@ -1,14 +1,15 @@
-import {AttestationTypeID} from './AttestationTypes'
 import {keccak256} from 'js-sha3'
-const crypto = require('crypto')
 import MerkleTree, {IProof} from 'merkletreejs'
-import {validateDateTime} from './RFC3339DateTime'
-const ethUtil = require('ethereumjs-util')
-const ethSigUtil = require('eth-sig-util')
 import * as ethereumjsWallet from 'ethereumjs-wallet'
 
-export const hashMessage = (message: string): string =>
-  ethUtil.addHexPrefix(keccak256(message))
+const crypto = require('crypto')
+const ethUtil = require('ethereumjs-util')
+const ethSigUtil = require('eth-sig-util')
+
+import {validateDateTime} from './RFC3339DateTime'
+import {AttestationTypeID} from './AttestationTypes'
+
+export const hashMessage = (message: string): string => ethUtil.addHexPrefix(keccak256(message))
 
 /**
  * Generate a random hex string with 0x prefix
@@ -130,8 +131,7 @@ export interface IBloomMerkleTreeComponents {
   version: string
 }
 
-export interface IBloomBatchMerkleTreeComponents
-  extends IBloomMerkleTreeComponents {
+export interface IBloomBatchMerkleTreeComponents extends IBloomMerkleTreeComponents {
   batchAttesterSig: string
   batchLayer2Hash: string // Hash of attester sig and subject sig
   contractAddress: string
@@ -171,8 +171,8 @@ export interface ISignedAuthorization {
  * which is a copy of `obj`, but its properties are sorted using
  * `Array<string>.sort`.
  */
-export const orderedStringify = (obj: {}) => {
-  let orderedObj = {}
+export const orderedStringify = (obj: {[i: string]: any}) => {
+  let orderedObj: {[i: string]: any} = {}
   Object.keys(obj)
     .sort()
     .map(o => (orderedObj[o] = obj[o]))
@@ -185,9 +185,7 @@ export const orderedStringify = (obj: {}) => {
  */
 export const getMerkleTreeFromLeaves = (leaves: string[]) => {
   const leavesSorted = leaves.sort().map(hexStr => ethUtil.toBuffer(hexStr))
-  return new MerkleTree(leavesSorted, (x: Buffer) =>
-    Buffer.from(keccak256(x), 'hex')
-  )
+  return new MerkleTree(leavesSorted, (x: Buffer) => Buffer.from(keccak256(x), 'hex'))
 }
 
 /**
@@ -245,7 +243,7 @@ export const getSignedClaimNode = (
   privKey: Buffer,
   issuanceDate: string,
   expirationDate: string,
-  localRevocationLink?: string
+  localRevocationLink?: string,
 ): ISignedClaimNode => {
   // validateDates
   if (!validateDateTime(issuanceDate)) throw new Error('Invalid issuance date')
@@ -352,11 +350,7 @@ export const hashAttestationNode = (attestation: IAttestationNode): Buffer => {
  * @param globalRevocationLink - Hex string referencing revocation of the whole attestation
  * @param privKey - Private key of signer
  */
-export const getSignedDataNode = (
-  dataNode: IAttestationLegacy,
-  globalRevocationLink: string,
-  privKey: Buffer
-): IDataNodeLegacy => {
+export const getSignedDataNode = (dataNode: IAttestationLegacy, globalRevocationLink: string, privKey: Buffer): IDataNodeLegacy => {
   const attestationNode: IAttestationNode = {
     data: dataNode.data,
     type: dataNode.type,
@@ -386,11 +380,7 @@ export const getSignedDataNode = (
  * after padding, and sorting.
  *
  */
-export const getBloomMerkleTree = (
-  claimHashes: string[],
-  paddingNodes: string[],
-  checksumHash: string
-): MerkleTree => {
+export const getBloomMerkleTree = (claimHashes: string[], paddingNodes: string[], checksumHash: string): MerkleTree => {
   let leaves = claimHashes
   leaves.push(checksumHash)
   leaves = leaves.concat(paddingNodes)
@@ -457,10 +447,9 @@ export const getSignedMerkleTreeComponents = (
     localRevocationLinks?: string[]
     globalRevocationLink?: string
     rootHashNonce?: string
-  }
+  },
 ): IBloomMerkleTreeComponents => {
-  const globalRevocationLink =
-    (opts && opts.globalRevocationLink) || generateNonce()
+  const globalRevocationLink = (opts && opts.globalRevocationLink) || generateNonce()
   const signedClaimNodes: ISignedClaimNode[] = claimNodes.map((a, i) => {
     return getSignedClaimNode(
       a,
@@ -468,31 +457,22 @@ export const getSignedMerkleTreeComponents = (
       privKey,
       issuanceDate,
       expirationDate,
-      opts && opts.localRevocationLinks
-        ? opts.localRevocationLinks[i]
-        : undefined
+      opts && opts.localRevocationLinks ? opts.localRevocationLinks[i] : undefined,
     )
   })
-  const attesterClaimSigHashes = signedClaimNodes.map(a =>
-    hashMessage(a.attesterSig)
-  )
+  const attesterClaimSigHashes = signedClaimNodes.map(a => hashMessage(a.attesterSig))
 
-  const paddingNodes =
-    (opts && opts.paddingNodes) || getPadding(attesterClaimSigHashes.length)
+  const paddingNodes = (opts && opts.paddingNodes) || getPadding(attesterClaimSigHashes.length)
   const signedChecksum = signChecksum(attesterClaimSigHashes, privKey)
   const signedChecksumHash = hashMessage(signedChecksum)
-  const rootHash = getBloomMerkleTree(
-    attesterClaimSigHashes,
-    paddingNodes,
-    signedChecksumHash
-  ).getRoot()
+  const rootHash = getBloomMerkleTree(attesterClaimSigHashes, paddingNodes, signedChecksumHash).getRoot()
   const signedRootHash = signHash(rootHash, privKey)
   const rootHashNonce = (opts && opts.rootHashNonce) || generateNonce()
   const layer2Hash = hashMessage(
     orderedStringify({
       rootHash: ethUtil.bufferToHex(rootHash),
       nonce: rootHashNonce,
-    })
+    }),
   )
   const attester = ethereumjsWallet.fromPrivateKey(privKey)
   return {
@@ -520,33 +500,24 @@ export const getSignedMerkleTreeComponents = (
  * @param dataNodes - Complete attestation nodes
  * @param privKey - Attester private key
  */
-export const getSignedMerkleTreeComponentsLegacy = (
-  dataNodes: IAttestationLegacy[],
-  privKey: Buffer
-): IBloomMerkleTreeComponentsLegacy => {
+export const getSignedMerkleTreeComponentsLegacy = (dataNodes: IAttestationLegacy[], privKey: Buffer): IBloomMerkleTreeComponentsLegacy => {
   const globalRevocationLink = generateNonce()
   const signedDataNodes: IDataNodeLegacy[] = dataNodes.map(a => {
     return getSignedDataNode(a, globalRevocationLink, privKey)
   })
-  const signedDataHashes = signedDataNodes.map(a =>
-    hashMessage(a.signedAttestation)
-  )
+  const signedDataHashes = signedDataNodes.map(a => hashMessage(a.signedAttestation))
 
   const paddingNodes = getPadding(signedDataHashes.length)
   const signedChecksum = signChecksum(signedDataHashes, privKey)
   const signedChecksumHash = hashMessage(signedChecksum)
-  const rootHash = getBloomMerkleTree(
-    signedDataHashes,
-    paddingNodes,
-    signedChecksumHash
-  ).getRoot()
+  const rootHash = getBloomMerkleTree(signedDataHashes, paddingNodes, signedChecksumHash).getRoot()
   const signedRootHash = signHash(rootHash, privKey)
   const rootHashNonce = generateNonce()
   const layer2Hash = hashMessage(
     orderedStringify({
       rootHash: ethUtil.bufferToHex(rootHash),
       nonce: rootHashNonce,
-    })
+    }),
   )
   return {
     layer2Hash: layer2Hash,
@@ -559,30 +530,14 @@ export const getSignedMerkleTreeComponentsLegacy = (
   }
 }
 
-export const getMerkleTreeFromComponentsLegacy = (
-  components: IBloomMerkleTreeComponentsLegacy
-): MerkleTree => {
-  const signedDataHashes = components.dataNodes.map(a =>
-    hashMessage(a.signedAttestation)
-  )
-  return getBloomMerkleTree(
-    signedDataHashes,
-    components.paddingNodes,
-    hashMessage(components.checksumSig)
-  )
+export const getMerkleTreeFromComponentsLegacy = (components: IBloomMerkleTreeComponentsLegacy): MerkleTree => {
+  const signedDataHashes = components.dataNodes.map(a => hashMessage(a.signedAttestation))
+  return getBloomMerkleTree(signedDataHashes, components.paddingNodes, hashMessage(components.checksumSig))
 }
 
-export const getMerkleTreeFromComponents = (
-  components: IBloomMerkleTreeComponents | IBloomBatchMerkleTreeComponents
-): MerkleTree => {
-  const signedDataHashes = components.claimNodes.map(a =>
-    hashMessage(a.attesterSig)
-  )
-  return getBloomMerkleTree(
-    signedDataHashes,
-    components.paddingNodes,
-    hashMessage(components.checksumSig)
-  )
+export const getMerkleTreeFromComponents = (components: IBloomMerkleTreeComponents | IBloomBatchMerkleTreeComponents): MerkleTree => {
+  const signedDataHashes = components.claimNodes.map(a => hashMessage(a.attesterSig))
+  return getBloomMerkleTree(signedDataHashes, components.paddingNodes, hashMessage(components.checksumSig))
 }
 
 /**
@@ -601,11 +556,7 @@ export const getMerkleTreeFromComponents = (
  *
  * standalone verify function taken from https://github.com/miguelmota/merkletreejs
  */
-export const verifyMerkleProof = (
-  proof: IProof[],
-  targetNode: Buffer,
-  root: Buffer
-): boolean => {
+export const verifyMerkleProof = (proof: IProof[], targetNode: Buffer, root: Buffer): boolean => {
   // Should not succeed with all empty arguments
   // Proof can be empty if single leaf tree
   if (targetNode.toString() === '' || root.toString() === '') {
@@ -655,7 +606,7 @@ export const getAttestationAgreement = (
   contractAddress: string,
   chainId: number,
   dataHash: string,
-  requestNonce: string
+  requestNonce: string,
 ): IFormattedTypedData => {
   return {
     types: {
@@ -665,10 +616,7 @@ export const getAttestationAgreement = (
         {name: 'chainId', type: 'uint256'},
         {name: 'verifyingContract', type: 'address'},
       ],
-      AttestationRequest: [
-        {name: 'dataHash', type: 'bytes32'},
-        {name: 'nonce', type: 'bytes32'},
-      ],
+      AttestationRequest: [{name: 'dataHash', type: 'bytes32'}, {name: 'nonce', type: 'bytes32'}],
     },
     primaryType: 'AttestationRequest',
     domain: {
@@ -684,13 +632,7 @@ export const getAttestationAgreement = (
   }
 }
 
-export const validateSignedAgreement = (
-  subjectSig: string,
-  contractAddress: string,
-  dataHash: string,
-  nonce: string,
-  subject: string
-) => {
+export const validateSignedAgreement = (subjectSig: string, contractAddress: string, dataHash: string, nonce: string, subject: string) => {
   const recoveredEthAddress = ethSigUtil.recoverTypedSignature({
     data: getAttestationAgreement(contractAddress, 1, dataHash, nonce),
     sig: subjectSig,
@@ -704,17 +646,9 @@ export const getSignedBatchMerkleTreeComponents = (
   subjectSig: string,
   subject: string,
   requestNonce: string,
-  privKey: Buffer
+  privKey: Buffer,
 ): IBloomBatchMerkleTreeComponents => {
-  if (
-    !validateSignedAgreement(
-      subjectSig,
-      contractAddress,
-      components.layer2Hash,
-      requestNonce,
-      subject
-    )
-  ) {
+  if (!validateSignedAgreement(subjectSig, contractAddress, components.layer2Hash, requestNonce, subject)) {
     throw new Error('Invalid subject sig')
   }
   const batchAttesterSig = signHash(
@@ -723,16 +657,16 @@ export const getSignedBatchMerkleTreeComponents = (
         orderedStringify({
           subject: subject,
           rootHash: components.layer2Hash,
-        })
-      )
+        }),
+      ),
     ),
-    privKey
+    privKey,
   )
   const batchLayer2Hash = hashMessage(
     orderedStringify({
       attesterSig: batchAttesterSig,
       subjectSig: subjectSig,
-    })
+    }),
   )
   const attester = ethereumjsWallet.fromPrivateKey(privKey)
   return {

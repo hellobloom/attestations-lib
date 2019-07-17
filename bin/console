@@ -3,11 +3,10 @@
 const repl = require('repl')
 const path = require('path')
 
-require('ts-node').register({project: 'tsconfig.server.json'})
+require('ts-node').register({project: 'tsconfig.repl.json'})
 require('tsconfig-paths/register')
 
-const projectRequire = relativeRequire =>
-  require(path.join(path.resolve(__dirname, '..'), relativeRequire))
+const projectRequire = relativeRequire => require(path.join(path.resolve(__dirname, '..'), relativeRequire))
 
 // Add values to this object if you want them to be available in the console
 const customReplContext = {}
@@ -26,11 +25,9 @@ console.log()
  * Inject helpers into REPL context
  */
 
-const helpers = {
-}
+const helpers = {}
 
 Object.assign(customReplContext, helpers)
-
 
 /**
  * Initialize REPLs
@@ -43,9 +40,7 @@ for (key in customReplContext) {
   // replSession.context already has things in it like `console` so you can do `console.log`
   // As a precaution, we should throw an error if we accidentally clobber
   if (key in replSession.context) {
-    throw new Error(
-      `${key} is already set in replSession.context! You'll need to give it another name`
-    )
+    throw new Error(`${key} is already set in replSession.context! You'll need to give it another name`)
   }
 
   replSession.context[key] = customReplContext[key]
