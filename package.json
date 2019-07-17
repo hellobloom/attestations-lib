@@ -22,6 +22,7 @@
     "prepublishOnly": "npm run test && npm run eslint"
   },
   "dependencies": {
+    "@bloomprotocol/verify-kit": "^1.0.0",
     "@types/ramda": "^0.26.9",
     "eth-sig-util": "^2.1.0",
     "ethereumjs-util": "^6.0.0",

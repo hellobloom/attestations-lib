@@ -1,3 +1,6 @@
+import * as VK from '@bloomprotocol/verify-kit'
+import * as HL from './HashingLogic'
+
 export type TContextField = string | {type: string; data: string}
 
 ///////////////////////////////////////////////////
@@ -91,6 +94,8 @@ export type TPhoneNumberObj = {
   line?: string
   ext?: string
 }
+
+export type TEthAddr = string // "did:eth:0x...", "0x..."
 
 export type TGender = string // 'male', 'female', ...
 
@@ -255,6 +260,60 @@ export interface IBaseAttIDDoc extends IBaseAtt {
 }
 
 ///////////////////////////////////////////////////
+// Loan bill attestation dataStr type
+///////////////////////////////////////////////////
+export interface IBaseAttLoanPayment {
+  amount?: number
+  date?: string
+}
+export interface IBaseAttLoanLien {
+  amount?: number
+  type?: string
+  preference?: number
+}
+export interface IBaseAttLoanAccount {
+  loan_date?: TDateOrTime
+  interest_size?: number // if 'fixed', a flat number, if 'simple' or 'compound', a percent
+  interest_variable?: boolean // variable-rate vs. fixed rate
+  interest_variable_benchmark?: string // unspecified; e.g. "libor"
+  interest_type?: string // 'fixed', 'simple', 'compound'...
+  interest_accrual_interval?: string // 'daily', 'weekly', 'monthly', 'quarterly', 'yearly'...
+  payment_interval?: string // 'daily', 'weekly', 'monthly', 'quarterly', 'yearly'...
+  currency?: string
+  principal?: number
+  prepayment_allowed?: boolean
+  amount_paid?: number
+  amount_remaining?: number
+  num_late_payments?: number // Number of late payments total
+  num_months_behind?: number // Number of months behind on payments
+  delinquent?: boolean // Is loan delinquent
+  defaulted?: boolean // Is loan in default
+  foreclosure?: boolean // Has a property been foreclosed on
+  preference?: number // Preference of payment in event of default
+  liens?: Array<IBaseAttLoanLien>
+  payments?: Array<IBaseAttLoanPayment>
+}
+export interface IBaseAttLoanProvider extends IBaseAttDataObj {
+  name?: string
+  id?: string
+  country?: string
+  website?: string
+  accounts?: Array<IBaseAttLoanAccount>
+}
+export interface IBaseAttLoanSummary {
+  date?: string
+  currency?: string
+  total_original_balance?: number
+  total_amount_paid?: number
+  total_balance?: number
+}
+export interface IBaseAttLoan extends IBaseAtt {
+  generality: number
+  summary?: IBaseAttLoanSummary
+  data?: IBaseAttLoanProvider | Array<IBaseAttLoanProvider>
+}
+
+///////////////////////////////////////////////////
 // Utility bill attestation dataStr type
 ///////////////////////////////////////////////////
 export type TBaseAttUtilitySummary = {
@@ -384,8 +443,6 @@ export interface IBaseAttIncome extends IBaseAtt {
 
 ///////////////////////////////////////////////////
 // Assets attestation dataStr type (total, gross, or expenses)
-// import {AttestationData as AD} from '@bloomprotocol/attestations-lib'
-
 ///////////////////////////////////////////////////
 export interface IBaseAttAssetsSummary {
   date?: TDateOrTime
@@ -413,6 +470,27 @@ export interface IBaseAttAssets extends IBaseAtt {
 ///////////////////////////////////////////////////
 export interface IBaseAttGender extends IBaseAtt {
   data: TGender
+}
+
+///////////////////////////////////////////////////
+// Meta attestation dataStr type
+///////////////////////////////////////////////////
+export interface IBaseAttMetaSummary {
+  date?: TDateOrTime
+  num_attestations?: number
+}
+export interface IBaseMetaClaim {
+  type: string // 'claim_only' | 'single_attestation' | 'batch_attestation' | 'hash_only' | ...
+  data: any | string | HL.ISignedClaimNode | VK.IVerifiableCredential // Non-enforced, hence "any"
+}
+export interface IBaseMetaData {
+  meta?: any
+  attestations: Array<IBaseMetaClaim>
+}
+export interface IBaseAttMeta extends IBaseAtt {
+  generality: number
+  summary?: IBaseAttMetaSummary
+  data: IBaseMetaData
 }
 
 /**
