@@ -480,17 +480,16 @@ export interface IBaseAttGender extends IBaseAtt {
 ///////////////////////////////////////////////////
 // Meta attestation dataStr type
 ///////////////////////////////////////////////////
-export interface IBaseAttMetaMeta {}
 export interface IBaseAttMetaSummary {
   date?: TDateOrTime
   num_attestations?: number
 }
 export interface IBaseMetaClaim {
-  type: 'claim_only' | 'single_attestation' | 'batch_attestation' | 'hash_only'
-  data: string | HL.ISignedClaimNode | VK.IVerifiableCredential
+  type: string // 'claim_only' | 'single_attestation' | 'batch_attestation' | 'hash_only' | ...
+  data: any | string | HL.ISignedClaimNode | VK.IVerifiableCredential // Non-enforced, hence "any"
 }
 export interface IBaseMetaData {
-  meta?: IBaseAttMetaMeta
+  meta?: any
   attestations: Array<IBaseMetaClaim>
 }
 export interface IBaseAttMeta extends IBaseAtt {
