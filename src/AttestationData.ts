@@ -247,8 +247,21 @@ export interface IBaseAttIDDocData extends IBaseAttDataObj {
     expiration_date?: TDateOrTime
     name?: TPersonalName
     gender?: string
-    photo?: string
   } // IAssureIDResult.Biographic,
+  classification?: {
+    mode?: string
+    name?: string
+    class?: string
+    class_code?: string
+    class_name?: string
+    country_code?: string
+    issue?: string
+    issuer_name?: string
+    issuer_type?: string
+    issuer_code?: string
+    keesing_code?: string
+    generic?: boolean
+  } // IClassification
   facematch_result?: {
     is_match?: boolean
     score?: number
