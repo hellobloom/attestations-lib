@@ -267,18 +267,18 @@ export interface IBaseAttIDDocData extends IBaseAttDataObj {
     gender?: string
   } // IAssureIDResult.Biographic,
   classification?: {
-    classification_method: 'automatic' | 'manual'
-    id_type_name: string
-    id_class: TDocumentClass
-    id_class_name: string
-    country_code: string
-    issue_date: TDate
-    issuer_name: string
-    issuer_type: string
-    '@provider_specific': {
-      issuer_code: string
-      keesing_code: string
-      generic: boolean
+    classification_method?: 'automatic' | 'manual'
+    id_type_name?: string
+    id_class?: TDocumentClass
+    id_class_name?: string
+    country_code?: string
+    issue_date?: TDate
+    issuer_name?: string
+    issuer_type?: string
+    '@provider_specific'?: {
+      issuer_code?: string
+      keesing_code?: string
+      generic?: boolean
     }
   } // IClassification
   facematch_result?: {
