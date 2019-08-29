@@ -274,7 +274,7 @@ export interface IBaseAttIDDocData extends IBaseAttDataObj {
     country_code?: string
     issue_date?: TDate
     issuer_name?: string
-    issuer_type?: string
+    issue_type?: string
     '@provider_specific'?: {
       issuer_code?: string
       keesing_code?: string
