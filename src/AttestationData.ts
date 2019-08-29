@@ -254,6 +254,11 @@ export interface IBaseAttIDDocData extends IBaseAttDataObj {
     score?: number
     transaction_id?: string
   } // IFaceMatchResult
+  images?: {
+    front?: string
+    back?: string
+    selfie?: string
+  }
 }
 export interface IBaseAttIDDoc extends IBaseAtt {
   data: IBaseAttIDDocData | Array<IBaseAttIDDocData>
