@@ -231,6 +231,24 @@ export interface IBaseAttPEP extends IBaseAtt {
   data: IBaseAttPEPData | Array<IBaseAttPEPData>
 }
 
+export type TDocumentClass =
+  | 'unknown'
+  | 'passport'
+  | 'visa'
+  | 'drivers_license'
+  | 'identification_card'
+  | 'permit'
+  | 'currency'
+  | 'residence_document'
+  | 'travel_document'
+  | 'birth_certificate'
+  | 'vehicle_registration'
+  | 'other'
+  | 'weapon_license'
+  | 'tribal_identification'
+  | 'voter_identification'
+  | 'military'
+
 ///////////////////////////////////////////////////
 // ID document attestation dataStr type
 ///////////////////////////////////////////////////
@@ -247,13 +265,32 @@ export interface IBaseAttIDDocData extends IBaseAttDataObj {
     expiration_date?: TDateOrTime
     name?: TPersonalName
     gender?: string
-    photo?: string
   } // IAssureIDResult.Biographic,
+  classification?: {
+    classification_method?: 'automatic' | 'manual'
+    id_type_name?: string
+    id_class?: TDocumentClass
+    id_class_name?: string
+    country_code?: string
+    issue_date?: TDate
+    issuer_name?: string
+    issue_type?: string
+    '@provider_specific'?: {
+      issuer_code?: string
+      keesing_code?: string
+      generic?: boolean
+    }
+  } // IClassification
   facematch_result?: {
     is_match?: boolean
     score?: number
     transaction_id?: string
   } // IFaceMatchResult
+  images?: {
+    front?: string
+    back?: string
+    selfie?: string
+  }
 }
 export interface IBaseAttIDDoc extends IBaseAtt {
   data: IBaseAttIDDocData | Array<IBaseAttIDDocData>
