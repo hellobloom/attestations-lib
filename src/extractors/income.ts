@@ -3,7 +3,7 @@ import {AttestationData as AD} from 'src'
 
 export const extractIncome = async (
   a: AD.IBaseAttIncome,
-  attType: string,
+  _attType: string,
   valType: string,
 ): Promise<AD.IBaseAttIncome | string | number | null> => {
   if (!a.data) {

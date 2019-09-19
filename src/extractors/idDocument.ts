@@ -1,26 +1,19 @@
 import {AttestationData as AD} from 'src'
 import * as B from './base'
 
-const biographicFields: Array<keyof NonNullable<AD.IBaseAttIDDocData['biographic']>> = [
-  'age',
-  'dob',
-  'expiration_date',
-  'name',
-  'gender',
-  'photo',
-]
+const biographicFields: Array<keyof NonNullable<AD.IBaseAttIDDocData['biographic']>> = ['age', 'dob', 'expiration_date', 'name', 'gender']
 const facematchResultFields: Array<keyof NonNullable<AD.IBaseAttIDDocData['facematch_result']>> = ['is_match', 'score', 'transaction_id']
 
 export const extractIDDoc = async (
   a: AD.IBaseAttIDDoc,
-  attType: string,
+  _attType: string,
   valType: string,
 ): Promise<AD.IBaseAttIDDocData['facematch_result'] | AD.IBaseAttIDDocData['biographic'] | string | number | null> => {
   if (!a.data) {
     return null
   }
 
-  let d = await B.getFirst(a.data)
+  const d = await B.getFirst(a.data)
 
   if (!d) return null
 
@@ -30,20 +23,21 @@ export const extractIDDoc = async (
   if (valType === 'biographic') return d.biographic || null
 
   if (biographicFields.indexOf(valType as any) !== -1) {
-    if (!d.biographic) {
+    if (!d.biographic || !(valType in d.biographic)) {
       return null
     }
-    return d.biographic[valType]
+
+    return d.biographic[valType as keyof AD.IBaseAttIDDocData['biographic']]
   }
 
   // Facematch result
   if (valType === 'facematch_result') return d.facematch_result || null
 
   if (facematchResultFields.indexOf(valType as any) !== -1) {
-    if (!d.facematch_result) {
+    if (!d.facematch_result || !(valType in d.facematch_result)) {
       return null
     }
-    return d.facematch_result[valType]
+    return d.facematch_result[valType as keyof AD.IBaseAttIDDocData['facematch_result']]
   }
 
   if (valType === 'authentication_result') return d.authentication_result || null

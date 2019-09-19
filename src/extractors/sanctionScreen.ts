@@ -14,10 +14,13 @@ const searchSummaryFields: Array<keyof NonNullable<AD.IBaseAttSanctionScreenData
 
 export const extractSanctionScreen = async (
   a: AD.IBaseAttSanctionScreen,
-  attType: string,
+  _attType: string,
   valType: string,
 ): Promise<
   | AD.IBaseAttSanctionScreenData
+  | AD.IBaseAttSanctionScreenData['id']
+  | AD.IBaseAttSanctionScreenData['name']
+  | AD.IBaseAttSanctionScreenData['dob']
   | AD.IBaseAttSanctionScreenData['search_summary']
   | NonNullable<NonNullable<AD.IBaseAttSanctionScreenData['search_summary']>['hits']>
   | string
@@ -34,14 +37,14 @@ export const extractSanctionScreen = async (
 
   if (!d) return null
 
-  if (dataFields.indexOf(valType as any) !== -1) {
-    return d[valType]
+  if (dataFields.indexOf(valType as any) !== -1 && typeof d === 'object' && valType in d) {
+    return d[valType as keyof AD.IBaseAttSanctionScreenData]
   }
 
   if (searchSummaryFields.indexOf(valType as any) !== -1) {
     let s = d['search_summary']
     if (!s) return null
-    return s[valType] || null
+    return s[valType as keyof AD.IBaseAttSanctionScreenData['search_summary']] || null
   }
 
   return null

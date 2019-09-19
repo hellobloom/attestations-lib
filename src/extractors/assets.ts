@@ -3,7 +3,7 @@ import * as B from './base'
 
 export const extractAssets = async (
   a: AD.IBaseAttAssets,
-  attType: string,
+  _attType: string,
   valType: string,
 ): Promise<AD.IBaseAttAssets | string | number | null> => {
   // Naive one-account implementation.  Will need future improvement, like adding together values with currency

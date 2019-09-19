@@ -4,7 +4,7 @@ import * as B from './base'
 
 export const extractUtility = async (
   a: AD.IBaseAttUtility,
-  attType: string,
+  _attType: string,
   valType: string,
 ): Promise<AD.IBaseAttUtility | string | number | AD.TAddress | null> => {
   if (valType === 'object') {

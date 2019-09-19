@@ -16,21 +16,25 @@ export const fields: Array<keyof AD.TAddress> = [
 
 export const extractAddress = async (
   a: AD.IBaseAttAddress,
-  attType: string,
+  _attType: string,
   valType: string,
 ): Promise<AD.TAddress | string | number | null> => {
   // Get first provider
-  let providerBlock: AD.IBaseAttAddressProvider | null = await B.getFirst(a.data)
+  const providerBlock: AD.IBaseAttAddressProvider | null = await B.getFirst(a.data)
   if (providerBlock) {
     if (typeof providerBlock.address !== 'object') {
       return null
     }
-    let address: AD.TAddress | null =
+    const address: AD.TAddress | null =
       providerBlock.address instanceof Array ? await B.getFirst(providerBlock.address) : providerBlock.address
     if (valType === 'object') {
       return address
-    } else if (address && valType in address) {
-      return address[valType]
+    } else if (address && typeof address === 'object' && valType in address) {
+      const val = address[valType as keyof AD.TAddress]
+      if (typeof val === 'undefined') {
+        return null
+      }
+      return val
     }
   }
   return null

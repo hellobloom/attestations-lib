@@ -5,16 +5,20 @@ export const fields: Array<keyof AD.IBaseAttAccountData> = ['id', 'email', 'name
 
 export const extractAccount = async (
   a: AD.IBaseAttAccount,
-  attType: string,
+  _attType: string,
   valType: string,
-): Promise<AD.IBaseAttAccountData | string | number | null> => {
+): Promise<AD.IBaseAttAccountData | AD.TPersonalNameObj | string | number | null> => {
   // Get first provider
-  let account: AD.IBaseAttAccountData | null = await B.getFirst(a.data)
+  const account: AD.IBaseAttAccountData | null = await B.getFirst(a.data)
   if (account) {
     if (valType === 'object') {
       return account
-    } else if (account && valType in account) {
-      return account[valType]
+    } else if (account && typeof account === 'object' && valType in account) {
+      const val = account[valType as keyof AD.IBaseAttAccountData]
+      if (typeof val === 'undefined') {
+        return null
+      }
+      return val
     }
   }
   return null

@@ -17,9 +17,19 @@ export const ssfields: Array<keyof AD.IBaseAttPEPData['search_summary']> = [
 
 export const extractPEP = async (
   a: AD.IBaseAttPEP,
-  attType: string,
+  _attType: string,
   valType: string,
-): Promise<AD.IBaseAttPEPData | string | number | null> => {
+): Promise<
+  | AD.IBaseAttPEPData
+  | AD.IBaseAttPEPData['date']
+  | AD.IBaseAttPEPData['name']
+  | AD.IBaseAttPEPData['search_summary']
+  | AD.IBaseAttPEPData['search_summary']['lists']
+  | AD.IBaseAttPEPData['search_summary']['hits']
+  | string
+  | number
+  | null
+> => {
   // Original spec
   if (typeof a.data === 'object') {
     let data: AD.IBaseAttPEPData | null = await B.getFirst(a.data)
@@ -29,8 +39,9 @@ export const extractPEP = async (
     if (typeof data === 'object') {
       // Since there's no overlap between 'fields' and 'ssfields' this just does a quick property lookup across both
       if ((fields as Array<string>).indexOf(valType) !== -1) {
-        if (typeof data[valType] !== 'undefined') {
-          return data[valType]
+        const pepKey = valType as keyof AD.IBaseAttPEPData
+        if (typeof data[pepKey] !== 'undefined') {
+          return data[pepKey]
         } else {
           return null
         }
@@ -38,8 +49,9 @@ export const extractPEP = async (
         let ss = data.search_summary
         if (typeof ss === 'object') {
           if ((ssfields as Array<string>).indexOf(valType) !== -1) {
-            if (typeof ss[valType] !== 'undefined') {
-              return ss[valType]
+            const ssKey = valType as keyof AD.IBaseAttPEPData['search_summary']
+            if (typeof ss[ssKey] !== 'undefined') {
+              return ss[ssKey]
             }
           }
         }

@@ -26,16 +26,17 @@ export const getStrOrFromAttr = async (a: MaybeDS<AD.IBaseAtt>, attr: string, va
         if (typeof a.data === 'string') {
           return a.data
         } else if (typeof a.data === 'object') {
+          const attrKey = attr as keyof AD.IBaseAttDataObj
           if (a.data instanceof Array) {
             if (typeof a.data[0] === 'string') {
               return a.data[0] as string
-            } else if (typeof a.data[0] === 'object' && typeof a.data[0][attr] === 'string') {
-              return a.data[0][attr]
+            } else if (typeof a.data[0] === 'object' && typeof a.data[0][attrKey] === 'string') {
+              return a.data[0][attrKey]
             } else {
               return null
             }
-          } else if (typeof a.data[attr] === 'string') {
-            return a.data[attr]
+          } else if (typeof a.data[attrKey] === 'string') {
+            return a.data[attrKey]
           }
         }
       }
@@ -109,7 +110,7 @@ export const getAttr = async <T extends AD.IBaseAtt, TD extends AD.IBaseAttDataO
       if (data === null) {
         return null
       } else {
-        return data[attr]
+        return data[attr as keyof AD.IBaseAttDataObj]
       }
     }
   }
@@ -122,7 +123,7 @@ export const getAttr = async <T extends AD.IBaseAtt, TD extends AD.IBaseAttDataO
 export const getAttrOrStr = async <T extends AD.IBaseAtt, TD extends AD.IBaseAttDataObj>(
   a: MaybeDS<T>,
   attr: keyof TD,
-): Promise<TD[keyof TD] | string | null> => {
+): Promise<TD[keyof TD] | string | null | keyof TD> => {
   if (typeof a === 'string') {
     return (a as unknown) as keyof TD
   } else if (typeof a === 'object') {
@@ -134,7 +135,7 @@ export const getAttrOrStr = async <T extends AD.IBaseAtt, TD extends AD.IBaseAtt
         if (data === null) {
           return null
         } else {
-          return data[attr]
+          return data[attr as keyof AD.IBaseAttDataObj]
         }
       }
     }

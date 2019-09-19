@@ -1,7 +1,7 @@
 import {AttestationData as AD} from 'src'
 import * as B from './base'
 
-export const extractName = async (a: B.MaybeDS<AD.IBaseAttName>, attType: string, valType: string): Promise<string | null> => {
+export const extractName = async (a: B.MaybeDS<AD.IBaseAttName>, _attType: string, valType: string): Promise<string | null> => {
   switch (valType) {
     case 'full':
       if (typeof a === 'string') {
@@ -11,7 +11,7 @@ export const extractName = async (a: B.MaybeDS<AD.IBaseAttName>, attType: string
           if (a.data.length === 0) {
             return null
           } else if (typeof a.data[0] === 'string') {
-            return a[0]
+            return B.getNameString(a.data[0])
           } else if (typeof a.data[0] === 'object') {
             return B.getNameString(a.data[0])
           }
