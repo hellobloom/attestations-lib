@@ -2,11 +2,11 @@ import {AttestationData as AD} from 'src'
 import * as B from './base'
 // import {lensPath} from 'ramda'
 
-export const extractUtility = async (
+export const extractUtility = (
   a: AD.IBaseAttUtility,
   _attType: string,
   valType: string,
-): Promise<AD.IBaseAttUtility | string | number | AD.TAddress | null> => {
+): AD.IBaseAttUtility | string | number | AD.TAddress | null => {
   if (valType === 'object') {
     return a
   }
@@ -23,7 +23,7 @@ export const extractUtility = async (
       case 'total_paid':
         return a.summary.total_paid || null
       case 'statement_date':
-        return a.summary.statement_dates ? await B.getFirstPrimitive(a.summary.statement_dates) : null
+        return a.summary.statement_dates ? B.getFirstPrimitive(a.summary.statement_dates) : null
       default:
         return null
     }
@@ -31,7 +31,7 @@ export const extractUtility = async (
 
   if (valType === 'address') {
     if (typeof a.summary.address === 'undefined') return null
-    let addr = await B.getFirst(a.summary.address)
+    let addr = B.getFirst(a.summary.address)
     return addr || null
   }
 

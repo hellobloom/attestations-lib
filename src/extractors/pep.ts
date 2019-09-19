@@ -14,11 +14,11 @@ export const ssfields: Array<keyof AD.IBaseAttPEPData['search_summary']> = [
   'comment',
 ]
 
-export const extractPEP = async (
+export const extractPEP = (
   a: AD.IBaseAttPEP,
   _attType: string,
   valType: string,
-): Promise<
+):
   | AD.IBaseAttPEPData
   | AD.IBaseAttPEPData['date']
   | AD.IBaseAttPEPData['name']
@@ -27,11 +27,10 @@ export const extractPEP = async (
   | AD.IBaseAttPEPData['search_summary']['hits']
   | string
   | number
-  | null
-> => {
+  | null => {
   // Original spec
   if (typeof a.data === 'object') {
-    let data: AD.IBaseAttPEPData | null = await B.getFirst(a.data)
+    let data: AD.IBaseAttPEPData | null = B.getFirst(a.data)
     if (data === null) {
       return null
     }

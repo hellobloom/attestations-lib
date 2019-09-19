@@ -4,16 +4,16 @@ import * as B from './base'
 const biographicFields: Array<keyof NonNullable<AD.IBaseAttIDDocData['biographic']>> = ['age', 'dob', 'expiration_date', 'name', 'gender']
 const facematchResultFields: Array<keyof NonNullable<AD.IBaseAttIDDocData['facematch_result']>> = ['is_match', 'score', 'transaction_id']
 
-export const extractIDDoc = async (
+export const extractIDDoc = (
   a: AD.IBaseAttIDDoc,
   _attType: string,
   valType: string,
-): Promise<AD.IBaseAttIDDocData['facematch_result'] | AD.IBaseAttIDDocData['biographic'] | string | number | null> => {
+): AD.IBaseAttIDDocData['facematch_result'] | AD.IBaseAttIDDocData['biographic'] | string | number | null => {
   if (!a.data) {
     return null
   }
 
-  const d = await B.getFirst(a.data)
+  const d = B.getFirst(a.data)
 
   if (!d) return null
 

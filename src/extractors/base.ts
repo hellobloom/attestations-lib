@@ -17,7 +17,7 @@ export const parseDataStr = (x: string): null | MaybeDS<AD.IBaseAtt> => {
   }
 }
 
-export const getStrOrFromAttr = async (a: MaybeDS<AD.IBaseAtt>, attr: string, valType: string): Promise<string | null> => {
+export const getStrOrFromAttr = (a: MaybeDS<AD.IBaseAtt>, attr: string, valType: string): string | null => {
   switch (valType) {
     case 'number':
       if (typeof a === 'string') {
@@ -77,7 +77,7 @@ export const getNameString = (a: MaybeDS<AD.TPersonalName>): string | null => {
 
 type TDataAny = {[key: string]: any}
 
-export const getFirst = async <T extends TDataAny>(a: T | Array<T>): Promise<T | null> => {
+export const getFirst = <T extends TDataAny>(a: T | Array<T>): T | null => {
   if (a instanceof Array) {
     if (a.length === 0) {
       return null
@@ -90,7 +90,7 @@ export const getFirst = async <T extends TDataAny>(a: T | Array<T>): Promise<T |
 }
 
 // Typescript hack :(
-export const getFirstPrimitive = async <T extends any>(a: T | Array<T>): Promise<T | null> => {
+export const getFirstPrimitive = <T extends any>(a: T | Array<T>): T | null => {
   if (a instanceof Array) {
     if (a.length === 0) {
       return null
@@ -103,10 +103,10 @@ export const getFirstPrimitive = async <T extends any>(a: T | Array<T>): Promise
 }
 
 // Get an attribute of an attestation data type that's guaranteed to be { ..., data: {... myAttr: any } }
-export const getAttr = async <T extends AD.IBaseAtt, TD extends AD.IBaseAttDataObj>(a: T, attr: keyof TD): Promise<TD[keyof TD] | null> => {
+export const getAttr = <T extends AD.IBaseAtt, TD extends AD.IBaseAttDataObj>(a: T, attr: keyof TD): TD[keyof TD] | null => {
   if ('data' in a) {
     if (typeof a.data === 'object') {
-      let data = await getFirst(a.data)
+      let data = getFirst(a.data)
       if (data === null) {
         return null
       } else {
@@ -120,10 +120,10 @@ export const getAttr = async <T extends AD.IBaseAtt, TD extends AD.IBaseAttDataO
 // Get an attribute of an attestation data string that may: (a) just be a string, (b) just have a string for data
 // property: { ..., data: "x" }, or have an attribute that resolves to an arbitrary
 // type { ..., data: { myAttr: any } }.  For backwards compatibility with legacy attestation types only.
-export const getAttrOrStr = async <T extends AD.IBaseAtt, TD extends AD.IBaseAttDataObj>(
+export const getAttrOrStr = <T extends AD.IBaseAtt, TD extends AD.IBaseAttDataObj>(
   a: MaybeDS<T>,
   attr: keyof TD,
-): Promise<TD[keyof TD] | string | null | keyof TD> => {
+): TD[keyof TD] | string | null | keyof TD => {
   if (typeof a === 'string') {
     return (a as unknown) as keyof TD
   } else if (typeof a === 'object') {
@@ -131,7 +131,7 @@ export const getAttrOrStr = async <T extends AD.IBaseAtt, TD extends AD.IBaseAtt
       if (typeof a.data === 'string') {
         return a.data
       } else if (typeof a.data === 'object') {
-        let data = await getFirst(a.data)
+        let data = getFirst(a.data)
         if (data === null) {
           return null
         } else {

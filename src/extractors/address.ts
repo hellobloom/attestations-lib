@@ -14,19 +14,14 @@ export const fields: Array<keyof AD.TAddress> = [
   'country',
 ]
 
-export const extractAddress = async (
-  a: AD.IBaseAttAddress,
-  _attType: string,
-  valType: string,
-): Promise<AD.TAddress | string | number | null> => {
+export const extractAddress = (a: AD.IBaseAttAddress, _attType: string, valType: string): AD.TAddress | string | number | null => {
   // Get first provider
-  const providerBlock: AD.IBaseAttAddressProvider | null = await B.getFirst(a.data)
+  const providerBlock: AD.IBaseAttAddressProvider | null = B.getFirst(a.data)
   if (providerBlock) {
     if (typeof providerBlock.address !== 'object') {
       return null
     }
-    const address: AD.TAddress | null =
-      providerBlock.address instanceof Array ? await B.getFirst(providerBlock.address) : providerBlock.address
+    const address: AD.TAddress | null = providerBlock.address instanceof Array ? B.getFirst(providerBlock.address) : providerBlock.address
     if (valType === 'object') {
       return address
     } else if (address && typeof address === 'object' && valType in address) {

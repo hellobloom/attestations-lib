@@ -1,10 +1,6 @@
 import {AttestationData as AD} from 'src'
 
-export const extractIncome = async (
-  a: AD.IBaseAttIncome,
-  _attType: string,
-  valType: string,
-): Promise<AD.IBaseAttIncome | string | number | null> => {
+export const extractIncome = (a: AD.IBaseAttIncome, _attType: string, valType: string): AD.IBaseAttIncome | string | number | null => {
   if (!a.data) {
     return null
   }

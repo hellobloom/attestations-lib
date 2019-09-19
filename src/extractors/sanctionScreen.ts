@@ -12,11 +12,11 @@ const searchSummaryFields: Array<keyof NonNullable<AD.IBaseAttSanctionScreenData
   'comment',
 ]
 
-export const extractSanctionScreen = async (
+export const extractSanctionScreen = (
   a: AD.IBaseAttSanctionScreen,
   _attType: string,
   valType: string,
-): Promise<
+):
   | AD.IBaseAttSanctionScreenData
   | AD.IBaseAttSanctionScreenData['id']
   | AD.IBaseAttSanctionScreenData['name']
@@ -25,13 +25,12 @@ export const extractSanctionScreen = async (
   | NonNullable<NonNullable<AD.IBaseAttSanctionScreenData['search_summary']>['hits']>
   | string
   | number
-  | null
-> => {
+  | null => {
   if (!a.data) {
     return null
   }
 
-  let d = await B.getFirst(a.data)
+  let d = B.getFirst(a.data)
 
   if (valType === 'object') return d
 
