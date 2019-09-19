@@ -5,15 +5,15 @@ const biographicFields: Array<keyof NonNullable<AD.IBaseAttIDDocData['biographic
 const facematchResultFields: Array<keyof NonNullable<AD.IBaseAttIDDocData['facematch_result']>> = ['is_match', 'score', 'transaction_id']
 
 export const extractIDDoc = (
-  a: AD.IBaseAttIDDoc,
+  a: AD.IBaseAttIDDoc['data'],
   _attType: string,
   valType: string,
 ): AD.IBaseAttIDDocData['facematch_result'] | AD.IBaseAttIDDocData['biographic'] | string | number | null => {
-  if (!a.data) {
+  if (!a) {
     return null
   }
 
-  const d = B.getFirst(a.data)
+  const d = B.getFirst(a)
 
   if (!d) return null
 

@@ -49,7 +49,7 @@ export const extractBase = (dataStr: string, attType: TAttestationTypeNames, val
         val = extractPEP(a as AD.IBaseAttPEP, attType, valType)
         break
       case 'id-document':
-        val = extractIDDoc(a as AD.IBaseAttIDDoc, attType, valType)
+        val = extractIDDoc(a as AD.IBaseAttIDDoc['data'], attType, valType)
         break
       case 'utility':
         val = extractUtility(a as AD.IBaseAttUtility, attType, valType)
