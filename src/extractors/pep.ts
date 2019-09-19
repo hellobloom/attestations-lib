@@ -1,6 +1,5 @@
 import {AttestationData as AD} from 'src'
 import * as B from './base'
-// import {lensPath} from 'ramda'
 
 export const fields: Array<keyof AD.IBaseAttPEPData> = ['date', 'name', 'country', 'search_summary']
 export const ssfields: Array<keyof AD.IBaseAttPEPData['search_summary']> = [

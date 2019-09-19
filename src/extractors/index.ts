@@ -1,4 +1,4 @@
-import {TAttestationTypeNames, AttestationData as AD} from '@bloomprotocol/attestations-lib'
+import {TAttestationTypeNames, AttestationData as AD} from 'src'
 import * as B from './base'
 
 import {extractAccount} from './account'

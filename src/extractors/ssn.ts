@@ -6,9 +6,7 @@ export const extractSSN = async (a: B.MaybeDS<AD.IBaseAttSSN>, _attType: string,
     case 'number':
       let result = await B.getAttrOrStr<AD.IBaseAttSSN, AD.IBaseAttSSNData>(a, 'id')
       return B.stringOrNull(result)
-      break
     default:
       return null
   }
-  return null
 }

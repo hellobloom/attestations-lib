@@ -1,5 +1,4 @@
 import {AttestationData as AD} from 'src'
-// import {lensPath} from 'ramda'
 
 export const extractIncome = async (
   a: AD.IBaseAttIncome,
@@ -10,19 +9,6 @@ export const extractIncome = async (
     return null
   }
 
-  /* if (!a.data.income) {
-    return null
-  }
-  if (!a.data.expense) {
-    return null
-  }
-
-  let income = await B.getFirst(a.data.income)
-
-  if (!income) {
-    return null
-  }
-  */
   if (!a.summary) {
     return null
   }

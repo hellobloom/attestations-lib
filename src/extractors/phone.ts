@@ -6,9 +6,7 @@ export const extractPhone = async (a: B.MaybeDS<AD.IBaseAttPhone>, _attType: str
     case 'number':
       let result = await B.getAttrOrStr<AD.IBaseAttPhone, AD.TPhoneNumberObj>(a, 'full')
       return B.stringOrNull(result)
-      break
     default:
       return null
   }
-  return null
 }

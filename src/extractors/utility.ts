@@ -18,16 +18,12 @@ export const extractUtility = async (
     switch (valType) {
       case 'date':
         return a.summary.date || null
-        break
       case 'currency':
         return a.summary.currency || null
-        break
       case 'total_paid':
         return a.summary.total_paid || null
-        break
       case 'statement_date':
         return a.summary.statement_dates ? await B.getFirstPrimitive(a.summary.statement_dates) : null
-        break
       default:
         return null
     }
