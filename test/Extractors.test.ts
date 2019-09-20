@@ -8,6 +8,8 @@ import {
   IBaseAttAccount,
   IBaseAttDOB,
   IBaseAttSanctionScreen,
+  IBaseAttPEP,
+  IBaseAttIDDoc,
 } from '../src/AttestationData'
 
 test('phone extractor', () => {
@@ -130,14 +132,14 @@ test('ssn extractor', () => {
 })
 
 test('birth-date extractor', () => {
-  const value = '01-01-2000'
+  const value = '2000-01-01'
 
-  expect(Extractors.extractBase('01-02-2000', 'birth-date', 'dob')).not.toEqual(value)
+  expect(Extractors.extractBase('2000-01-02', 'birth-date', 'dob')).not.toEqual(value)
   expect(Extractors.extractBase(value, 'birth-date', 'dob')).toEqual(value)
   expect(Extractors.extractBase(value, 'birth-date', 'bogus')).toBeNull()
 
   const dob: Partial<IBaseAttDOB> = {
-    data: '01-01-2000',
+    data: '2000-01-01',
   }
   expect(Extractors.extractBase(JSON.stringify(dob), 'birth-date', 'dob')).toEqual(value)
 })
@@ -186,14 +188,14 @@ test('account extractor', () => {
 })
 
 test('birth-date extractor', () => {
-  const value = '01-01-2000'
+  const value = '2000-01-01'
 
-  expect(Extractors.extractBase('01-02-2000', 'birth-date', 'dob')).not.toEqual(value)
+  expect(Extractors.extractBase('2000-01-02', 'birth-date', 'dob')).not.toEqual(value)
   expect(Extractors.extractBase(value, 'birth-date', 'dob')).toEqual(value)
   expect(Extractors.extractBase(value, 'birth-date', 'bogus')).toBeNull()
 
   const dob: Partial<IBaseAttDOB> = {
-    data: '01-01-2000',
+    data: '2000-01-01',
   }
   expect(Extractors.extractBase(JSON.stringify(dob), 'birth-date', 'dob')).toEqual(value)
 })
@@ -202,7 +204,7 @@ test('sanction-screen extractor', () => {
   const value = {
     id: 'id',
     name: 'Bloom Tester',
-    dob: '01-01-2000',
+    dob: '2000-01-01',
     search_summary: {
       hit_number: 1,
       hits: [
@@ -222,4 +224,52 @@ test('sanction-screen extractor', () => {
   expect(Extractors.extractBase(JSON.stringify(ss), 'sanction-screen', 'id')).toEqual(value.id)
   expect(Extractors.extractBase(JSON.stringify(ss), 'sanction-screen', 'bogus')).toBeNull()
   expect(Extractors.extractBase(JSON.stringify(ss), 'sanction-screen', 'hit_number')).toEqual(value.search_summary.hit_number)
+})
+
+test('pep-screen extractor', () => {
+  const value = {
+    date: '2019-01-01',
+    name: {
+      given: 'Given',
+      middle: 'Middle',
+      family: 'Family',
+    },
+    country: 'US',
+    search_summary: {
+      hit_number: 10,
+      lists: [],
+    },
+  }
+  const pep: Partial<IBaseAttPEP> = {
+    data: value,
+  }
+
+  expect(JSON.stringify(Extractors.extractBase(JSON.stringify(pep), 'pep-screen', 'object'))).toEqual(JSON.stringify(value))
+  expect(Extractors.extractBase(JSON.stringify(pep), 'pep-screen', 'bogus')).toBeNull()
+  expect(Extractors.extractBase(JSON.stringify(pep), 'pep-screen', 'name')).toEqual('Given Middle Family')
+  expect(Extractors.extractBase(JSON.stringify(pep), 'pep-screen', 'country')).toEqual(value.country)
+  expect(Extractors.extractBase(JSON.stringify(pep), 'pep-screen', 'hit_number')).toEqual(value.search_summary.hit_number)
+})
+
+test('id-document extractor', () => {
+  const value = {
+    date: '2019-01-01',
+    biographic: {
+      age: 19,
+      dob: '2000-01-01',
+      name: 'Definitely A Real Person',
+    },
+    facematch_result: {
+      is_match: true,
+      score: 80,
+    },
+  }
+  const idDoc: Partial<IBaseAttIDDoc> = {
+    data: value,
+  }
+
+  expect(JSON.stringify(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'object'))).toEqual(JSON.stringify(value))
+  expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'bogus')).toBeNull()
+  expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'dob')).toEqual(value.biographic.dob)
+  expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'is_match')).toEqual(value.facematch_result.is_match)
 })
