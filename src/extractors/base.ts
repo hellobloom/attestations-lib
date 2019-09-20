@@ -75,7 +75,7 @@ export const getNameString = (a: MaybeDS<AD.TPersonalName>): string | null => {
   } else if (typeof a.full === 'string') {
     return a.full.trim()
   } else {
-    let str = getNameValue(a.given).trim() + ` ${getNameValue(a.middle)}`.trimEnd() + ` ${getNameValue(a.family)}`.trimEnd()
+    let str = getNameValue(a.given).trim() + ` ${getNameValue(a.middle)}`.trimRight() + ` ${getNameValue(a.family)}`.trimRight()
     if (a.prefix) {
       str = `${a.prefix} ${str}`.trim()
     }
