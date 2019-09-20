@@ -14,9 +14,13 @@ export const extractAccount = (
     if (valType === 'object') {
       return account
     } else if (account && typeof account === 'object' && valType in account) {
-      const val = account[valType as keyof AD.IBaseAttAccountData]
+      const accountKey = valType as keyof AD.IBaseAttAccountData
+      const val = account[accountKey]
       if (typeof val === 'undefined') {
         return null
+      }
+      if (accountKey === 'name' && typeof val === 'object') {
+        return B.getNameString(val)
       }
       return val
     }

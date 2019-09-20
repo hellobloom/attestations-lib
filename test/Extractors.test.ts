@@ -1,6 +1,7 @@
 import {Extractors} from '../src'
 
-import {IBaseAttPhone, IBaseAttEmail, IBaseAttName, IBaseAttSSN} from '../src/AttestationData'
+import {IBaseAttPhone, IBaseAttEmail, IBaseAttName, IBaseAttSSN, IBaseAttAccount} from '../src/AttestationData'
+import {IBaseAttDOB} from 'dist/AttestationData'
 
 test('phone extractor', () => {
   const value = '+15154932491'
@@ -119,4 +120,63 @@ test('ssn extractor', () => {
     ],
   }
   expect(Extractors.extractBase(JSON.stringify(ssnArr), 'ssn', 'number')).toEqual(value)
+})
+
+test('birth-date extractor', () => {
+  const value = '01-01-2000'
+
+  expect(Extractors.extractBase('01-02-2000', 'birth-date', 'dob')).not.toEqual(value)
+  expect(Extractors.extractBase(value, 'birth-date', 'dob')).toEqual(value)
+  expect(Extractors.extractBase(value, 'birth-date', 'bogus')).toBeNull()
+
+  const dob: Partial<IBaseAttDOB> = {
+    data: '01-01-2000',
+  }
+  expect(Extractors.extractBase(JSON.stringify(dob), 'birth-date', 'dob')).toEqual(value)
+})
+
+test('account extractor', () => {
+  const value = {
+    id: 'id',
+    email: 'test@bloom.co',
+    name: 'Bloom Tester',
+  }
+
+  const account: Partial<IBaseAttAccount> = {
+    data: {
+      id: 'id',
+      email: 'test@bloom.co',
+      name: 'Bloom Tester',
+    },
+  }
+  const accountJSON = JSON.stringify(account)
+  expect(JSON.stringify(Extractors.extractBase(accountJSON, 'account', 'object'))).toEqual(JSON.stringify(value))
+  expect(Extractors.extractBase(accountJSON, 'account', 'id')).toEqual(value.id)
+  expect(Extractors.extractBase(accountJSON, 'account', 'email')).toEqual(value.email)
+  expect(Extractors.extractBase(accountJSON, 'account', 'name')).toEqual(value.name)
+
+  const accountNameObj0: Partial<IBaseAttAccount> = {
+    data: {
+      id: 'id',
+      email: 'test@bloom.co',
+      name: {
+        full: 'Bloom Tester',
+      },
+    },
+  }
+  const accountNameObj0JSON = JSON.stringify(accountNameObj0)
+  expect(Extractors.extractBase(accountNameObj0JSON, 'account', 'name')).toEqual(value.name)
+
+  const accountNameObj1: Partial<IBaseAttAccount> = {
+    data: {
+      id: 'id',
+      email: 'test@bloom.co',
+      name: {
+        given: 'Bloom',
+        family: 'Tester',
+      },
+    },
+  }
+  const accountNameObj1JSON = JSON.stringify(accountNameObj1)
+  expect(Extractors.extractBase(accountNameObj1JSON, 'account', 'name')).toEqual(value.name)
 })
