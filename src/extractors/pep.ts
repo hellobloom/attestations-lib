@@ -34,11 +34,17 @@ export const extractPEP = (
     if (data === null) {
       return null
     }
+    if (valType === 'object') {
+      return data
+    }
     if (typeof data === 'object') {
       // Since there's no overlap between 'fields' and 'ssfields' this just does a quick property lookup across both
       if ((fields as Array<string>).indexOf(valType) !== -1) {
         const pepKey = valType as keyof AD.IBaseAttPEPData
         if (typeof data[pepKey] !== 'undefined') {
+          if (pepKey === 'name') {
+            return B.getNameString(data[pepKey])
+          }
           return data[pepKey]
         } else {
           return null
