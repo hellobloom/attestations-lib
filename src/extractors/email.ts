@@ -6,9 +6,7 @@ export const extractEmail = (a: B.MaybeDS<AD.IBaseAttEmail>, _attType: string, v
     case 'email':
       let result = B.getAttrOrStr<AD.IBaseAttEmail, AD.IBaseAttEmailData>(a, 'email')
       return B.stringOrNull(result)
-      break
     default:
       return null
   }
-  return null
 }
