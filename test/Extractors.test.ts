@@ -1,7 +1,6 @@
 import {Extractors} from '../src'
 
-import {IBaseAttPhone, IBaseAttEmail} from 'src/AttestationData'
-import {IBaseAttName} from 'dist/AttestationData'
+import {IBaseAttPhone, IBaseAttEmail, IBaseAttName, IBaseAttSSN} from 'src/AttestationData'
 
 test('phone extractor', () => {
   const value = '+15154932491'
@@ -90,4 +89,34 @@ test('full-name extractor', () => {
   }
   expect(Extractors.extractBase(JSON.stringify(arrData), 'full-name', 'full')).toEqual(value)
   expect(Extractors.extractBase(JSON.stringify(arrComponents), 'full-name', 'full')).toEqual('Friedrich not bastiat xtra August von Hayek')
+})
+
+test('ssn extractor', () => {
+  const value = '000-000-0000'
+
+  expect(Extractors.extractBase('111-111-1111', 'ssn', 'number')).not.toEqual(value)
+
+  expect(Extractors.extractBase(value, 'ssn', 'bogus')).toBeNull()
+
+  expect(Extractors.extractBase(value, 'ssn', 'number')).toEqual(value)
+
+  const ssn: Partial<IBaseAttSSN> = {
+    data: {
+      id: '000-000-0000',
+      country_code: 'US',
+      id_type: 'SSN',
+    },
+  }
+  expect(Extractors.extractBase(JSON.stringify(ssn), 'ssn', 'number')).toEqual(value)
+
+  const ssnArr: Partial<IBaseAttSSN> = {
+    data: [
+      {
+        id: '000-000-0000',
+        country_code: 'US',
+        id_type: 'SSN',
+      },
+    ],
+  }
+  expect(Extractors.extractBase(JSON.stringify(ssnArr), 'ssn', 'number')).toEqual(value)
 })
