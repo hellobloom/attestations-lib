@@ -54,25 +54,36 @@ export const getDateString = (a: MaybeDS<AD.TDateOrTime>): string | null => {
   return null
 }
 
+const getNameValue = (name?: string | string[]) => {
+  if (typeof name === 'undefined') {
+    return ''
+  }
+  return typeof name === 'string'
+    ? name.trim()
+    : name
+        .filter(n => typeof n === 'string' && n.trim() !== '')
+        .map(n => n.trim())
+        .join(' ')
+}
+
 export const getNameString = (a: MaybeDS<AD.TPersonalName>): string | null => {
   if (!a) {
     return null
   }
   if (typeof a === 'string') {
-    return a
+    return a.trim()
   } else if (typeof a.full === 'string') {
-    return a.full
+    return a.full.trim()
   } else {
-    let str = `${a.given} ${a.middle} ${a.family}`
+    let str = getNameValue(a.given).trim() + ` ${getNameValue(a.middle)}`.trimEnd() + ` ${getNameValue(a.family)}`.trimEnd()
     if (a.prefix) {
-      str = `${a.prefix} ${str}`
+      str = `${a.prefix} ${str}`.trim()
     }
     if (a.suffix) {
-      str = `${str} ${a.suffix}`
+      str = `${str} ${a.suffix}`.trim()
     }
     return str
   }
-  return null
 }
 
 type TDataAny = {[key: string]: any}
