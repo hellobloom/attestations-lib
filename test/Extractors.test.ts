@@ -1,6 +1,6 @@
 import {Extractors} from '../src'
 
-import {IBaseAttPhone, IBaseAttEmail, IBaseAttName, IBaseAttSSN} from 'src/AttestationData'
+import {IBaseAttPhone, IBaseAttEmail, IBaseAttName, IBaseAttSSN} from '../src/AttestationData'
 
 test('phone extractor', () => {
   const value = '+15154932491'
