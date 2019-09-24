@@ -10,6 +10,7 @@ import {
   IBaseAttSanctionScreen,
   IBaseAttPEP,
   IBaseAttIDDoc,
+  IBaseAttIDDocData,
 } from '../src/AttestationData'
 
 test('phone extractor', () => {
@@ -254,10 +255,18 @@ test('pep-screen extractor', () => {
 test('id-document extractor', () => {
   const value = {
     date: '2019-01-01',
+    name: 'Definitely A Real Person A',
+    country: 'US',
+    document_type: 'US Passport',
+    authentication_result: 'caution',
     biographic: {
       age: 19,
       dob: '2000-01-01',
-      name: 'Definitely A Real Person',
+      name: 'Definitely A Real Person B',
+    },
+    classification: {
+      classification_method: 'automatic',
+      id_class: 'passport',
     },
     facematch_result: {
       is_match: true,
@@ -265,11 +274,28 @@ test('id-document extractor', () => {
     },
   }
   const idDoc: Partial<IBaseAttIDDoc> = {
-    data: value,
+    data: value as IBaseAttIDDocData,
   }
 
   expect(JSON.stringify(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'object'))).toEqual(JSON.stringify(value))
   expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'bogus')).toBeNull()
+  expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'date')).toEqual(value.date)
+
+  // top level props
+  expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'name')).toEqual(value.name)
+  expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'country')).toEqual(value.country)
+  expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'document_type')).toEqual(value.document_type)
+  expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'authentication_result')).toEqual(value.authentication_result)
+
+  // second level props
+  expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'age')).toEqual(value.biographic.age)
+  expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'dob')).toEqual(value.biographic.dob)
+  expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'biographic.name')).toEqual(value.biographic.name)
+  expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'id_class')).toEqual(value.classification.id_class)
+  expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'classification_method')).toEqual(
+    value.classification.classification_method,
+  )
   expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'dob')).toEqual(value.biographic.dob)
   expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'is_match')).toEqual(value.facematch_result.is_match)
+  expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'score')).toEqual(value.facematch_result.score)
 })
