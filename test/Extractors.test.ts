@@ -11,6 +11,8 @@ import {
   IBaseAttPEP,
   IBaseAttIDDoc,
   IBaseAttIDDocData,
+  IBaseAttUtility,
+  TAddress,
 } from '../src/AttestationData'
 
 test('phone extractor', () => {
@@ -262,7 +264,9 @@ test('id-document extractor', () => {
     biographic: {
       age: 19,
       dob: '2000-01-01',
-      name: 'Definitely A Real Person B',
+      name: {
+        full: 'Definitely A Real Person B',
+      },
     },
     classification: {
       classification_method: 'automatic',
@@ -290,7 +294,7 @@ test('id-document extractor', () => {
   // second level props
   expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'age')).toEqual(value.biographic.age)
   expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'dob')).toEqual(value.biographic.dob)
-  expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'biographic.name')).toEqual(value.biographic.name)
+  expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'biographic.name')).toEqual(value.biographic.name.full)
   expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'id_class')).toEqual(value.classification.id_class)
   expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'classification_method')).toEqual(
     value.classification.classification_method,
@@ -298,4 +302,57 @@ test('id-document extractor', () => {
   expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'dob')).toEqual(value.biographic.dob)
   expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'is_match')).toEqual(value.facematch_result.is_match)
   expect(Extractors.extractBase(JSON.stringify(idDoc), 'id-document', 'score')).toEqual(value.facematch_result.score)
+})
+
+test('utility extractor', () => {
+  const fullAddress = '123 Main St New York, NY 12345'
+  const d = {
+    name: 'fake name',
+    id: 'fake id',
+    country: 'US',
+    service_types: 'Natural Gas',
+    website: 'https://naturalgas.co',
+    accounts: [],
+  }
+  const u: Partial<IBaseAttUtility> = {
+    generality: 10,
+    summary: {
+      date: '2019-01-05',
+      currency: 'USD',
+      total_paid: 0,
+      account_numbers: ['fake-acct-number'],
+      statement_dates: ['2018-11-11'],
+      address: [
+        {
+          full: fullAddress,
+          name: 'some addy',
+          street_1: 'Main St',
+          city: 'New York',
+          postal_code: '12345',
+          region_1: 'NY',
+        },
+      ],
+    },
+    data: d,
+  }
+  const uJSON = JSON.stringify(u)
+
+  expect(JSON.stringify(Extractors.extractBase(uJSON, 'utility', 'object'))).toEqual(uJSON)
+
+  // summary
+  expect(Extractors.extractBase(uJSON, 'utility', 'date')).toEqual(u.summary!.date)
+  expect(Extractors.extractBase(uJSON, 'utility', 'currency')).toEqual(u.summary!.currency)
+  expect(Extractors.extractBase(uJSON, 'utility', 'total_paid')).toEqual(u.summary!.total_paid)
+  expect(Extractors.extractBase(uJSON, 'utility', 'account_number')).toEqual(u.summary!.account_numbers![0])
+  expect(Extractors.extractBase(uJSON, 'utility', 'statement_date')).toEqual(u.summary!.statement_dates![0])
+  const a: TAddress = Extractors.extractBase(uJSON, 'utility', 'address')
+  expect(a && a.full).toEqual(fullAddress)
+
+  // data
+  expect(Extractors.extractBase(uJSON, 'utility', 'name')).toEqual(d.name)
+  expect(Extractors.extractBase(uJSON, 'utility', 'id')).toEqual(d.id)
+  expect(Extractors.extractBase(uJSON, 'utility', 'country')).toEqual(d.country)
+  expect(Extractors.extractBase(uJSON, 'utility', 'service_types')).toEqual(d.service_types)
+  expect(Extractors.extractBase(uJSON, 'utility', 'website')).toEqual(d.website)
+  expect(Extractors.extractBase(uJSON, 'utility', 'accounts')).toHaveLength(d.accounts.length)
 })
