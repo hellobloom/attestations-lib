@@ -13,6 +13,7 @@ import {
   IBaseAttIDDocData,
   IBaseAttUtility,
   TAddress,
+  IBaseAttAddress,
 } from '../src/AttestationData'
 
 test('phone extractor', () => {
@@ -355,4 +356,39 @@ test('utility extractor', () => {
   expect(Extractors.extractBase(uJSON, 'utility', 'service_types')).toEqual(d.service_types)
   expect(Extractors.extractBase(uJSON, 'utility', 'website')).toEqual(d.website)
   expect(Extractors.extractBase(uJSON, 'utility', 'accounts')).toHaveLength(d.accounts.length)
+})
+
+test('address extractor', () => {
+  const fullAddress = '123 Main St New York, NY 12345'
+  const baap = {
+    provider: {
+      name: 'Provider name',
+      id: 'Provider id',
+      country: 'US',
+      service_types: ['Natural Gas'],
+      website: 'https://naturalgas.co',
+    },
+    accounts: [],
+    address: [
+      {
+        full: fullAddress,
+        name: 'some addy',
+        street_1: 'Main St',
+        city: 'New York',
+        postal_code: '12345',
+        region_1: 'NY',
+      },
+    ],
+  }
+  const value: Partial<IBaseAttAddress> = {
+    data: baap,
+  }
+  const json = JSON.stringify(value)
+
+  expect(JSON.stringify(Extractors.extractBase(json, 'address', 'object'))).toEqual(JSON.stringify(baap))
+  expect(JSON.stringify(Extractors.extractBase(json, 'address', 'address'))).toEqual(JSON.stringify(baap.address[0]))
+  expect(Extractors.extractBase(json, 'address', 'full')).toEqual(fullAddress)
+  expect(Extractors.extractBase(json, 'address', 'name')).toEqual(baap.address[0].name)
+  expect(Extractors.extractBase(json, 'address', 'provider.name')).toEqual(baap.provider.name)
+  expect(Extractors.extractBase(json, 'address', 'service_types')).toHaveLength(1)
 })
