@@ -14,6 +14,7 @@ import {
   IBaseAttUtility,
   TAddress,
   IBaseAttAddress,
+  IBaseAttIncome,
 } from '../src/AttestationData'
 
 test('phone extractor', () => {
@@ -391,4 +392,18 @@ test('address extractor', () => {
   expect(Extractors.extractBase(json, 'address', 'name')).toEqual(baap.address[0].name)
   expect(Extractors.extractBase(json, 'address', 'provider.name')).toEqual(baap.provider.name)
   expect(Extractors.extractBase(json, 'address', 'service_types')).toHaveLength(1)
+})
+
+test('income extractor', () => {
+  const income: Partial<IBaseAttIncome> = {
+    generality: 100,
+    summary: {
+      start_date: '2018-01-01',
+      end_date: '2019-01-01',
+    },
+  }
+
+  expect(Extractors.extractBase(JSON.stringify(income), 'income', 'start_date')).toEqual(income.summary!.start_date)
+  expect(Extractors.extractBase(JSON.stringify(income), 'income', 'end_date')).toEqual(income.summary!.end_date)
+  expect(JSON.stringify(Extractors.extractBase(JSON.stringify(income), 'income', 'object'))).toEqual(JSON.stringify(income))
 })
