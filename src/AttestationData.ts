@@ -530,6 +530,70 @@ export interface IBaseAttMeta extends IBaseAtt {
   data: IBaseMetaData
 }
 
+///////////////////////////////////////////////////
+// National Digital Identity attestation dataStr type
+///////////////////////////////////////////////////
+type TNDIDataItemBase = {
+  classification: string
+  source:
+    | '1' // Government-verified
+    | '2' // User provided
+    | '3' // Field is Not Applicable to Person
+    | '4' // Verified by SingPass
+  lastupdated: string
+}
+
+type TNDIDataItemObjectValueBased = {
+  value: string | number
+} & TNDIDataItemBase
+
+type TNDIDataItemObjectCodeBased = {
+  code: string
+  desc: string
+} & TNDIDataItemBase
+
+// type TNDIDataItemObjectKeyArrayBased
+
+type TNDIDataItemObjectKeyBased = {
+  [key: string]: any
+} & TNDIDataItemBase
+
+type TNDIDataItemUnavailable = {
+  unavailable: true
+}
+
+type TNDIDataItemObject = TNDIDataItemObjectValueBased | TNDIDataItemObjectCodeBased | TNDIDataItemObjectKeyBased | TNDIDataItemUnavailable
+
+export interface IBaseAttNDIData extends IBaseAttDataObj {
+  date: TDateOrTime
+  name?: TPersonalName
+  country?: string
+
+  biographic?: {
+    age?: number
+    dob?: TDateOrTime
+    name?: TPersonalName
+    gender?: string
+  }
+  '@provider_specific'?: {
+    edulevel?: TNDIDataItemObject
+    nationality?: TNDIDataItemObject
+    occupation?: TNDIDataItemObject
+    employment?: TNDIDataItemObject
+    mobileno?: TNDIDataItemObject
+    mailadd?: TNDIDataItemObject
+    passportnumber?: TNDIDataItemObject
+    passportexpirydate?: TNDIDataItemObject
+    schoolname?: TNDIDataItemObject
+    dob?: TNDIDataItemObject
+    email?: TNDIDataItemObject
+    householdincome?: TNDIDataItemObject
+  }
+}
+export interface IBaseAttNDI extends IBaseAtt {
+  data: IBaseAttNDIData | Array<IBaseAttNDIData>
+}
+
 /**
  * +--------- Table of implemented attestation types -----------+
  *
