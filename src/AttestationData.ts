@@ -533,7 +533,7 @@ export interface IBaseAttMeta extends IBaseAtt {
 ///////////////////////////////////////////////////
 // National Digital Identity attestation dataStr type
 ///////////////////////////////////////////////////
-type TNDIDataItemBase = {
+export type TNDIDataItemBase = {
   classification: string
   source:
     | '1' // Government-verified
@@ -543,26 +543,30 @@ type TNDIDataItemBase = {
   lastupdated: string
 }
 
-type TNDIDataItemObjectValueBased = {
+export type TNDIDataItemObjectValueBased = {
   value: string | number
 } & TNDIDataItemBase
 
-type TNDIDataItemObjectCodeBased = {
+export type TNDIDataItemObjectCodeBased = {
   code: string
   desc: string
 } & TNDIDataItemBase
 
-// type TNDIDataItemObjectKeyArrayBased
+// export type TNDIDataItemObjectKeyArrayBased
 
-type TNDIDataItemObjectKeyBased = {
+export type TNDIDataItemObjectKeyBased = {
   [key: string]: any
 } & TNDIDataItemBase
 
-type TNDIDataItemUnavailable = {
+export type TNDIDataItemUnavailable = {
   unavailable: true
 }
 
-type TNDIDataItemObject = TNDIDataItemObjectValueBased | TNDIDataItemObjectCodeBased | TNDIDataItemObjectKeyBased | TNDIDataItemUnavailable
+export type TNDIDataItemObject =
+  | TNDIDataItemObjectValueBased
+  | TNDIDataItemObjectCodeBased
+  | TNDIDataItemObjectKeyBased
+  | TNDIDataItemUnavailable
 
 export interface IBaseAttNDIData extends IBaseAttDataObj {
   date: TDateOrTime
