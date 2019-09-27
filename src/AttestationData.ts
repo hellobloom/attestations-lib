@@ -580,6 +580,7 @@ export interface IBaseAttNDIData extends IBaseAttDataObj {
     gender?: string
   }
   '@provider_specific'?: {
+    name?: TNDIDataItemObject
     edulevel?: TNDIDataItemObject
     nationality?: TNDIDataItemObject
     occupation?: TNDIDataItemObject
@@ -592,6 +593,7 @@ export interface IBaseAttNDIData extends IBaseAttDataObj {
     dob?: TNDIDataItemObject
     email?: TNDIDataItemObject
     householdincome?: TNDIDataItemObject
+    sex?: TNDIDataItemObject
   }
 }
 export interface IBaseAttNDI extends IBaseAtt {
@@ -643,4 +645,5 @@ export interface IBaseAttNDI extends IBaseAtt {
  *   X 'address' = 33,
  *   - 'correction' = 34,
  *   X 'account' = 35,
+ *   X 'ndi' = 36,
  */
