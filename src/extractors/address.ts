@@ -1,6 +1,6 @@
 import {AttestationData as AD} from 'src'
 import * as B from './base'
-import {extractNDIField} from 'src/NDIData'
+import * as NDI from '../NDIData'
 
 export const fields: Array<keyof AD.TAddressObj> = [
   'full',
@@ -15,6 +15,7 @@ export const fields: Array<keyof AD.TAddressObj> = [
   'country',
 ]
 
+// For NDI data only valType of object currently works
 export const extractAddress = (
   a: AD.IBaseAttAddress,
   _attType: string,
@@ -40,7 +41,7 @@ export const extractAddress = (
       } else if (typeof val === 'string') {
         return val
       } else if (typeof val === 'object') {
-        return extractNDIField(val)
+        return NDI.extractNDIField(val)
       }
       return null
     } else if (provider && typeof provider === 'object' && (valType === 'provider.name' || valType in provider)) {

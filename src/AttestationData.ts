@@ -130,7 +130,7 @@ export interface IBaseAttEmailData extends IBaseAttDataObj {
   start_date?: TDateOrTime
   end_date?: TDateOrTime
 }
-export type TBaseAttEmailData = string | IBaseAttEmailData
+export type TBaseAttEmailData = string | IBaseAttEmailData | NDI.INDIFieldValueBased
 export interface IBaseAttEmail extends IBaseAtt {
   data: TBaseAttEmailData | Array<TBaseAttEmailData>
 }

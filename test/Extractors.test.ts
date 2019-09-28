@@ -12,10 +12,10 @@ import {
   IBaseAttIDDoc,
   IBaseAttIDDocData,
   IBaseAttUtility,
-  TAddress,
   IBaseAttAddress,
   IBaseAttIncome,
   IBaseAttNDI,
+  TAddressObj,
 } from '../src/AttestationData'
 
 test('phone extractor', () => {
@@ -52,6 +52,8 @@ test('email extractor', () => {
   }
   const e = JSON.stringify(bae)
   expect(Extractors.extractBase(e, 'email', 'email')).toEqual(value)
+  const valueNDI = {data: {lastupdated: '2019-09-17', source: '2', classification: 'C', value: 'myinfotesting@gmail.com'}}
+  expect(Extractors.extractBase(JSON.stringify(valueNDI), 'email', 'email')).toEqual(valueNDI.data.value)
 })
 
 test('full-name extractor', () => {
@@ -351,7 +353,7 @@ test('utility extractor', () => {
   expect(Extractors.extractBase(uJSON, 'utility', 'total_paid')).toEqual(u.summary!.total_paid)
   expect(Extractors.extractBase(uJSON, 'utility', 'account_number')).toEqual(u.summary!.account_numbers![0])
   expect(Extractors.extractBase(uJSON, 'utility', 'statement_date')).toEqual(u.summary!.statement_dates![0])
-  const a: TAddress = Extractors.extractBase(uJSON, 'utility', 'address')
+  const a: TAddressObj = Extractors.extractBase(uJSON, 'utility', 'address')
   expect(a && a.full).toEqual(fullAddress)
 
   // data
@@ -417,12 +419,8 @@ test('address extractor', () => {
 
   const jsonNDI = JSON.stringify(valueNDI)
 
+  // TODO build the rest of the extractors if needed
   expect(JSON.stringify(Extractors.extractBase(jsonNDI, 'address', 'object'))).toEqual(JSON.stringify(valueNDI.data))
-  expect(JSON.stringify(Extractors.extractBase(jsonNDI, 'address', 'address'))).toEqual(JSON.stringify(baap.address[0]))
-  // expect(Extractors.extractBase(json, 'address', 'full')).toEqual(fullAddress)
-  // expect(Extractors.extractBase(json, 'address', 'name')).toEqual(baap.address[0].name)
-  // expect(Extractors.extractBase(json, 'address', 'provider.name')).toEqual(baap.provider.name)
-  // expect(Extractors.extractBase(json, 'address', 'service_types')).toHaveLength(1)
 })
 
 test('income extractor', () => {
