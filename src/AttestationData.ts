@@ -168,7 +168,7 @@ export interface IBaseAttAccountData extends IBaseAttDataObj {
   id?: string | number
   email?: string
 
-  name?: TPersonalName
+  name?: string | TPersonalNameObj
   start_date?: TDateOrTime
   end_date?: TDateOrTime
 }
@@ -475,11 +475,13 @@ export type TBaseAttIncomeStream = {
     value: number
   }>
 }
-export interface IBaseAttIncome extends IBaseAtt {
+export interface IBaseAttIncomeObj extends IBaseAtt {
   generality: number
   summary?: TBaseAttIncomeSummary
   data: TBaseAttIncomeStreamWrapper
 }
+
+export type TBaseAttIncome = IBaseAttIncomeObj | {data: NDI.TNDIHouseholdIncome}
 
 ///////////////////////////////////////////////////
 // Assets attestation dataStr type (total, gross, or expenses)

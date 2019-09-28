@@ -13,7 +13,7 @@ import {
   IBaseAttIDDocData,
   IBaseAttUtility,
   IBaseAttAddress,
-  IBaseAttIncome,
+  TBaseAttIncome,
   IBaseAttNDI,
   TAddressObj,
 } from '../src/AttestationData'
@@ -424,7 +424,7 @@ test('address extractor', () => {
 })
 
 test('income extractor', () => {
-  const income: Partial<IBaseAttIncome> = {
+  const income: Partial<TBaseAttIncome> = {
     generality: 100,
     summary: {
       start_date: '2018-01-01',
@@ -435,6 +435,8 @@ test('income extractor', () => {
   expect(Extractors.extractBase(JSON.stringify(income), 'income', 'start_date')).toEqual(income.summary!.start_date)
   expect(Extractors.extractBase(JSON.stringify(income), 'income', 'end_date')).toEqual(income.summary!.end_date)
   expect(JSON.stringify(Extractors.extractBase(JSON.stringify(income), 'income', 'object'))).toEqual(JSON.stringify(income))
+  const valueNDI = {data: {lastupdated: '2019-09-17', high: {value: 4999}, source: '2', classification: 'C', low: {value: 4000}}}
+  expect(JSON.stringify(Extractors.extractBase(JSON.stringify(valueNDI), 'income', 'object'))).toEqual(JSON.stringify(valueNDI.data))
 })
 
 test('ndi extractor', () => {

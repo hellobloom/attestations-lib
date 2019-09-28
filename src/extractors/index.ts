@@ -59,7 +59,7 @@ export const extractBase = (dataStr: string, attType: TAttestationTypeNames, val
         val = extractAddress(a as AD.IBaseAttAddress, attType, valType)
         break
       case 'income':
-        val = extractIncome(a as AD.IBaseAttIncome, attType, valType)
+        val = extractIncome(a as AD.TBaseAttIncome, attType, valType)
         break
       case 'assets':
         val = extractAssets(a as AD.IBaseAttAssets, attType, valType)
