@@ -1,5 +1,6 @@
 import * as VK from '@bloomprotocol/verify-kit'
 import * as HL from './HashingLogic'
+import * as NDI from './NDIData'
 
 export type TContextField = string | {type: string; data: string}
 
@@ -73,7 +74,7 @@ export type TPersonalNameObj = {
   start_date?: TDateOrTime
   end_date?: TDateOrTime
 }
-export type TPersonalName = TPersonalNameObj | string
+export type TPersonalName = TPersonalNameObj | NDI.TNDIItemValueBased | string
 
 export type TDateOrTime = TDate | TDatetime
 
@@ -99,7 +100,7 @@ export type TEthAddr = string // "did:eth:0x...", "0x..."
 
 export type TGender = string // 'male', 'female', ...
 
-export type TAddress = {
+export type TAddressObj = {
   full: string
   name: string
   street_1: string
@@ -111,6 +112,8 @@ export type TAddress = {
   region_2?: string
   country?: string
 }
+
+export type TAddress = TAddressObj | NDI.TNDIMailAdd
 
 ///////////////////////////////////////////////////
 // Phone attestation dataStr type
@@ -533,40 +536,6 @@ export interface IBaseAttMeta extends IBaseAtt {
 ///////////////////////////////////////////////////
 // National Digital Identity attestation dataStr type
 ///////////////////////////////////////////////////
-export type TNDIDataItemBase = {
-  classification: string
-  source: string
-  // '1' - Government-verified
-  // '2' - User provided
-  // '3' - Field is Not Applicable to Person
-  // '4' - Verified by SingPass
-  lastupdated: string
-}
-
-export type TNDIDataItemObjectValueBased = {
-  value: string | number
-} & TNDIDataItemBase
-
-export type TNDIDataItemObjectCodeBased = {
-  code: string
-  desc: string
-} & TNDIDataItemBase
-
-// export type TNDIDataItemObjectKeyArrayBased
-
-export type TNDIDataItemObjectKeyBased = {
-  [key: string]: any
-} & TNDIDataItemBase
-
-export type TNDIDataItemUnavailable = {
-  unavailable: true
-}
-
-export type TNDIDataItemObject =
-  | TNDIDataItemObjectValueBased
-  | TNDIDataItemObjectCodeBased
-  | TNDIDataItemObjectKeyBased
-  | TNDIDataItemUnavailable
 
 export interface IBaseAttNDIData extends IBaseAttDataObj {
   date: TDateOrTime
@@ -580,20 +549,20 @@ export interface IBaseAttNDIData extends IBaseAttDataObj {
     gender?: string
   }
   '@provider_specific'?: {
-    name?: TNDIDataItemObject
-    edulevel?: TNDIDataItemObject
-    nationality?: TNDIDataItemObject
-    occupation?: TNDIDataItemObject
-    employment?: TNDIDataItemObject
-    mobileno?: TNDIDataItemObject
-    mailadd?: TNDIDataItemObject
-    passportnumber?: TNDIDataItemObject
-    passportexpirydate?: TNDIDataItemObject
-    schoolname?: TNDIDataItemObject
-    dob?: TNDIDataItemObject
-    email?: TNDIDataItemObject
-    householdincome?: TNDIDataItemObject
-    sex?: TNDIDataItemObject
+    name?: NDI.TNDIItemValueBased
+    edulevel?: NDI.TNDIItemCodeBased
+    nationality?: NDI.TNDIItemCodeBased
+    occupation?: NDI.TNDIItemCodeBased
+    employment?: NDI.TNDIItemValueBased
+    mobileno?: NDI.TNDIMobileNo
+    mailadd?: NDI.TNDIMailAdd
+    passportnumber?: NDI.TNDIItemValueBased
+    passportexpirydate?: NDI.TNDIItemValueBased
+    schoolname?: NDI.TNDIItemCodeBased
+    dob?: NDI.TNDIItemValueBased
+    email?: NDI.TNDIItemValueBased
+    householdincome?: NDI.TNDIHouseholdIncome
+    sex?: NDI.TNDIItemCodeBased
   }
 }
 export interface IBaseAttNDI extends IBaseAtt {

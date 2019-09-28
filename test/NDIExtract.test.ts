@@ -444,6 +444,5 @@ const batchMerkleTreeComponents = HashingLogic.getSignedBatchMerkleTreeComponent
 )
 
 test('HashingLogic.hashMessage', () => {
-  console.log(JSON.stringify(batchMerkleTreeComponents))
-  expect(true)
+  expect(batchMerkleTreeComponents.requestNonce).toBe(requestNonce)
 })

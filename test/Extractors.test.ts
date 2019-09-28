@@ -63,6 +63,9 @@ test('full-name extractor', () => {
 
   expect(Extractors.extractBase(value, 'full-name', 'full')).toEqual(value)
 
+  const valueNDI = {data: {lastupdated: '2019-09-17', source: '1', classification: 'C', value: 'TAN XIAO HUI'}}
+  expect(Extractors.extractBase(JSON.stringify(valueNDI), 'full-name', 'full')).toEqual(valueNDI.data.value)
+
   const full: Partial<IBaseAttName> = {
     data: {
       full: value,
@@ -393,6 +396,33 @@ test('address extractor', () => {
   expect(Extractors.extractBase(json, 'address', 'name')).toEqual(baap.address[0].name)
   expect(Extractors.extractBase(json, 'address', 'provider.name')).toEqual(baap.provider.name)
   expect(Extractors.extractBase(json, 'address', 'service_types')).toHaveLength(1)
+
+  const valueNDI = {
+    data: {
+      mailadd: {
+        country: {code: 'SG', desc: 'SINGAPORE'},
+        unit: {value: '128'},
+        street: {value: 'BEDOK NORTH AVENUE 4'},
+        lastupdated: '2019-09-17',
+        block: {value: '102'},
+        source: '2',
+        postal: {value: '460102'},
+        classification: 'C',
+        floor: {value: '9'},
+        type: 'SG',
+        building: {value: 'PEARL GARDEN'},
+      },
+    },
+  }
+
+  const jsonNDI = JSON.stringify(valueNDI)
+
+  expect(JSON.stringify(Extractors.extractBase(jsonNDI, 'address', 'object'))).toEqual(JSON.stringify(valueNDI.data))
+  expect(JSON.stringify(Extractors.extractBase(jsonNDI, 'address', 'address'))).toEqual(JSON.stringify(baap.address[0]))
+  // expect(Extractors.extractBase(json, 'address', 'full')).toEqual(fullAddress)
+  // expect(Extractors.extractBase(json, 'address', 'name')).toEqual(baap.address[0].name)
+  // expect(Extractors.extractBase(json, 'address', 'provider.name')).toEqual(baap.provider.name)
+  // expect(Extractors.extractBase(json, 'address', 'service_types')).toHaveLength(1)
 })
 
 test('income extractor', () => {
