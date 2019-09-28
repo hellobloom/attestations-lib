@@ -15,6 +15,7 @@ import {
   TAddress,
   IBaseAttAddress,
   IBaseAttIncome,
+  IBaseAttNDI,
 } from '../src/AttestationData'
 
 test('phone extractor', () => {
@@ -406,4 +407,58 @@ test('income extractor', () => {
   expect(Extractors.extractBase(JSON.stringify(income), 'income', 'start_date')).toEqual(income.summary!.start_date)
   expect(Extractors.extractBase(JSON.stringify(income), 'income', 'end_date')).toEqual(income.summary!.end_date)
   expect(JSON.stringify(Extractors.extractBase(JSON.stringify(income), 'income', 'object'))).toEqual(JSON.stringify(income))
+})
+
+test('ndi extractor', () => {
+  const value = {
+    date: '2019-01-01',
+    name: 'TAN XIAO HUI',
+    country: 'SG',
+    biographic: {
+      dob: '1998-06-06',
+      name: 'TAN XIAO HUI',
+      gender: 'F',
+    },
+    '@provider_specific': {
+      name: {lastupdated: '2019-09-17', source: '1', classification: 'C', value: 'TAN XIAO HUI'},
+      edulevel: {lastupdated: '2019-09-17', code: '3', source: '2', classification: 'C', desc: 'SECONDARY'},
+      nationality: {lastupdated: '2019-09-17', code: 'SG', source: '1', classification: 'C', desc: 'SINGAPORE CITIZEN'},
+      occupation: {lastupdated: '2019-09-17', code: '25140', source: '2', classification: 'C', desc: 'APPLICATIONS/SYSTEMS PROGRAMMER'},
+      employment: {lastupdated: '2019-09-17', source: '2', classification: 'C', value: 'CRYSTAL HORSE INVEST PTE LTD'},
+      mobileno: {
+        lastupdated: '2019-09-17',
+        source: '2',
+        classification: 'C',
+        areacode: {value: '65'},
+        prefix: {value: '+'},
+        nbr: {value: '97399245'},
+      },
+      mailadd: {
+        country: {code: 'SG', desc: 'SINGAPORE'},
+        unit: {value: '128'},
+        street: {value: 'BEDOK NORTH AVENUE 4'},
+        lastupdated: '2019-09-17',
+        block: {value: '102'},
+        source: '2',
+        postal: {value: '460102'},
+        classification: 'C',
+        floor: {value: '9'},
+        type: 'SG',
+        building: {value: 'PEARL GARDEN'},
+      },
+      passportnumber: {lastupdated: '2019-09-17', source: '1', classification: 'C', value: 'E35463874W'},
+      passexpirydate: {lastupdated: '2019-09-17', source: '3', classification: 'C', value: ''},
+      schoolname: {lastupdated: '2019-09-17', code: 'T07GS3203L', source: '2', classification: 'C', desc: 'BUKIT MERAH SECONDARY SCHOOL'},
+      dob: {lastupdated: '2019-09-17', source: '1', classification: 'C', value: '1998-06-06'},
+      email: {lastupdated: '2019-09-17', source: '2', classification: 'C', value: 'myinfotesting@gmail.com'},
+      householdincome: {lastupdated: '2019-09-17', high: {value: 4999}, source: '2', classification: 'C', low: {value: 4000}},
+      sex: {lastupdated: '2019-09-17', code: 'F', source: '1', classification: 'C', desc: 'FEMALE'},
+    },
+  }
+
+  const ndi: Partial<IBaseAttNDI> = {
+    data: [value],
+  }
+
+  expect(JSON.stringify(Extractors.extractBase(JSON.stringify(ndi), 'ndi', 'object'))).toEqual(JSON.stringify(value))
 })

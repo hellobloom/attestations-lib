@@ -535,11 +535,11 @@ export interface IBaseAttMeta extends IBaseAtt {
 ///////////////////////////////////////////////////
 export type TNDIDataItemBase = {
   classification: string
-  source:
-    | '1' // Government-verified
-    | '2' // User provided
-    | '3' // Field is Not Applicable to Person
-    | '4' // Verified by SingPass
+  source: string
+  // '1' - Government-verified
+  // '2' - User provided
+  // '3' - Field is Not Applicable to Person
+  // '4' - Verified by SingPass
   lastupdated: string
 }
 

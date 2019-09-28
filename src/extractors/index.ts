@@ -15,6 +15,7 @@ import {extractPhone} from './phone'
 import {extractSanctionScreen} from './sanctionScreen'
 import {extractSSN} from './ssn'
 import {extractUtility} from './utility'
+import {extractNDI} from './ndi'
 
 export const extractBase = (dataStr: string, attType: TAttestationTypeNames, valType: string, errCallback?: (err: any) => void) => {
   const a: string | AD.IBaseAtt | null = B.parseDataStr(dataStr)
@@ -65,6 +66,9 @@ export const extractBase = (dataStr: string, attType: TAttestationTypeNames, val
         break
       case 'gender':
         val = extractGender(a as AD.IBaseAttGender, attType, valType)
+        break
+      case 'ndi':
+        val = extractNDI(a as AD.IBaseAttNDI, attType, valType)
         break
       default:
         return null
