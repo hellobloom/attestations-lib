@@ -85,6 +85,7 @@ export type TDatetime = string // ISO-8601 datetime in YYYY-MM-DDTHH:MM:SSZ form
 export type TPhoneNumber =
   | string // Valid internationally-formatted phone number
   | TPhoneNumberObj
+  | NDI.TNDIMobileNo
 
 export type TPhoneNumberObj = {
   full?: string

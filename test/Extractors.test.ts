@@ -34,6 +34,17 @@ test('phone extractor', () => {
   }
   const p = JSON.stringify(bap)
   expect(Extractors.extractBase(p, 'phone', 'number')).toEqual(value)
+  const valueNDI = {
+    data: {
+      lastupdated: '2019-09-17',
+      source: '2',
+      classification: 'C',
+      areacode: {value: '65'},
+      prefix: {value: '+'},
+      nbr: {value: '97399245'},
+    },
+  }
+  expect(Extractors.extractBase(JSON.stringify(valueNDI), 'phone', 'number')).toEqual('+6597399245')
 })
 
 test('email extractor', () => {
