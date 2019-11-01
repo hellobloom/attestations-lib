@@ -764,6 +764,8 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents', () => {
     alicePrivkey,
   )
 
+  console.log(JSON.stringify(batchComponents))
+
   expect(validBatchComponentVersions.indexOf(batchComponents.version)).toBeGreaterThan(-1)
 
   // batch should have same length as non-batch

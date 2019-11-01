@@ -47,7 +47,7 @@ export interface IAttestationType {
   /**
    * The type of attestation (phone, email, etc.)
    */
-  type: keyof typeof AttestationTypeID
+  type: keyof typeof AttestationTypeID | string
   /**
    * Optionally identifies service used to perform attestation
    */
