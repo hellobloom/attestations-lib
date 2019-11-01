@@ -42,6 +42,7 @@ export enum AttestationTypeID {
   'address' = 33,
   'correction' = 34,
   'account' = 35,
+  'ndi' = 36,
 }
 
 export type AttestationTypeManifest = {[P in keyof typeof AttestationTypeID]: AttestationType}
@@ -226,6 +227,11 @@ export const AttestationTypes: AttestationTypeManifest = {
     id: AttestationTypeID['account'],
     scoreWeight: 5,
     nameFriendly: 'Account',
+  },
+  ndi: {
+    id: AttestationTypeID['ndi'],
+    scoreWeight: 25,
+    nameFriendly: 'National Digital Identity',
   },
 }
 

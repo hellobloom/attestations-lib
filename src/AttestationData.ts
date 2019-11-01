@@ -1,5 +1,6 @@
 import * as VK from '@bloomprotocol/verify-kit'
 import * as HL from './HashingLogic'
+import * as NDI from './NDIData'
 
 export type TContextField = string | {type: string; data: string}
 
@@ -73,7 +74,7 @@ export type TPersonalNameObj = {
   start_date?: TDateOrTime
   end_date?: TDateOrTime
 }
-export type TPersonalName = TPersonalNameObj | string
+export type TPersonalName = TPersonalNameObj | NDI.TNDIItemValueBased | string
 
 export type TDateOrTime = TDate | TDatetime
 
@@ -84,6 +85,7 @@ export type TDatetime = string // ISO-8601 datetime in YYYY-MM-DDTHH:MM:SSZ form
 export type TPhoneNumber =
   | string // Valid internationally-formatted phone number
   | TPhoneNumberObj
+  | NDI.TNDIMobileNo
 
 export type TPhoneNumberObj = {
   full?: string
@@ -99,7 +101,7 @@ export type TEthAddr = string // "did:eth:0x...", "0x..."
 
 export type TGender = string // 'male', 'female', ...
 
-export type TAddress = {
+export type TAddressObj = {
   full: string
   name: string
   street_1: string
@@ -111,6 +113,8 @@ export type TAddress = {
   region_2?: string
   country?: string
 }
+
+export type TAddress = TAddressObj | NDI.TNDIMailAdd
 
 ///////////////////////////////////////////////////
 // Phone attestation dataStr type
@@ -127,7 +131,7 @@ export interface IBaseAttEmailData extends IBaseAttDataObj {
   start_date?: TDateOrTime
   end_date?: TDateOrTime
 }
-export type TBaseAttEmailData = string | IBaseAttEmailData
+export type TBaseAttEmailData = string | IBaseAttEmailData | NDI.INDIFieldValueBased
 export interface IBaseAttEmail extends IBaseAtt {
   data: TBaseAttEmailData | Array<TBaseAttEmailData>
 }
@@ -165,7 +169,7 @@ export interface IBaseAttAccountData extends IBaseAttDataObj {
   id?: string | number
   email?: string
 
-  name?: TPersonalName
+  name?: string | TPersonalNameObj
   start_date?: TDateOrTime
   end_date?: TDateOrTime
 }
@@ -472,11 +476,13 @@ export type TBaseAttIncomeStream = {
     value: number
   }>
 }
-export interface IBaseAttIncome extends IBaseAtt {
+export interface IBaseAttIncomeObj extends IBaseAtt {
   generality: number
   summary?: TBaseAttIncomeSummary
   data: TBaseAttIncomeStreamWrapper
 }
+
+export type TBaseAttIncome = IBaseAttIncomeObj | {data: NDI.TNDIHouseholdIncome}
 
 ///////////////////////////////////////////////////
 // Assets attestation dataStr type (total, gross, or expenses)
@@ -530,6 +536,42 @@ export interface IBaseAttMeta extends IBaseAtt {
   data: IBaseMetaData
 }
 
+///////////////////////////////////////////////////
+// National Digital Identity attestation dataStr type
+///////////////////////////////////////////////////
+
+export interface IBaseAttNDIData extends IBaseAttDataObj {
+  date: TDateOrTime
+  name?: TPersonalName
+  country?: string
+
+  biographic?: {
+    age?: number
+    dob?: TDateOrTime
+    name?: TPersonalName
+    gender?: string
+  }
+  '@provider_specific'?: {
+    name?: NDI.TNDIItemValueBased
+    edulevel?: NDI.TNDIItemCodeBased
+    nationality?: NDI.TNDIItemCodeBased
+    occupation?: NDI.TNDIItemCodeBased
+    employment?: NDI.TNDIItemValueBased
+    mobileno?: NDI.TNDIMobileNo
+    mailadd?: NDI.TNDIMailAdd
+    passportnumber?: NDI.TNDIItemValueBased
+    passportexpirydate?: NDI.TNDIItemValueBased
+    schoolname?: NDI.TNDIItemCodeBased
+    dob?: NDI.TNDIItemValueBased
+    email?: NDI.TNDIItemValueBased
+    householdincome?: NDI.TNDIHouseholdIncome
+    sex?: NDI.TNDIItemCodeBased
+  }
+}
+export interface IBaseAttNDI extends IBaseAtt {
+  data: IBaseAttNDIData | Array<IBaseAttNDIData>
+}
+
 /**
  * +--------- Table of implemented attestation types -----------+
  *
@@ -575,4 +617,5 @@ export interface IBaseAttMeta extends IBaseAtt {
  *   X 'address' = 33,
  *   - 'correction' = 34,
  *   X 'account' = 35,
+ *   X 'ndi' = 36,
  */

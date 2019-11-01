@@ -72,7 +72,13 @@ export const getNameString = (a: MaybeDS<AD.TPersonalName>): string | null => {
   }
   if (typeof a === 'string') {
     return a.trim()
-  } else if (typeof a.full === 'string') {
+  } else if ('value' in a) {
+    if (typeof a.value === 'string') {
+      return a.value.trim()
+    } else {
+      return null
+    }
+  } else if ('full' in a && typeof a.full === 'string') {
     return a.full.trim()
   } else {
     let str = getNameValue(a.given).trim() + ` ${getNameValue(a.middle)}`.trimRight() + ` ${getNameValue(a.family)}`.trimRight()
@@ -83,6 +89,25 @@ export const getNameString = (a: MaybeDS<AD.TPersonalName>): string | null => {
       str = `${str} ${a.suffix}`.trim()
     }
     return str
+  }
+}
+
+export const getEmailString = (a: MaybeDS<AD.TBaseAttEmailData>): string | null => {
+  if (!a) {
+    return null
+  }
+  if (typeof a === 'string') {
+    return a.trim()
+  } else if ('value' in a) {
+    if (typeof a.value === 'string') {
+      return a.value.trim()
+    } else {
+      return null
+    }
+  } else if ('email' in a && typeof a.email === 'string') {
+    return a.email.trim()
+  } else {
+    return null
   }
 }
 
