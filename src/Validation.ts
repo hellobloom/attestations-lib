@@ -94,7 +94,7 @@ export const validateAttestationDataNode = genValidateFn([
 
 export const validateAttestationTypeNode = genValidateFn([
   ['type', isNotEmptyString, false],
-  ['type', isValidTypeString, false],
+  // ['type', isValidTypeString, false],
   ['nonce', isNotEmptyString, false],
 ])
 
