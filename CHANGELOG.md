@@ -1,3 +1,7 @@
+## 5.3.0
+
+- Adds `dob` property to `IBaseAttPEPData` type.
+
 ## 5.0.0
 
 **Improvements**
