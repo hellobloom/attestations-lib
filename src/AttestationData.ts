@@ -209,6 +209,7 @@ export interface IBaseAttSanctionScreen extends IBaseAtt {
 export interface IBaseAttPEPData extends IBaseAttDataObj {
   date: TDateOrTime
   name: TPersonalName
+  dob?: TDateOrTime
   country: string
 
   // Primarily modelled after KYC2020 responses, most fields left optional for flexibility
