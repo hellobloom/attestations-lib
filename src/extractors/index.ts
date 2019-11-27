@@ -16,7 +16,7 @@ import {extractSanctionScreen} from './sanctionScreen'
 import {extractSSN} from './ssn'
 import {extractUtility} from './utility'
 
-export const extractBase = (dataStr: string, attType: TAttestationTypeNames, valType: string, errCallback?: (err: any) => void) => {
+export const extract = (dataStr: string, attType: TAttestationTypeNames, valType: string, errCallback?: (err: any) => void) => {
   const a: string | AD.IBaseAtt | null = B.parseDataStr(dataStr)
   if (a === null) {
     return a
@@ -80,3 +80,5 @@ export const extractBase = (dataStr: string, attType: TAttestationTypeNames, val
   }
   return val
 }
+
+export const extractBase = extract
