@@ -7,7 +7,15 @@ export const parseDataStr = (x: string): null | MaybeDS<AD.IBaseAtt> => {
     return null
   } else if (x[0] === '{') {
     try {
-      const obj = JSON.parse(x)
+      let obj = JSON.parse(x)
+
+      // Force wrapper if attestation is malformed such that the data attribute is at the top level
+      if (!('data' in obj)) {
+        obj = {
+          data: obj,
+        }
+      }
+
       return obj
     } catch (err) {
       return null

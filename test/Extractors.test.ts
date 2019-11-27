@@ -396,6 +396,7 @@ test('address extractor', () => {
 
 test('income extractor', () => {
   const income: Partial<IBaseAttIncome> = {
+    data: {},
     generality: 100,
     summary: {
       start_date: '2018-01-01',
