@@ -1,7 +1,7 @@
 declare module 'ethereumjs-wallet' {
   import {Buffer} from 'buffer'
 
-  export class Wallet {
+  export default class Wallet {
     getAddress(): Buffer
     getAddressString(): string
     getChecksumAddressString(): string
@@ -10,9 +10,9 @@ declare module 'ethereumjs-wallet' {
     getPublicKey(): Buffer
     getPublicKeyString(): string
     getV3Filename(): string
-  }
 
-  export function generate(): Wallet
-  export function fromPrivateKey(key: Buffer): Wallet
-  export function fromPublicKey(key: Buffer): Wallet
+    static generate(): Wallet
+    static fromPrivateKey(key: Buffer): Wallet
+    static fromPublicKey(key: Buffer): Wallet
+  }
 }

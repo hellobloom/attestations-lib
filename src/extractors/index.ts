@@ -21,7 +21,7 @@ export const extract = (dataStr: string, attType: TAttestationTypeNames, valType
   if (a === null) {
     return a
   }
-  var val: any = null
+  let val: any = null
   try {
     switch (attType) {
       case 'phone':

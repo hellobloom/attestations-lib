@@ -1,5 +1,5 @@
-import * as VK from '@bloomprotocol/verify-kit'
 import * as HL from './HashingLogic'
+import {IVerifiableCredential} from './types'
 
 export type TContextField = string | {type: string; data: string}
 
@@ -519,7 +519,7 @@ export interface IBaseAttMetaSummary {
 }
 export interface IBaseMetaClaim {
   type: string // 'claim_only' | 'single_attestation' | 'batch_attestation' | 'hash_only' | ...
-  data: any | string | HL.ISignedClaimNode | VK.IVerifiableCredential // Non-enforced, hence "any"
+  data: any | string | HL.ISignedClaimNode | IVerifiableCredential // Non-enforced, hence "any"
 }
 export interface IBaseMetaData {
   meta?: any

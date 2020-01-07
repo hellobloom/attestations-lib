@@ -11,9 +11,7 @@ export const extractDOB = (a: B.MaybeDS<AD.IBaseAttDOB>, _attType: string, valTy
       } else {
         return null
       }
-      break
     default:
       return null
   }
-  return null
 }

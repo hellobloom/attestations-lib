@@ -1,6 +1,5 @@
-import * as EthU from 'ethereumjs-util'
-
-const ethSigUtil = require('eth-sig-util')
+import * as ethUtil from 'ethereumjs-util'
+import * as ethSigUtil from 'eth-sig-util'
 
 import {genValidateFn, TUnvalidated} from './validator'
 import {AttestationTypeID} from './AttestationTypes'
@@ -13,14 +12,14 @@ import * as HashingLogic from './HashingLogic'
  * @param signatureString A signature string like "0x123456..."
  */
 export const isValidSignatureString = (signatureString: string): boolean => {
-  let signature: EthU.Signature
+  let signature: ethUtil.ECDSASignature
   try {
-    signature = EthU.fromRpcSig(signatureString)
+    signature = ethUtil.fromRpcSig(signatureString)
   } catch {
     return false
   }
   const {v, r, s} = signature
-  return EthU.isValidSignature(v, r, s, true)
+  return ethUtil.isValidSignature(v, r, s, true)
 }
 
 const isNotEmpty = (value: string) => value.replace(/\s+/g, '') !== ''
@@ -51,13 +50,13 @@ export const validateAttesterClaimSig = (attesterSig: string, params: TUnvalidat
 }
 
 export const validateAttesterRootSig = (attesterSig: string, params: TUnvalidated<HashingLogic.IBloomMerkleTreeComponents>) => {
-  const recoveredSigner = HashingLogic.recoverHashSigner(EthU.toBuffer(params.rootHash), attesterSig)
+  const recoveredSigner = HashingLogic.recoverHashSigner(ethUtil.toBuffer(params.rootHash), attesterSig)
   return recoveredSigner.toLowerCase() === params.attester.toLowerCase()
 }
 
 export const validateBatchAttesterSig = (batchAttesterSig: string, params: TUnvalidated<HashingLogic.IBloomBatchMerkleTreeComponents>) => {
   const recoveredSigner = HashingLogic.recoverHashSigner(
-    EthU.toBuffer(
+    ethUtil.toBuffer(
       HashingLogic.hashMessage(
         HashingLogic.orderedStringify({
           subject: params.subject,
@@ -214,10 +213,10 @@ export const validateBloomBatchMerkleTreeComponents = genValidateFn([
   ['version', isNotEmptyString, false],
   ['batchAttesterSig', isValidSignatureString, false],
   ['batchAttesterSig', validateBatchAttesterSig, true],
-  ['contractAddress', EthU.isValidAddress, false],
+  ['contractAddress', ethUtil.isValidAddress, false],
   ['requestNonce', isValidHash, false],
   ['requestNonce', isValidEthHexString, false],
-  ['subject', EthU.isValidAddress, false],
+  ['subject', ethUtil.isValidAddress, false],
   ['subjectSig', isValidSignatureString, false],
   ['subjectSig', validateSubjectSig, true],
 ])

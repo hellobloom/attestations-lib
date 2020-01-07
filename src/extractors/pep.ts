@@ -30,7 +30,7 @@ export const extractPEP = (
   | null => {
   // Original spec
   if (typeof a.data === 'object') {
-    let data: AD.IBaseAttPEPData | null = B.getFirst(a.data)
+    const data: AD.IBaseAttPEPData | null = B.getFirst(a.data)
     if (data === null) {
       return null
     }
@@ -50,7 +50,7 @@ export const extractPEP = (
           return null
         }
       } else {
-        let ss = data.search_summary
+        const ss = data.search_summary
         if (typeof ss === 'object') {
           if ((ssfields as Array<string>).indexOf(valType) !== -1) {
             const ssKey = valType as keyof AD.IBaseAttPEPData['search_summary']

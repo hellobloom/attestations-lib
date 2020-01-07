@@ -131,8 +131,8 @@ export const validateDateTime = (dateTimeString: string): boolean => {
 
   // Check if it is a correct date using the javascript Date parse() method.
   const time = Date.parse(dateTimeString)
+  // eslint-disable-next-line
   if (time !== time) {
-    // eslint-disable-line
     return false
   }
   // Split the date-time-string up into the string-date and time-string part.

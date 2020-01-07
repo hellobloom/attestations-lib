@@ -1,6 +1,6 @@
 {
   "name": "@bloomprotocol/attestations-lib",
-  "version": "5.3.1",
+  "version": "5.4.0-beta.0",
   "main": "dist/index.js",
   "module": "dist/attestations-lib.esm.js",
   "typings": "dist/index.d.ts",
@@ -12,41 +12,42 @@
     "dist"
   ],
   "scripts": {
-    "start": "npm run clean && tsdx watch --tsconfig ./tsconfig.build.json",
-    "build": "npm run clean && tsdx build --tsconfig ./tsconfig.build.json",
+    "start": "tsdx watch --tsconfig ./tsconfig.build.json",
+    "build": "tsdx build --tsconfig ./tsconfig.build.json",
     "test": "tsdx test",
-    "eslint": "./bin/eslint",
-    "eslint-fix": "./bin/eslint --fix",
-    "clean": "rimraf dist",
+    "lint": "tsdx lint src test",
     "prepare": "npm run build",
-    "prepublishOnly": "npm run test && npm run eslint"
+    "prepublishOnly": "npm run test && npm run lint"
   },
   "dependencies": {
-    "@bloomprotocol/verify-kit": "^1.0.0",
-    "@types/ramda": "^0.26.9",
-    "eth-sig-util": "^2.1.0",
-    "ethereumjs-util": "^6.0.0",
-    "ethereumjs-wallet": "^0.6.2",
+    "@types/eth-sig-util": "^2.1.0",
+    "@types/ramda": "^0.26.39",
+    "@types/randombytes": "^2.0.0",
+    "eth-sig-util": "^2.5.2",
+    "ethereumjs-util": "^6.2.0",
+    "ethereumjs-wallet": "^0.6.3",
     "js-sha3": "^0.8.0",
-    "merkletreejs": "^0.0.11",
-    "ramda": "^0.26.1"
+    "merkletreejs": "0.1.1",
+    "ramda": "^0.26.1",
+    "randombytes": "^2.1.0"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.15",
-    "@typescript-eslint/eslint-plugin": "^1.7.0",
-    "@typescript-eslint/parser": "^1.7.0",
-    "acorn": "^6.1.1",
-    "eslint": "^5.16.0",
-    "eslint-config-prettier": "^5.0.0",
-    "eslint-plugin-prettier": "^3.0.1",
+    "@bloomprotocol/eslint-config": "^1.0.0-beta.1",
+    "@bloomprotocol/prettier-config": "^1.0.0-beta.1",
+    "@types/jest": "^24.0.25",
+    "@typescript-eslint/eslint-plugin": "^2.14.0",
+    "@typescript-eslint/parser": "^2.14.0",
+    "acorn": "^7.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-prettier": "^3.1.2",
     "jest-resolve": "^24.8.0",
-    "prettier": "^1.18.2",
-    "rimraf": "^2.6.3",
+    "prettier": "^1.19.1",
     "ts-node": "^8.3.0",
     "tsconfig-paths": "^3.5.0",
-    "tsdx": "^0.7.2",
+    "tsdx": "^0.12.1",
     "tslib": "^1.10.0",
-    "typescript": "^3.5.2"
+    "typescript": "^3.7.4"
   },
   "jest": {
     "moduleFileExtensions": [
