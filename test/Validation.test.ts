@@ -1,12 +1,12 @@
-import * as ethereumjsWallet from 'ethereumjs-wallet'
-const ethSigUtil = require('eth-sig-util')
+import EthWallet from 'ethereumjs-wallet'
+import * as ethSigUtil from 'eth-sig-util'
 
 import * as Validation from '../src/Validation'
 import * as HashingLogic from '../src/HashingLogic'
 
-const aliceWallet = ethereumjsWallet.fromPrivateKey(new Buffer('c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3', 'hex'))
+const aliceWallet = EthWallet.fromPrivateKey(new Buffer('c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3', 'hex'))
 const alicePrivkey = aliceWallet.getPrivateKey()
-const bobWallet = ethereumjsWallet.fromPrivateKey(new Buffer('ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f', 'hex'))
+const bobWallet = EthWallet.fromPrivateKey(new Buffer('ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f', 'hex'))
 
 const bobPrivkey = bobWallet.getPrivateKey()
 const bobAddress = bobWallet.getAddressString()

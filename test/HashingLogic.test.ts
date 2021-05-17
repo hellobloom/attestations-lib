@@ -1,13 +1,14 @@
-import * as ethereumjsWallet from 'ethereumjs-wallet'
-const ethUtil = require('ethereumjs-util')
-const ethSigUtil = require('eth-sig-util')
+import EthWallet from 'ethereumjs-wallet'
+import * as ethUtil from 'ethereumjs-util'
+import * as ethSigUtil from 'eth-sig-util'
 
 import * as HashingLogic from '../src/HashingLogic'
+import {IProof} from 'src/types'
 
-const aliceWallet = ethereumjsWallet.fromPrivateKey(new Buffer('c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3', 'hex'))
+const aliceWallet = EthWallet.fromPrivateKey(new Buffer('c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3', 'hex'))
 const alicePrivkey = aliceWallet.getPrivateKey()
 
-const bobWallet = ethereumjsWallet.fromPrivateKey(new Buffer('ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f', 'hex'))
+const bobWallet = EthWallet.fromPrivateKey(new Buffer('ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f', 'hex'))
 
 const bobPrivkey = bobWallet.getPrivateKey()
 const bobAddress = bobWallet.getAddressString()
@@ -40,7 +41,10 @@ const preComputedAgreement = {
       {name: 'chainId', type: 'uint256'},
       {name: 'verifyingContract', type: 'address'},
     ],
-    AttestationRequest: [{name: 'dataHash', type: 'bytes32'}, {name: 'nonce', type: 'bytes32'}],
+    AttestationRequest: [
+      {name: 'dataHash', type: 'bytes32'},
+      {name: 'nonce', type: 'bytes32'},
+    ],
   },
   primaryType: 'AttestationRequest',
   domain: {
@@ -458,9 +462,9 @@ test('Bloom Merkle Tree Proofs', () => {
   const tree = HashingLogic.getBloomMerkleTree(dataHashes, sample13PaddingNodes, signedChecksumHash)
   const root = tree.getRoot()
   const leaves = tree.getLeaves()
-  const emailProof = tree.getProof(ethUtil.toBuffer(hashedEmailAttestation))
-  const phoneProof = tree.getProof(ethUtil.toBuffer(hashedPhoneAttestation))
-  const checksumProof = tree.getProof(ethUtil.toBuffer(signedChecksumHash))
+  const emailProof = tree.getProof(ethUtil.toBuffer(hashedEmailAttestation)) as IProof[]
+  const phoneProof = tree.getProof(ethUtil.toBuffer(hashedPhoneAttestation)) as IProof[]
+  const checksumProof = tree.getProof(ethUtil.toBuffer(signedChecksumHash)) as IProof[]
 
   const stringLeaves = leaves.map(x => ethUtil.bufferToHex(x))
 
@@ -492,10 +496,10 @@ test('Attestation Data Tree Proofs', () => {
   const tree = HashingLogic.getDataTree(emailAttestationNode)
   const root = tree.getRoot()
   const leaves = tree.getLeaves()
-  const dataProof = tree.getProof(ethUtil.toBuffer(dataHash))
-  const typeProof = tree.getProof(ethUtil.toBuffer(typeHash))
-  const linkProof = tree.getProof(ethUtil.toBuffer(linkHash))
-  const auxProof = tree.getProof(ethUtil.toBuffer(auxHash))
+  const dataProof = tree.getProof(ethUtil.toBuffer(dataHash)) as IProof[]
+  const typeProof = tree.getProof(ethUtil.toBuffer(typeHash)) as IProof[]
+  const linkProof = tree.getProof(ethUtil.toBuffer(linkHash)) as IProof[]
+  const auxProof = tree.getProof(ethUtil.toBuffer(auxHash)) as IProof[]
 
   const stringLeaves = leaves.map(x => ethUtil.bufferToHex(x))
 
@@ -853,7 +857,7 @@ test('HashingLogic.getSignedBatchMerkleTreeComponents sig validation', () => {
   }).toThrowError(new Error('Invalid subject sig'))
 })
 
-test('HashingLogic getAttestationAgreement' + ' - has not been modified', () => {
+test('HashingLogic getAttestationAgreement - has not been modified', () => {
   const dataHash = preComputedHashes.rootHash
   const nonce = '0xd5d7e6ae812a8ff7bd44f928b199806446c2170412df381efb41d8f47fcd044b'
 

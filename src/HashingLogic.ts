@@ -1,20 +1,20 @@
 import {keccak256} from 'js-sha3'
-import MerkleTree, {IProof} from 'merkletreejs'
-import * as ethereumjsWallet from 'ethereumjs-wallet'
-
-const crypto = require('crypto')
-const ethUtil = require('ethereumjs-util')
-const ethSigUtil = require('eth-sig-util')
+import MerkleTree from 'merkletreejs'
+import EthWallet from 'ethereumjs-wallet'
+import * as ethUtil from 'ethereumjs-util'
+import * as ethSigUtil from 'eth-sig-util'
+import randomBytes from 'randombytes'
 
 import {validateDateTime} from './RFC3339DateTime'
 import {AttestationTypeID} from './AttestationTypes'
+import {IProof} from './types'
 
 export const hashMessage = (message: string): string => ethUtil.addHexPrefix(keccak256(message))
 
 /**
  * Generate a random hex string with 0x prefix
  */
-export const generateNonce = () => hashMessage(crypto.randomBytes(20))
+export const generateNonce = () => hashMessage(randomBytes(20).toString())
 
 /**
  * Latest supported types for constructing and interpreting Bloom Merkle Tree
@@ -172,7 +172,7 @@ export interface ISignedAuthorization {
  * `Array<string>.sort`.
  */
 export const orderedStringify = (obj: {[i: string]: any}) => {
-  let orderedObj: {[i: string]: any} = {}
+  const orderedObj: {[i: string]: any} = {}
   Object.keys(obj)
     .sort()
     .map(o => (orderedObj[o] = obj[o]))
@@ -224,11 +224,10 @@ export const signHash = (hash: Buffer, privKey: Buffer): string => {
  * @param hash Buffer of the message that was signed
  * @param sig Hex string of the signature
  */
-export const recoverHashSigner = (hash: Buffer, sig: string) => {
-  const signature = ethUtil.toBuffer(sig)
+export const recoverHashSigner = (hash: Buffer, signature: string) => {
   const sigParams = ethUtil.fromRpcSig(signature)
   const pubKey = ethUtil.ecrecover(hash, sigParams.v, sigParams.r, sigParams.s)
-  const sender = ethUtil.publicToAddress(pubKey)
+  const sender = ethUtil.publicToAddress(ethUtil.toBuffer(pubKey))
   return ethUtil.bufferToHex(sender)
 }
 /**
@@ -265,7 +264,7 @@ export const getSignedClaimNode = (
   }
   const claimHash = hashClaimTree(issuedClaimNode)
   const attesterSig = signHash(claimHash, privKey)
-  const attester = ethereumjsWallet.fromPrivateKey(privKey)
+  const attester = EthWallet.fromPrivateKey(privKey)
   return {
     claimNode: issuedClaimNode,
     attester: attester.getAddressString(),
@@ -427,9 +426,10 @@ export const getPadding = (dataCount: number): string[] => {
     i += 5
   }
   const paddingCount = 2 ** (i - 1) - (dataCount + 1)
-  return Array.apply(null, Array(paddingCount)).map(() => {
-    return hashMessage(crypto.randomBytes(20))
-  })
+
+  return Array(paddingCount)
+    .fill('')
+    .map(() => hashMessage(randomBytes(20).toString()))
 }
 /**
  * Given attestation data and the attester's private key, construct the entire Bloom Merkle tree
@@ -474,7 +474,7 @@ export const getSignedMerkleTreeComponents = (
       nonce: rootHashNonce,
     }),
   )
-  const attester = ethereumjsWallet.fromPrivateKey(privKey)
+  const attester = EthWallet.fromPrivateKey(privKey)
   return {
     attester: attester.getAddressString(),
     layer2Hash: layer2Hash,
@@ -616,7 +616,10 @@ export const getAttestationAgreement = (
         {name: 'chainId', type: 'uint256'},
         {name: 'verifyingContract', type: 'address'},
       ],
-      AttestationRequest: [{name: 'dataHash', type: 'bytes32'}, {name: 'nonce', type: 'bytes32'}],
+      AttestationRequest: [
+        {name: 'dataHash', type: 'bytes32'},
+        {name: 'nonce', type: 'bytes32'},
+      ],
     },
     primaryType: 'AttestationRequest',
     domain: {
@@ -668,7 +671,7 @@ export const getSignedBatchMerkleTreeComponents = (
       subjectSig: subjectSig,
     }),
   )
-  const attester = ethereumjsWallet.fromPrivateKey(privKey)
+  const attester = EthWallet.fromPrivateKey(privKey)
   return {
     attesterSig: components.attesterSig,
     batchAttesterSig: batchAttesterSig,

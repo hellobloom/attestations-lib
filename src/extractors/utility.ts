@@ -16,7 +16,7 @@ export const extractUtility = (
   ) {
     if (valType === 'address') {
       if (typeof a.summary.address === 'undefined') return null
-      let addr = B.getFirst(a.summary.address)
+      const addr = B.getFirst(a.summary.address)
       return addr || null
     }
 

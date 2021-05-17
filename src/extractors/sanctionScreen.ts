@@ -30,7 +30,7 @@ export const extractSanctionScreen = (
     return null
   }
 
-  let d = B.getFirst(a.data)
+  const d = B.getFirst(a.data)
 
   if (valType === 'object') return d
 
@@ -41,7 +41,7 @@ export const extractSanctionScreen = (
   }
 
   if (searchSummaryFields.indexOf(valType as any) !== -1) {
-    let s = d['search_summary']
+    const s = d['search_summary']
     if (!s) return null
     return s[valType as keyof AD.IBaseAttSanctionScreenData['search_summary']] || null
   }

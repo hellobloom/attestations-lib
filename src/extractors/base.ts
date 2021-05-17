@@ -125,7 +125,7 @@ export const getFirstPrimitive = <T extends any>(a: T | Array<T>): T | null => {
 export const getAttr = <T extends AD.IBaseAtt, TD extends AD.IBaseAttDataObj>(a: T, attr: keyof TD): TD[keyof TD] | null => {
   if ('data' in a) {
     if (typeof a.data === 'object') {
-      let data = getFirst(a.data)
+      const data = getFirst(a.data)
       if (data === null) {
         return null
       } else {
@@ -150,7 +150,7 @@ export const getAttrOrStr = <T extends AD.IBaseAtt, TD extends AD.IBaseAttDataOb
       if (typeof a.data === 'string') {
         return a.data
       } else if (typeof a.data === 'object') {
-        let data = getFirst(a.data)
+        const data = getFirst(a.data)
         if (data === null) {
           return null
         } else {

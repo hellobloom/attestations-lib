@@ -25,7 +25,7 @@ export const genParamsValidator = <ParamType>(
     if (!requiredFields.every(requiredField(data))) return false
 
     const allValidationsPassed = validations.every(([fieldName, validation, useFullData]) => {
-      let outcome = useFullData ? validation(data[fieldName], data) : validation(data[fieldName])
+      const outcome = useFullData ? validation(data[fieldName], data) : validation(data[fieldName])
       if (outcome) {
         return true
       }
